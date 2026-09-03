@@ -19,6 +19,9 @@ from garminconnect import Garmin
 # Gets environment variables from a .env file and loads them into the memory for os.getenv() to access them
 load_dotenv()
 
+# Get the port number from the environment variables, defaulting to 8000 if not set
+PORT = int(os.getenv("PORT", 8000))
+
 # Initialize FastAPI app with title, description, and version
 app = FastAPI(
     title="TrackList Garmin Service",
@@ -105,4 +108,4 @@ if __name__ == "__main__":
     # Run the FastAPI app using Uvicorn server on localhost at port 8000 with auto-reload enabled for development
     import uvicorn
 
-    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run("main:app", host="127.0.0.1", port=PORT, reload=True)

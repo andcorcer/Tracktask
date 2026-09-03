@@ -1,7 +1,8 @@
 // Import all dependencies
 import axios from 'axios';
 
-const GARMIN_SERVICE_BASE_URL = 'http://localhost:8000/api/garmin';
+const PORT = process.env.PORT || 8000;
+const GARMIN_SERVICE_BASE_URL = `http://localhost:${PORT}/api/garmin`;
 
 // Create an instance of axios with the base URL for the backend python port
 const garminApi = axios.create({
