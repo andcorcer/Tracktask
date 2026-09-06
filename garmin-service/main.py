@@ -4,8 +4,8 @@
 import os
 from dotenv import load_dotenv
 
-# Gets the date if not provided in the request
-from datetime import date
+# Gets dates
+from datetime import date, timedelta
 
 # Import FastAPI and HTTPException for building the API with it's backend routes and handling errors
 from fastapi import FastAPI, HTTPException
@@ -58,7 +58,7 @@ def get_garmin_client():
             status_code=500,
             detail="Garmin credentials missing from environment variables (.env)",
         )
-    
+
     if garmin_client is None:
         try:
             client = Garmin(EMAIL, PASSWORD)
@@ -83,22 +83,68 @@ def get_daily_summary(target_date: str = None):
     try:
         data = client.get_user_summary(query_date)
         return data
-    
+
     except Exception as e:
         # Throw an HTTPException with status code 500 and a detailed error message if Garmin fetching of data fails
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# Route to fetch recent activities/workouts, with optional start and limit parameters for pagination
+# Route to fetch recent activities/workouts, with a start and end date
 @app.get("/api/garmin/activities")
-def get_activities(start: int = 0, limit: int = 10):
+def get_activities(start_date: str = None, end_date: str = None):
     """Fetch recent activities/workouts."""
     client = get_garmin_client()
 
+    query_start = start_date or date.today().isoformat()
+    query_end = end_date or date.today().isoformat()
+
     try:
-        activities = client.get_activities(start, limit)
+        activities = client.get_activities_by_date(query_start, query_end)
         return activities
-    
+
+    except Exception as e:
+        # Throw an HTTPException with status code 500 and a detailed error message if Garmin fetching of activities fails
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# Route to fetch the workouts and details for an active training plan
+@app.get("/api/garmin/training-plans")
+def get_training_plans():
+    """Fetch active Garmin Coach or custom training programs."""
+    client = get_garmin_client()
+
+    try:
+        plans = client.get_training_plans()
+        return plans
+
+    except Exception as e:
+        # Throw an HTTPException with status code 500 and a detailed error message if Garmin fetching of activities fails
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# Route to fetch the workouts and details for an active training plan
+@app.get("/api/garmin/workouts-in-time-range")
+def get_workouts_in_time_range(start_date: str = None, end_date: str = None):
+    """Fetch workouts in a given time range"""
+    client = get_garmin_client()
+
+    query_start = start_date or date.today().isoformat()
+    query_end = end_date or (date.today() + timedelta(weeks=1)).isoformat()
+    upcoming_workouts = []
+
+    try:
+        calendar_data = client.get_calendar(query_start, query_end)
+        # We make events an array of the returned data
+        events = (
+            calendar_data.get("calendarItems", []) # Gets the calendarItems key if a dictionary is returned
+            if isinstance(calendar_data, dict)
+            else calendar_data # returns the fetched data as an array if it isn't a dicionary
+        )
+        for event in events:
+            if isinstance(event, dict) and event.get("itemType") == "WORKOUT": # Only if event is a dictionary do we access it's 'itemType'
+                upcoming_workouts.append(event)
+        return upcoming_workouts
+
     except Exception as e:
         # Throw an HTTPException with status code 500 and a detailed error message if Garmin fetching of activities fails
         raise HTTPException(status_code=500, detail=str(e))

@@ -1,7 +1,7 @@
 // Import all dependencies
 import axios from 'axios';
 
-const PORT = process.env.PORT || 8000;
+const PORT = import.meta.env.VITE_GARMIN_PORT || 8000;
 const GARMIN_SERVICE_BASE_URL = `http://localhost:${PORT}/api/garmin`;
 
 // Create an instance of axios with the base URL for the backend python port
@@ -66,19 +66,55 @@ class GarminApi {
     // JSDoc comment for the getActivities static method
     /**
    * Get activities from most recent to least recent for the logged-in user
-   * @param {number} start - The starting index for the activities to retrieve (default is 0)
-   * @param {number} limit - The maximum number of activities to retrieve (default is 10)
+   * @param {Date|string} startDate
+   * @param {Date|string} endDate
    */
-    static async getActivities(start = 0, limit = 10) {
+    static async getActivities(startDate = new Date(), endDate = new Date()) {
         try {
             // Make a GET request to retrieve all activities witthin a given range of activities
             const response = await garminApi.get('/activities', {
-                params: { start, limit }
+                params: { start_date: formatDateToISO(startDate), end_date: formatDateToISO(endDate) }
             });
             return response.data || [];
         } catch(error) {
             // Log the error for the console with the corresponding static method
             console.error('Garmin API Error (getActivities):', error.response?.data || error.message);
+            throw error;
+        }
+    }
+
+    // JSDoc comment for the getTrainingPlans static method
+    /**
+   * Get every active training plan the user has
+   */
+    static async getTrainingPlans() {
+        try {
+            // Make a GET request to retrieve every training program
+            const response = await garminApi.get('/training-plans');
+            return response.data || [];
+        } catch(error) { 
+            // Log the error for the console with the corresponding static method
+            console.error('Garmin API Error (getTrainingPlans):', error.response?.data || error.message);
+            throw error;
+        }
+    }
+
+    // JSDoc comment for the getWorkoutsInTimeRange static method
+    /**
+   * Get workouts in a given date range
+   * @param {Date|string} startDate
+   * @param {Date|string} endDate
+   */
+    static async getWorkoutsInTimeRange(startDate = new Date(), endDate = new Date()) {
+        try {
+            // Make a GET request to retrieve workouts for the specified date range
+            const response = await garminApi.get('/workouts-in-time-range', {
+                params: { start_date: formatDateToISO(startDate), end_date: formatDateToISO(endDate) }
+            });
+            return response.data || [];
+        } catch(error) { 
+            // Log the error for the console with the corresponding static method
+            console.error('Garmin API Error (getWorkoutsInTimeRange):', error.response?.data || error.message);
             throw error;
         }
     }
