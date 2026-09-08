@@ -16,6 +16,9 @@ from fastapi.middleware.cors import CORSMiddleware
 # Import Garmin client from the garminconnect library to interact with Garmin Connect API
 from garminconnect import Garmin
 
+# Import BaseModel for POST requests to be parsed automatically and EmailStr to ensure the given email has email syntax
+from pydantic import BaseModel, EmailStr
+
 # Gets environment variables from a .env file and loads them into the memory for os.getenv() to access them
 load_dotenv()
 
@@ -40,36 +43,87 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers (Authorization, Content-Type, etc.)
 )
 
-# Get the email and password from the environment variables for Garmin authentication
-EMAIL = os.getenv("GARMIN_EMAIL")
-PASSWORD = os.getenv("GARMIN_PASSWORD")
+# Path in the local computer to store Tokens for the session to persist while hasn't expired
+SESSION_DIR = os.path.expanduser("~/.garminconnect")
+
+
+# Class to create an object with login credentials from a post request
+class GarminCredentials(BaseModel):
+    email: EmailStr
+    password: str
+
 
 # Variable to hold the Garmin client instance, initialized as None
 garmin_client = None
 
 
-# Helper function to geta garmin_client instance, logging in if not already done
 def get_garmin_client():
+    """Helper function to log in via session tokens or return an error for the Front_end to request a log in"""
     global garmin_client
 
-    # Check for missing environment variables before attempting authentication
-    if not EMAIL or not PASSWORD:
+    # If already logged in just return the current profile
+    if garmin_client is not None:
+        return garmin_client
+
+    # Uses session tokens in for logging in if they've been saved
+    if os.path.exists(SESSION_DIR):
+        try:
+            client = Garmin()
+            client.login(SESSION_DIR)
+            garmin_client = client
+            return garmin_client
+        except Exception as e:
+            # Throw an HTTPException with status code 401 for failed token and a detailed error message if tokens fail
+            raise HTTPException(
+                status_code=401, detail=f"Failed Token. Possible expiration"
+            )
+    # Throw an HTTPException with status code 401 error for users that haven't logged in
+    raise HTTPException(
+        status_code=401, detail=f"Garmin not Authenticated. Please log in."
+    )
+
+
+# Route to handle Logging In using an email and password passed in the POST request
+@app.post("/api/garmin/login")
+def login(credentials: GarminCredentials):
+    """Authenticate with Garmin using email and password, then save session tokens for persistant access."""
+    global garmin_client
+
+    try:
+        client = Garmin(email=credentials.email, password=credentials.password)
+        client.login()
+
+        # Makes a directory to dump the access credentials for persistant profile
+        os.makedirs(SESSION_DIR, exist_ok=True)
+        client.garth.dump(SESSION_DIR)
+
+        garmin_client = client
+        # Returns a JSON message for the Front-End
+        return {
+            "status": "connected",
+            "message": "Successfully authenticated with Garmin",
+        }
+
+    except Exception as e:
         raise HTTPException(
-            status_code=500,
-            detail="Garmin credentials missing from environment variables (.env)",
+            # Throw an HTTPException with status code 401 error for an error in the log in
+            status_code=401,
+            detail=f"Garmin Authentication Failed: {str(e)}",
         )
 
-    if garmin_client is None:
-        try:
-            client = Garmin(EMAIL, PASSWORD)
-            client.login()
-            garmin_client = client
-        except Exception as e:
-            # Throw an HTTPException with status code 500 and a detailed error message if Garmin authentication fails
-            raise HTTPException(
-                status_code=500, detail=f"Garmin Authentication Failed: {str(e)}"
-            )
-    return garmin_client
+# Route to verify if a user has logged in for the clients and returns basic profile data
+@app.get("/api/garmin/status")
+def check_status():
+    """Verify if active session exists without fetching too much data and returns basic profile details"""
+    client = get_garmin_client()
+    profile = getattr(client, "profile", {}) or {}
+
+    # Return profile details with fallback values
+    return {"status": "connected", "user": {
+        "name": getattr(client, "full_name", "Garmin User"),
+        "username": profile.get("userName", ""),
+        "profileImageUrl": profile.get("profileImageUrlMedium") or profile.get("profileImageUrlSmall", None),
+    }}
 
 
 # Route to fetch wellness summary for a given date (steps, heart rate, sleep, calories) for a specific date or today if no date is provided
@@ -136,12 +190,16 @@ def get_workouts_in_time_range(start_date: str = None, end_date: str = None):
         calendar_data = client.get_calendar(query_start, query_end)
         # We make events an array of the returned data
         events = (
-            calendar_data.get("calendarItems", []) # Gets the calendarItems key if a dictionary is returned
+            calendar_data.get(
+                "calendarItems", []
+            )  # Gets the calendarItems key if a dictionary is returned
             if isinstance(calendar_data, dict)
-            else calendar_data # returns the fetched data as an array if it isn't a dicionary
+            else calendar_data  # returns the fetched data as an array if it isn't a dicionary
         )
         for event in events:
-            if isinstance(event, dict) and event.get("itemType") == "WORKOUT": # Only if event is a dictionary do we access it's 'itemType'
+            if (
+                isinstance(event, dict) and event.get("itemType") == "WORKOUT"
+            ):  # Only if event is a dictionary do we access it's 'itemType'
                 upcoming_workouts.append(event)
         return upcoming_workouts
 
