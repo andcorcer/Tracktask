@@ -1,5 +1,5 @@
 // Import all dependencies
-import axios from 'axios';
+import axios from "axios";
 
 const PORT = import.meta.env.VITE_GARMIN_PORT || 8000;
 const GARMIN_SERVICE_BASE_URL = `http://localhost:${PORT}/api/garmin`;
@@ -8,116 +8,132 @@ const GARMIN_SERVICE_BASE_URL = `http://localhost:${PORT}/api/garmin`;
 const garminApi = axios.create({
   baseURL: GARMIN_SERVICE_BASE_URL,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
 // Interceptor to handle errors in the response
 garminApi.interceptors.response.use(
-    response => response,
-    error => {
-        // Handle Network errors
-        if (!error.response) {
-            console.error(`[Garmin API Error]: Verify your internet connection.`);
-            return Promise.reject(new Error('Garmin microservice is unreachable. Check that main.py is running on port 8000.'));
-        }
-
-        // Handle errors provided by the backend python port
-        if (error.response?.data?.detail) {
-            console.error(`[Garmin API Error ${error.response?.status}]:`, error.response.data.detail);
-            return Promise.reject(new Error(error.response.data.detail));
-        }
-
-        // Handle any other errors
-        return Promise.reject(error);
+  (response) => response,
+  (error) => {
+    // Handle Network errors
+    if (!error.response) {
+      console.error(`[Garmin API Error]: Verify your internet connection.`);
+      return Promise.reject(
+        new Error(
+          "Garmin microservice is unreachable. Check that main.py is running on port 8000.",
+        ),
+      );
     }
+
+    // Handle errors provided by the backend python port
+    if (error.response?.data?.detail) {
+      console.error(
+        `[Garmin API Error ${error.response?.status}]:`,
+        error.response.data.detail,
+      );
+      return Promise.reject(new Error(error.response.data.detail));
+    }
+
+    // Handle any other errors
+    return Promise.reject(error);
+  },
 );
 
 // Functions that formats dates to ISO for the API
 const formatDateToISO = (date) => {
-    const d =date ? new Date(date) : new Date();
-    if (isNaN(d.getTime())) {
-        throw new Error(`Invalid date provided: ${date}`);
-    }
-    return d.toISOString().split('T')[0]; // Return only the date part in YYYY-MM-DD format
-}
+  const d = date ? new Date(date) : new Date();
+  if (isNaN(d.getTime())) {
+    throw new Error(`Invalid date provided: ${date}`);
+  }
+  return d.toISOString().split("T")[0]; // Return only the date part in YYYY-MM-DD format
+};
 
 // Class containing static methods for interacting with the Garmin API
 class GarminApi {
-    // JSDoc comment for the getDailySummary static method
-    /**
-   * Get daily summary data for the logged-in user
-   * @param {Date|string} targetDate - The date for which to retrieve the daily summary (default is today) 
+  // JSDoc comment for the login static method
+  /**
+   * Authenticate with Garmin Connect using credentials
+   * @param {string} email
+   * @param {string} password
    */
-    static async getDailySummary(targetDate = new Date()) {
-        try {
-            // Make a GET request to retrieve the daily summary for the specified date
-            const response = await garminApi.get('/summary', {
-                params: targetDate ? { target_date: formatDateToISO(targetDate) } : {}
-            });
-            return response.data;
-        } catch(error) { 
-            // Log the error for the console with the corresponding static method
-            console.error('Garmin API Error (getDailySummary):', error.response?.data || error.message);
-            throw error;
-        }
-    }
+  static async login(email, password) {
+    // Make a POST request to send the email and password to log in
+    const response = await garminApi.post(`/login`, {
+      email,
+      password,
+    });
+    return response.data;
+  }
 
-    // JSDoc comment for the getActivities static method
-    /**
+  // JSDoc comment for the checkStatus static method
+  /**
+   * Verify if an active Garmin session exists on the backend and fetch basic profile details
+   */
+  static async checkStatus() {
+    const response = await garminApi.get(`/status`);
+    return response.data;
+  }
+
+  // JSDoc comment for the getDailySummary static method
+  /**
+   * Get daily summary data for the logged-in user
+   * @param {Date|string} targetDate - The date for which to retrieve the daily summary (default is today)
+   */
+  static async getDailySummary(targetDate = new Date()) {
+    // Make a GET request to retrieve the daily summary for the specified date
+    const response = await garminApi.get("/summary", {
+      params: targetDate ? { target_date: formatDateToISO(targetDate) } : {},
+    });
+    return response.data;
+  }
+
+  // JSDoc comment for the getActivities static method
+  /**
    * Get activities from most recent to least recent for the logged-in user
    * @param {Date|string} startDate
    * @param {Date|string} endDate
    */
-    static async getActivities(startDate = new Date(), endDate = new Date()) {
-        try {
-            // Make a GET request to retrieve all activities witthin a given range of activities
-            const response = await garminApi.get('/activities', {
-                params: { start_date: formatDateToISO(startDate), end_date: formatDateToISO(endDate) }
-            });
-            return response.data || [];
-        } catch(error) {
-            // Log the error for the console with the corresponding static method
-            console.error('Garmin API Error (getActivities):', error.response?.data || error.message);
-            throw error;
-        }
-    }
+  static async getActivities(startDate = new Date(), endDate = new Date()) {
+    // Make a GET request to retrieve all activities witthin a given range of activities
+    const response = await garminApi.get("/activities", {
+      params: {
+        start_date: formatDateToISO(startDate),
+        end_date: formatDateToISO(endDate),
+      },
+    });
+    return response.data || [];
+  }
 
-    // JSDoc comment for the getTrainingPlans static method
-    /**
+  // JSDoc comment for the getTrainingPlans static method
+  /**
    * Get every active training plan the user has
    */
-    static async getTrainingPlans() {
-        try {
-            // Make a GET request to retrieve every training program
-            const response = await garminApi.get('/training-plans');
-            return response.data || [];
-        } catch(error) { 
-            // Log the error for the console with the corresponding static method
-            console.error('Garmin API Error (getTrainingPlans):', error.response?.data || error.message);
-            throw error;
-        }
-    }
+  static async getTrainingPlans() {
+    // Make a GET request to retrieve every training program
+    const response = await garminApi.get("/training-plans");
+    return response.data || [];
+  }
 
-    // JSDoc comment for the getWorkoutsInTimeRange static method
-    /**
+  // JSDoc comment for the getWorkoutsInTimeRange static method
+  /**
    * Get workouts in a given date range
    * @param {Date|string} startDate
    * @param {Date|string} endDate
    */
-    static async getWorkoutsInTimeRange(startDate = new Date(), endDate = new Date()) {
-        try {
-            // Make a GET request to retrieve workouts for the specified date range
-            const response = await garminApi.get('/workouts-in-time-range', {
-                params: { start_date: formatDateToISO(startDate), end_date: formatDateToISO(endDate) }
-            });
-            return response.data || [];
-        } catch(error) { 
-            // Log the error for the console with the corresponding static method
-            console.error('Garmin API Error (getWorkoutsInTimeRange):', error.response?.data || error.message);
-            throw error;
-        }
-    }
+  static async getWorkoutsInTimeRange(
+    startDate = new Date(),
+    endDate = new Date(),
+  ) {
+    // Make a GET request to retrieve workouts for the specified date range
+    const response = await garminApi.get("/workouts-in-time-range", {
+      params: {
+        start_date: formatDateToISO(startDate),
+        end_date: formatDateToISO(endDate),
+      },
+    });
+    return response.data || [];
+  }
 }
 
 export default GarminApi;
