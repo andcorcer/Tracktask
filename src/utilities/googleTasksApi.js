@@ -28,15 +28,29 @@ googleTasksApi.interceptors.response.use(
     error => {
         // Handle Network errors
         if (!error.response) {
-            console.error('Network error: Verify your internet connection.');
+            console.error('[Google Tasks API Error]: Verify your internet connection.');
+            return Promise.reject(
+                new Error(
+                    "Google Tasks API is unreachable. Check your connection",
+                ),
+      );
         }
         // Handle Authentication errors
         if (error.response?.status === 401) {
-            console.warn('Authentication error: Access token may have expired. Please re-authenticate.');
+            console.warn('[Google Tasks API Error]: Access token may have expired. Please re-authenticate.');
+            return Promise.reject(
+                new Error(
+                    "Google session has expired. Please log in",
+                ),
+            );
         }
 
-        // Re-throw the error for further handling in the calling function (Redux)
-        return Promise.reject(error);
+        console.error(`[Google Tasks API Error ${error.response?.status}]: ${error.response?.data?.error?.message}`)
+        return Promise.reject(
+                new Error(
+                    error.response?.data?.error?.message || "Unknown error, please try again."
+                ),
+            );
     }
 );
 
