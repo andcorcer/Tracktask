@@ -111,6 +111,7 @@ def login(credentials: GarminCredentials):
             detail=f"Garmin Authentication Failed: {str(e)}",
         )
 
+
 # Route to verify if a user has logged in for the clients and returns basic profile data
 @app.get("/api/garmin/status")
 def check_status():
@@ -119,11 +120,15 @@ def check_status():
     profile = getattr(client, "profile", {}) or {}
 
     # Return profile details with fallback values
-    return {"status": "connected", "user": {
-        "name": getattr(client, "full_name", "Garmin User"),
-        "username": profile.get("userName", ""),
-        "profileImageUrl": profile.get("profileImageUrlMedium") or profile.get("profileImageUrlSmall", None),
-    }}
+    return {
+        "status": "connected",
+        "user": {
+            "name": getattr(client, "full_name", "Garmin User"),
+            "username": profile.get("userName", ""),
+            "profileImageUrl": profile.get("profileImageUrlMedium")
+            or profile.get("profileImageUrlSmall", None),
+        },
+    }
 
 
 # Route to fetch wellness summary for a given date (steps, heart rate, sleep, calories) for a specific date or today if no date is provided
