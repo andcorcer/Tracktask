@@ -91,10 +91,13 @@ class GarminApi {
   // JSDoc comment for the getActivities static method
   /**
    * Get activities from most recent to least recent for the logged-in user
-   * @param {Date|string} startDate
-   * @param {Date|string} endDate
+   * @param {Date|string} startDate // The start limit date for the fetched workouts (defaults to a month before the current date)
+   * @param {Date|string} endDate // The end limit date for the fetched workouts (defaults to the current date)
    */
-  static async getActivities(startDate = new Date(), endDate = new Date()) {
+  static async getActivities(
+    startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+    endDate = new Date(),
+  ) {
     // Make a GET request to retrieve all activities witthin a given range of activities
     const response = await garminApi.get("/activities", {
       params: {
@@ -118,20 +121,27 @@ class GarminApi {
   // JSDoc comment for the getWorkoutsInTimeRange static method
   /**
    * Get workouts in a given date range
-   * @param {Date|string} startDate
-   * @param {Date|string} endDate
+   * @param {Date|string} startDate // The start limit date for the fetched workouts (defaults to the current date)
+   * @param {Date|string} endDate // The end limit date for the fetched workouts (defaults to a week from the current date)
+   * @param {string|number|null} _trainingPlanId // Optional parameter to filter upcoming workouts according to their corresponding training plan
    */
   static async getWorkoutsInTimeRange(
     startDate = new Date(),
-    endDate = new Date(),
+    endDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    trainingPlanId = null,
   ) {
-    // Make a GET request to retrieve workouts for the specified date range
-    const response = await garminApi.get("/workouts-in-time-range", {
-      params: {
+    // We define parameters outside of the get co we can modify them if the training plan is provided
+    const params = {
         start_date: formatDateToISO(startDate),
         end_date: formatDateToISO(endDate),
-      },
-    });
+      }
+    // We add training plan id to the request params if it's provided
+      if(trainingPlanId) {
+        params.training_plan_id = trainingPlanId;
+      }
+
+    // Make a GET request to retrieve workouts for the specified date range
+    const response = await garminApi.get("/workouts-in-time-range", { params });
     return response.data || [];
   }
 }
