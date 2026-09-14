@@ -19,7 +19,7 @@ const initialState = {
     accessToken: null,
     user: null,
   },
-  // Keeping track of the Loading and Error states for the Async Thunks
+  // Keeping track of the Loading and Error states for UI optimization
   isLoading: false,
   error: null,
 };
@@ -118,6 +118,7 @@ const authenticationSlice = createSlice({
         state.garmin.message = action.payload?.message || "No active session";
         state.garmin.user = null;
       })
+
       // loginGarminUser
       // Pending
       .addCase(loginGarminUser.pending, (state) => {
@@ -144,6 +145,7 @@ const authenticationSlice = createSlice({
 });
 
 // Export actions and reducer
+
 export const {
   logoutGarmin,
   setGoogleAuthenticationCredentials,
