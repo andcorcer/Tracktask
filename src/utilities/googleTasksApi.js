@@ -58,8 +58,13 @@ googleTasksApi.interceptors.response.use(
 );
 
 // Functions that formats dates to ISO for the API
-const formatDateToISO = (date) =>
-  date ? new Date(date).toISOString() : undefined;
+const formatDateToISO = (date) => {
+  const d = date ? new Date(date) : new Date();
+  if (isNaN(d.getTime())) {
+    throw new Error(`Invalid date provided: ${date}`);
+  }
+  return d.toISOString().split("T")[0]; // Return only the date part in YYYY-MM-DD format
+};
 
 // Class containing static methods for interacting with the Google Tasks API
 class GoogleTasksApi {

@@ -1,4 +1,4 @@
-// Import all dependencies 
+// Import all dependencies
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 // Import utility files
@@ -9,7 +9,7 @@ const initialState = {
   // Daily Health Metrics with a 'selectedMetricId' to inspect a given health data's details
   healthMetrics: {
     selectedMetricId: null,
-    summaryDate: null, 
+    summaryDate: null,
     items: [],
   },
 
@@ -38,7 +38,7 @@ const initialState = {
 
 // ASYNC THUNKS
 
-// Fetch Daily Summary 
+// Fetch Daily Summary
 export const fetchDailySummary = createAsyncThunk(
   "garmin/fetchDailySummary",
   async (date, { rejectWithValue }) => {
@@ -48,7 +48,7 @@ export const fetchDailySummary = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.message || "Failed to fetch daily summary");
     }
-  }
+  },
 );
 
 // Fetch Completed Activities for a time range
@@ -61,7 +61,7 @@ export const fetchActivities = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.message || "Failed to fetch activities");
     }
-  }
+  },
 );
 
 // Fetch All Active Training Plans
@@ -74,7 +74,7 @@ export const fetchTrainingPlans = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.message || "Failed to fetch training plans");
     }
-  }
+  },
 );
 
 // Get Upcoming Workouts for a specified time range
@@ -83,11 +83,13 @@ export const fetchUpcomingWorkouts = createAsyncThunk(
   async ({ startDate, endDate }, { rejectWithValue }) => {
     try {
       const data = await GarminApi.getWorkoutsInTimeRange(startDate, endDate);
-      return data; // Array workout objects 
+      return data; // Array workout objects
     } catch (error) {
-      return rejectWithValue(error.message || "Failed to fetch upcoming workouts");
+      return rejectWithValue(
+        error.message || "Failed to fetch upcoming workouts",
+      );
     }
-  }
+  },
 );
 
 // Get Workouts for a given Plan Id
@@ -95,14 +97,20 @@ export const fetchWorkoutsForTrainingPlan = createAsyncThunk(
   "garmin/fetchWorkoutsForTrainingPlan",
   async ({ planId, startDate, endDate }, { rejectWithValue }) => {
     try {
-      const data = await GarminApi.getWorkoutsInTimeRange(startDate, endDate, planId);
+      const data = await GarminApi.getWorkoutsInTimeRange(
+        startDate,
+        endDate,
+        planId,
+      );
       return data; // Array workout objects from a given training plan
     } catch (error) {
-      return rejectWithValue(error.message || "Failed to fetch workouts from the requested training plan");
+      return rejectWithValue(
+        error.message ||
+          "Failed to fetch workouts from the requested training plan",
+      );
     }
-  }
+  },
 );
-
 
 // SLICE DEFINITION
 
@@ -226,10 +234,9 @@ const garminSlice = createSlice({
       .addCase(fetchWorkoutsForTrainingPlan.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
-      })
+      });
   },
 });
-
 
 // Export actions and reducer
 
