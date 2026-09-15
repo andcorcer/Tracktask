@@ -123,7 +123,7 @@ class GarminApi {
    * Get workouts in a given date range
    * @param {Date|string} startDate // The start limit date for the fetched workouts (defaults to the current date)
    * @param {Date|string} endDate // The end limit date for the fetched workouts (defaults to a week from the current date)
-   * @param {string|number|null} _trainingPlanId // Optional parameter to filter upcoming workouts according to their corresponding training plan
+   * @param {string|number|null} trainingPlanId // Optional parameter to filter upcoming workouts according to their corresponding training plan
    */
   static async getWorkoutsInTimeRange(
     startDate = new Date(),
