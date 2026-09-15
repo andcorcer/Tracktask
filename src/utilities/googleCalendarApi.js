@@ -13,7 +13,7 @@ const googleCalendarApi = axios.create({
 // Interceptor to add the access token to the request headers upon request
 googleCalendarApi.interceptors.request.use(
   (config) => {
-    const token = store.getState().auth?.google?.accessToken;
+    const token = store.getState().authentication?.google?.accessToken;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -58,8 +58,13 @@ googleCalendarApi.interceptors.response.use(
 );
 
 // Functions that formats dates to ISO for the API
-const formatDateToISO = (date) =>
-  date ? new Date(date).toISOString() : undefined;
+const formatDateToISO = (date) => {
+  const d = date ? new Date(date) : new Date();
+  if (isNaN(d.getTime())) {
+    throw new Error(`Invalid date provided: ${date}`);
+  }
+  return d.toISOString().split("T")[0]; // Return only the date part in YYYY-MM-DD format
+};
 
 // Class containing static methods for interacting with the Google Calendar API
 class GoogleCalendarApi {

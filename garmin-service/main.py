@@ -183,7 +183,9 @@ def get_training_plans():
 
 # Route to fetch the workouts and details for an active training plan
 @app.get("/api/garmin/workouts-in-time-range")
-def get_workouts_in_time_range(start_date: str = None, end_date: str = None):
+def get_workouts_in_time_range(
+    start_date: str = None, end_date: str = None, training_plan_id=None
+):
     """Fetch workouts in a given time range"""
     client = get_garmin_client()
 
@@ -194,18 +196,41 @@ def get_workouts_in_time_range(start_date: str = None, end_date: str = None):
     try:
         calendar_data = client.get_calendar(query_start, query_end)
         # We make events an array of the returned data
-        events = (
-            calendar_data.get(
+
+        if isinstance(calendar_data, dict):
+            events = calendar_data.get(
                 "calendarItems", []
             )  # Gets the calendarItems key if a dictionary is returned
-            if isinstance(calendar_data, dict)
-            else calendar_data  # returns the fetched data as an array if it isn't a dicionary
-        )
+        elif isinstance(calendar_data, list):
+            events = calendar_data  # returns the fetched data as an array if it isn't a dicionary
+        else:
+            events = []
+
+        # Accepted "itemTypes" in Garmin's events returned
+        WORKOUT_TYPES = {"WORKOUT", "WORKOUT_TASK", "TRAINING_PLAN"}
+
         for event in events:
-            if (
-                isinstance(event, dict) and event.get("itemType") == "WORKOUT"
-            ):  # Only if event is a dictionary do we access it's 'itemType'
-                upcoming_workouts.append(event)
+            if not isinstance(event, dict):
+                continue
+
+            item_type = event.get("itemType")
+
+            if item_type in WORKOUT_TYPES:
+                # Logic to fetch workouts from a given training plan
+                if training_plan_id:
+                    event_training_plan_id = event.get("trainingPlanId") or event.get(
+                        "planId"
+                    )  # We get the plan id for the current event
+                    if event_training_plan_id is not None and str(
+                        event_training_plan_id
+                    ) == str(
+                        training_plan_id
+                    ):  # We compare the wanted plan id with the current event's plan id
+                        upcoming_workouts.append(event)
+                else:
+                    # If no training plan is provided we just return all workouts
+                    upcoming_workouts.append(event)
+
         return upcoming_workouts
 
     except Exception as e:

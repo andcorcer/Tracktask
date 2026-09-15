@@ -13,7 +13,7 @@ const googleTasksApi = axios.create({
 // Interceptor to add the access token to the request headers upon request
 googleTasksApi.interceptors.request.use(
   (config) => {
-    const token = store.getState().auth?.google?.accessToken;
+    const token = store.getState().authentication?.google?.accessToken;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -58,8 +58,13 @@ googleTasksApi.interceptors.response.use(
 );
 
 // Functions that formats dates to ISO for the API
-const formatDateToISO = (date) =>
-  date ? new Date(date).toISOString() : undefined;
+const formatDateToISO = (date) => {
+  const d = date ? new Date(date) : new Date();
+  if (isNaN(d.getTime())) {
+    throw new Error(`Invalid date provided: ${date}`);
+  }
+  return d.toISOString().split("T")[0]; // Return only the date part in YYYY-MM-DD format
+};
 
 // Class containing static methods for interacting with the Google Tasks API
 class GoogleTasksApi {
@@ -118,6 +123,24 @@ class GoogleTasksApi {
     const response = await googleTasksApi.post(
       `/lists/${listId}/tasks`,
       taskData,
+    );
+    return response.data;
+  }
+
+  // JSDoc comment for the toggleTask static method
+  /**
+   * Toggled the current state for a given task
+   * @param {string} taskId
+   * @param {boolean} isCompleted - Current status of the task
+   * @param {string} listId - Target task list ID (default is '@default')
+   */
+  static async toggleTask(taskId, isCompleted, listId = "@default") {
+    // Get the current status of the task using the 'isCompleted' variable
+    const status = isCompleted ? "completed" : "needsAction";
+    // Make a PATCH request to modify the status of the given task
+    const response = await googleTasksApi.patch(
+      `/lists/${listId}/tasks/${taskId}`,
+      { status },
     );
     return response.data;
   }
