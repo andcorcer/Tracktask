@@ -13,7 +13,7 @@ const googleTasksApi = axios.create({
 // Interceptor to add the access token to the request headers upon request
 googleTasksApi.interceptors.request.use(
   (config) => {
-    const token = store.getState().auth?.google?.accessToken;
+    const token = store.getState().authentication?.google?.accessToken;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
