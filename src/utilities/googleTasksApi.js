@@ -126,6 +126,24 @@ class GoogleTasksApi {
     );
     return response.data;
   }
+
+  // JSDoc comment for the toggleTask static method
+  /**
+   * Toggled the current state for a given task
+   * @param {string} taskId
+   * @param {boolean} isCompleted - Current status of the task
+   * @param {string} listId - Target task list ID (default is '@default')
+   */
+  static async toggleTask(taskId, isCompleted, listId = "@default") {
+    // Get the current status of the task using the 'isCompleted' variable
+    const status = isCompleted ? "completed" : "needsAction";
+    // Make a PATCH request to modify the status of the given task
+    const response = await googleTasksApi.patch(
+      `/lists/${listId}/tasks/${taskId}`,
+      { status },
+    );
+    return response.data;
+  }
 }
 
 export default GoogleTasksApi;

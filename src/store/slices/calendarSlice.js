@@ -156,6 +156,19 @@ export const createTask = createAsyncThunk(
   },
 );
 
+// Toggle Task
+export const toggleTask = createAsyncThunk(
+  "calendar/toggleTask",
+  async ({ taskId, isCompleted, listId = "@default" }, { rejectWithValue }) => {
+    try {
+      const data = await GoogleTasksApi.toggleTask(taskId, listId, isCompleted);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message || "Failed to toggle task");
+    }
+  } 
+)
+
 // SLICE DEFINITION
 
 const calendarSlice = createSlice({
@@ -254,7 +267,7 @@ const calendarSlice = createSlice({
           // Fulfilled
           .addCase(createCalendarEvent.fulfilled, (state, action) => {
             state.isLoading = false;
-            // We re-fetch calendar events instead of addig it directly to the state
+            // We re-fetch calendar events instead of adding it directly to the state
           })
           // Rejected
           .addCase(createCalendarEvent.rejected, (state, action) => {
@@ -322,10 +335,27 @@ const calendarSlice = createSlice({
           // Fulfilled
           .addCase(createTask.fulfilled, (state, action) => {
             state.isLoading = false;
-            // We re-fetch tasks instead of addig it directly to the state
+            // We re-fetch tasks instead of adding it directly to the state
           })
           // Rejected
           .addCase(createTask.rejected, (state, action) => {
+            state.isLoading = false;
+            state.error = action.payload;
+          })
+          
+          // toggleTask
+          // Pending
+          .addCase(toggleTask.pending, (state) => {
+            state.isLoading = true;
+            state.error = null;
+          })
+          // Fulfilled
+          .addCase(toggleTask.fulfilled, (state, action) => {
+            state.isLoading = false;
+            // We re-fetch tasks instead of changing it directly to the state
+          })
+          // Rejected
+          .addCase(toggleTask.rejected, (state, action) => {
             state.isLoading = false;
             state.error = action.payload;
           })  
