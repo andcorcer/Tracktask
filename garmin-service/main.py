@@ -149,9 +149,9 @@ def get_daily_summary(target_date: str = None):
 
 
 # Route to fetch recent activities/workouts, with a start and end date
-@app.get("/api/garmin/activities")
-def get_activities(start_date: str = None, end_date: str = None):
-    """Fetch recent activities/workouts."""
+@app.get("/api/garmin/activities-in-time-range")
+def get_activities_in_time_range(start_date: str = None, end_date: str = None):
+    """Fetch activities in a time range"""
     client = get_garmin_client()
 
     query_start = start_date or date.today().isoformat()
@@ -159,6 +159,20 @@ def get_activities(start_date: str = None, end_date: str = None):
 
     try:
         activities = client.get_activities_by_date(query_start, query_end)
+        return activities
+
+    except Exception as e:
+        # Throw an HTTPException with status code 500 and a detailed error message if Garmin fetching of activities fails
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Route to fetch the most recent activities/workouts using a start index and limit
+@app.get("/api/garmin/recent-activities")
+def get_recent_activities(start: int = 0, limit: int = 10):
+    """Fetch recent activities using a start index and limit"""
+    client = get_garmin_client()
+
+    try:
+        activities = client.get_activities(start, limit)
         return activities
 
     except Exception as e:

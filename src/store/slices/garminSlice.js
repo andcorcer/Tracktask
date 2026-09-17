@@ -10,7 +10,7 @@ const initialState = {
   healthMetrics: {
     selectedMetricId: null,
     summaryDate: null,
-    items: [],
+    items: null,
   },
 
   // Completed Activities with a 'selectedActivityId' to inspect a given activitie's details
@@ -51,15 +51,28 @@ export const fetchDailySummary = createAsyncThunk(
   },
 );
 
-// Fetch Completed Activities for a time range
-export const fetchActivities = createAsyncThunk(
-  "garmin/fetchActivities",
-  async ({ startDate, endDate }, { rejectWithValue }) => {
+// Fetch Completed Activities in a time range
+export const fetchActivitiesInTimeRange = createAsyncThunk(
+  "garmin/fetchActivitiesInTimeRange",
+  async ({ startDate, endDate } = {}, { rejectWithValue }) => {
     try {
-      const data = await GarminApi.getActivities(startDate, endDate);
+      const data = await GarminApi.getActivitiesInTimeRange(startDate, endDate);
       return data; // Array of activity objects
     } catch (error) {
-      return rejectWithValue(error.message || "Failed to fetch activities");
+      return rejectWithValue(error.message || "Failed to fetch activities in the given time range");
+    }
+  },
+);
+
+// Fetch Completed Activities from the most recent one
+export const fetchRecentActivities = createAsyncThunk(
+  "garmin/fetchRecentActivities",
+  async ({ start, limit } = {}, { rejectWithValue }) => {
+    try {
+      const data = await GarminApi.getRecentActivities(start, limit);
+      return data; // Array of activity objects
+    } catch (error) {
+      return rejectWithValue(error.message || "Failed to fetch recent activities");
     }
   },
 );
@@ -80,7 +93,7 @@ export const fetchTrainingPlans = createAsyncThunk(
 // Get Upcoming Workouts for a specified time range
 export const fetchUpcomingWorkouts = createAsyncThunk(
   "garmin/fetchUpcomingWorkouts",
-  async ({ startDate, endDate }, { rejectWithValue }) => {
+  async ({ startDate, endDate } = {}, { rejectWithValue }) => {
     try {
       const data = await GarminApi.getWorkoutsInTimeRange(startDate, endDate);
       return data; // Array workout objects
@@ -95,7 +108,7 @@ export const fetchUpcomingWorkouts = createAsyncThunk(
 // Get Workouts for a given Plan Id
 export const fetchWorkoutsForTrainingPlan = createAsyncThunk(
   "garmin/fetchWorkoutsForTrainingPlan",
-  async ({ planId, startDate, endDate }, { rejectWithValue }) => {
+  async ({ planId, startDate, endDate } = {}, { rejectWithValue }) => {
     try {
       const data = await GarminApi.getWorkoutsInTimeRange(
         startDate,
@@ -168,19 +181,36 @@ const garminSlice = createSlice({
         state.error = action.payload;
       })
 
-      // fetchActivities
+      // fetchActivitiesInTimeRange
       // Pending
-      .addCase(fetchActivities.pending, (state) => {
+      .addCase(fetchActivitiesInTimeRange.pending, (state) => {
         state.isLoading = true;
         state.error = null;
       })
       // Fulfilled
-      .addCase(fetchActivities.fulfilled, (state, action) => {
+      .addCase(fetchActivitiesInTimeRange.fulfilled, (state, action) => {
         state.isLoading = false;
         state.activities.items = action.payload;
       })
       // Rejected
-      .addCase(fetchActivities.rejected, (state, action) => {
+      .addCase(fetchActivitiesInTimeRange.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
+      })
+
+      // fetchRecentActivities
+      // Pending
+      .addCase(fetchRecentActivities.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      // Fulfilled
+      .addCase(fetchRecentActivities.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.activities.items = action.payload;
+      })
+      // Rejected
+      .addCase(fetchRecentActivities.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
       })
