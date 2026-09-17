@@ -45,7 +45,7 @@ export const checkGarminStatus = createAsyncThunk(
 // Async thunk to log in the user
 export const loginGarminUser = createAsyncThunk(
   "authentication/loginGarminUser",
-  async ({ email, password }, { rejectWithValue }) => {
+  async ({ email, password } = {}, { rejectWithValue }) => {
     try {
       const data = await GarminApi.login(email, password);
       return data; // Returns an object with 'status' and 'user' keys

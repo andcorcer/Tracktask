@@ -16,3 +16,5 @@ const Modal = () => {
 }
 
 export default Modal;
+
+// Component to black out the background while viewing the details 

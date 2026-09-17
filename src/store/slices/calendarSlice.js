@@ -56,7 +56,7 @@ export const fetchCalendarLists = createAsyncThunk(
 // Fetch Calendar Events
 export const fetchCalendarEvents = createAsyncThunk(
   "calendar/fetchCalendarEvents",
-  async ({ timeMin, timeMax, calendarId = "primary" }, { rejectWithValue }) => {
+  async ({ timeMin, timeMax, calendarId = "primary" } = {}, { rejectWithValue }) => {
     try {
       const data = await GoogleCalendarApi.getEventsByTimeFrame(
         timeMin,
@@ -75,7 +75,7 @@ export const fetchCalendarEvents = createAsyncThunk(
 // Fetch Event Details
 export const fetchEventById = createAsyncThunk(
   "calendar/fetchEventById",
-  async ({ eventId, calendarId = "primary" }, { rejectWithValue }) => {
+  async ({ eventId, calendarId = "primary" } = {}, { rejectWithValue }) => {
     try {
       const data = await GoogleCalendarApi.getEventById(eventId, calendarId);
       return data;
@@ -88,7 +88,7 @@ export const fetchEventById = createAsyncThunk(
 // Create Calendar Event
 export const createCalendarEvent = createAsyncThunk(
   "calendar/createCalendarEvent",
-  async ({ eventData, calendarId = "primary" }, { rejectWithValue }) => {
+  async ({ eventData, calendarId = "primary" } = {}, { rejectWithValue }) => {
     try {
       const data = await GoogleCalendarApi.createEvent(eventData, calendarId);
       return data;
@@ -116,7 +116,7 @@ export const fetchTaskLists = createAsyncThunk(
 // Fetch Tasks
 export const fetchTasks = createAsyncThunk(
   "calendar/fetchTasks",
-  async ({ dueMin, dueMax, listId = "@default" }, { rejectWithValue }) => {
+  async ({ dueMin, dueMax, listId = "@default" } = {}, { rejectWithValue }) => {
     try {
       const data = await GoogleTasksApi.getTasksByTimeFrame(
         dueMin,
@@ -133,7 +133,7 @@ export const fetchTasks = createAsyncThunk(
 // Fetch Task Details
 export const fetchTaskById = createAsyncThunk(
   "calendar/fetchTaskById",
-  async ({ taskId, listId = "@default" }, { rejectWithValue }) => {
+  async ({ taskId, listId = "@default" } = {}, { rejectWithValue }) => {
     try {
       const data = await GoogleTasksApi.getTaskById(taskId, listId);
       return data;
@@ -146,7 +146,7 @@ export const fetchTaskById = createAsyncThunk(
 // Create Task
 export const createTask = createAsyncThunk(
   "calendar/createTask",
-  async ({ taskData, listId = "@default" }, { rejectWithValue }) => {
+  async ({ taskData, listId = "@default" } = {}, { rejectWithValue }) => {
     try {
       const data = await GoogleTasksApi.createTask(taskData, listId);
       return data;
@@ -159,7 +159,7 @@ export const createTask = createAsyncThunk(
 // Toggle Task
 export const toggleTask = createAsyncThunk(
   "calendar/toggleTask",
-  async ({ taskId, isCompleted, listId = "@default" }, { rejectWithValue }) => {
+  async ({ taskId, isCompleted, listId = "@default" } = {}, { rejectWithValue }) => {
     try {
       const data = await GoogleTasksApi.toggleTask(taskId, listId, isCompleted);
       return data;
