@@ -165,6 +165,7 @@ def get_activities_in_time_range(start_date: str = None, end_date: str = None):
         # Throw an HTTPException with status code 500 and a detailed error message if Garmin fetching of activities fails
         raise HTTPException(status_code=500, detail=str(e))
 
+
 # Route to fetch the most recent activities/workouts using a start index and limit
 @app.get("/api/garmin/recent-activities")
 def get_recent_activities(start: int = 0, limit: int = 10):

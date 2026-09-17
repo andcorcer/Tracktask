@@ -59,7 +59,9 @@ export const fetchActivitiesInTimeRange = createAsyncThunk(
       const data = await GarminApi.getActivitiesInTimeRange(startDate, endDate);
       return data; // Array of activity objects
     } catch (error) {
-      return rejectWithValue(error.message || "Failed to fetch activities in the given time range");
+      return rejectWithValue(
+        error.message || "Failed to fetch activities in the given time range",
+      );
     }
   },
 );
@@ -72,7 +74,9 @@ export const fetchRecentActivities = createAsyncThunk(
       const data = await GarminApi.getRecentActivities(start, limit);
       return data; // Array of activity objects
     } catch (error) {
-      return rejectWithValue(error.message || "Failed to fetch recent activities");
+      return rejectWithValue(
+        error.message || "Failed to fetch recent activities",
+      );
     }
   },
 );
