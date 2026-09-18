@@ -16,6 +16,7 @@ import NotFoundPage from "../../pages/NotFoundPage/NotFoundPage";
 import HealthPage from "../../pages/HealthPage/HealthPage";
 import SettingsPage from "../../pages/SettingsPage/SettingsPage";
 import TodosPage from "../../pages/TodosPage/TodosPage";
+import CalendarPage from "../../pages/CalendarPage/CalendarPage";
 
 // Create the router
 const router = createBrowserRouter(
@@ -25,6 +26,7 @@ const router = createBrowserRouter(
       <Route path="health" element={<HealthPage />} />
       <Route path="todos" element={<TodosPage />} />
       <Route path="settings" element={<SettingsPage />} />
+      <Route path="calendar" element={<CalendarPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Route>
   )
