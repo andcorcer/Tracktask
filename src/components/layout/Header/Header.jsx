@@ -1,18 +1,26 @@
 // Import all dependencies
 import React from "react";
+import { Link } from "react-router-dom";
 
 // Import Components
-
+import Navbar from "../Navbar/Navbar.jsx";
 
 // Import Styles
-import './Header.css'
+import "./Header.css";
 
-// Header Component 
+// Header Component
 const Header = () => {
-   return (
-    <>
-    </>
-   ); 
-}
+  return (
+    <header className="header">
+      <div className="title-logo">
+        <h1 className="title">
+          <Link to="/">Tracktask</Link>
+        </h1>
+      </div>
+      <Navbar />
+    </header>
+  );
+};
 
+// Export the Header component
 export default Header;
