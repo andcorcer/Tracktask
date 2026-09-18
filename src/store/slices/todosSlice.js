@@ -9,7 +9,7 @@ const LOCAL_STORAGE_KEY = "tracktask_app_todos";
 const loadTodosFromLocalStorage = () => {
   try {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
-    return saved ? JSON.parse(saved) : []; // Return an empty array if no watchlist is found
+    return saved ? JSON.parse(saved) : []; // Return an empty array if no todo list is found
   } catch (error) {
     console.error("Could not load todos from localStorage", error);
     return [];
@@ -48,32 +48,63 @@ const todosSlice = createSlice({
         id: maxId + 1,
         category: action.payload.category || "General",
         data: action.payload.data,
-        completed: false,
-        createdAt: new Date().toISOString(),
+        isDaily: action.payload.isDaily || false,
+        completed: false, // For non recurring todos
+        completedDates: {}, // For daily todos
+        createdAt: new Date().toISOString().split("T")[0],
+        archivedAt: null, // Date for when a todo is deleted to preserve past completion history
       };
       state.items.push(newTodo); // Add the item to the todos
       saveTodosToLocalStorage(state.items); // Save the updated todos state to localStorage
     },
 
     toggleTodo: (state, action) => {
-      const todo = state.items.find((todo) => todo.id === action.payload); // We get the todo to toggle
-      if (todo) todo.completed = !todo.completed; // We toggle the todo to the opposite value
+      const { id, date } = action.payload;
+      const todo = state.items.find((todo) => todo.id === id); // We get the desired todo using it's id
+      if (todo) {
+        // Handle Daily Todos toggle
+        if (todo.isDaily) {
+          todo.completedDates[date] ? delete todo.completedDates[date] : todo.completedDates[date] = true;
+        } else {
+          // Handle non recurring todos
+          todo.completed = !todo.completed;
+        }
+      }
       saveTodosToLocalStorage(state.items); // Save the updated todos state to localStorage
     },
 
     deleteTodo: (state, action) => {
-      state.items = state.items.filter((todo) => todo.id !== action.payload); // We create a new todo list without the desired todo to remove
-      saveTodosToLocalStorage(state.items); // Save the updated todos state to localStorage
+      const todo = state.items.find((todo) => todo.id === action.payload); // We get the desired todo using it's id
+      if (todo) {
+        todo.archivedAt = new Date().toISOString().split("T")[0]; // We archive the todo to be able to show it before it was deleted
+        saveTodosToLocalStorage(state.items); // Save the updated todos state to localStorage
+      }
+    },
+
+    restoreTodo: (state, action) => {
+      const todo = state.items.find((todo) => todo.id === action.payload); // We get the desired todo using it's id
+      if (todo) {
+        todo.archivedAt = null;
+        saveTodosToLocalStorage(state.items); // Save the updated todos state to localStorage
+      }
     },
 
     clearTodos: (state) => {
-      state.items = []; // We clear all todos
+      const currentDate = new Date().toISOString().split("T")[0]; 
+      state.items.forEach(todo => {
+        if (!todo.archivedAt) todo.archivedAt = currentDate;
+      });
+      saveTodosToLocalStorage(state.items); // Save the updated todos state to localStorage
+    },
+
+    deleteTodosPermanently: (state) => {
+      state.items = [];
       saveTodosToLocalStorage(state.items); // Save the updated todos state to localStorage
     },
   },
 });
 
 // Export actions and reducer
-export const { createTodo, toggleTodo, deleteTodo, clearTodos } =
+export const { createTodo, toggleTodo, deleteTodo, restoreTodo, clearTodos, deleteTodosPermanently } =
   todosSlice.actions;
 export default todosSlice.reducer;
