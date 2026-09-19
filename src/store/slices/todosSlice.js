@@ -1,6 +1,5 @@
 // Import all dependencies
 import { createSlice } from "@reduxjs/toolkit";
-import { max } from "date-fns";
 
 // Location in the local storage where the todos will be stored
 const LOCAL_STORAGE_KEY = "tracktask_app_todos";
@@ -41,7 +40,7 @@ const todosSlice = createSlice({
         (currentMax, currentItem) =>
           typeof currentItem.id === "number" && currentMax < currentItem.id
             ? currentItem.id
-            : max,
+            : currentMax,
         0,
       );
       const newTodo = {
@@ -64,7 +63,9 @@ const todosSlice = createSlice({
       if (todo) {
         // Handle Daily Todos toggle
         if (todo.isDaily) {
-          todo.completedDates[date] ? delete todo.completedDates[date] : todo.completedDates[date] = true;
+          todo.completedDates[date]
+            ? delete todo.completedDates[date]
+            : (todo.completedDates[date] = true);
         } else {
           // Handle non recurring todos
           todo.completed = !todo.completed;
@@ -90,8 +91,8 @@ const todosSlice = createSlice({
     },
 
     clearTodos: (state) => {
-      const currentDate = new Date().toISOString().split("T")[0]; 
-      state.items.forEach(todo => {
+      const currentDate = new Date().toISOString().split("T")[0];
+      state.items.forEach((todo) => {
         if (!todo.archivedAt) todo.archivedAt = currentDate;
       });
       saveTodosToLocalStorage(state.items); // Save the updated todos state to localStorage
@@ -105,6 +106,12 @@ const todosSlice = createSlice({
 });
 
 // Export actions and reducer
-export const { createTodo, toggleTodo, deleteTodo, restoreTodo, clearTodos, deleteTodosPermanently } =
-  todosSlice.actions;
+export const {
+  createTodo,
+  toggleTodo,
+  deleteTodo,
+  restoreTodo,
+  clearTodos,
+  deleteTodosPermanently,
+} = todosSlice.actions;
 export default todosSlice.reducer;
