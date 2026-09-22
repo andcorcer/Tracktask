@@ -13,6 +13,8 @@ import {
   FaceAngry,
   Dumbbell,
   WavesLadder,
+  CalendarClock,
+  ClipboardClock,
 } from "lucide-react";
 
 // Import Styles
@@ -22,15 +24,16 @@ import "./HealthCard.css";
 const HealthCard = ({ type, data }) => {
   // Local state to render the DetailsCard component conditionally
   const [showDetails, setShowDetails] = useState(false);
-  const [type, setType] = useState(null);
+  const [selectedSubType, setselectedSubType] = useState(null);
 
-  const handleOpenDetails = (type2) => {
+  const handleOpenDetails = (secondaryType) => {
     setShowDetails(true);
-    setType(type, type2);
+    setselectedSubType(secondaryType);
   };
 
   const handleCloseDetails = () => {
     setShowDetails(false);
+    setselectedSubType(null);
   };
 
   // Function that transforms a time passed in seconds to it's HH:MM:SS format
@@ -53,104 +56,104 @@ const HealthCard = ({ type, data }) => {
   // Render Daily Summary
   const renderDailySummary = () => (
     <div className="health-content summary-container">
-      <div className="metric steps">
-        <button
-          className="btn summary-details steps"
-          onClick={() => handleOpenDetails("steps")}
-        >
-          <Footprints size={16} className="steps-icon" />
-          <span>
-            {data?.totalSteps?.toLocaleString() || 0} of
-            {data?.dailyStepGoal?.toLocaleString() || "Unknown"} Steps
-          </span>
-        </button>
+      <div
+        className="metric steps"
+        onClick={() => handleOpenDetails("steps")}
+        role="button"
+        tabIndex={0}
+      >
+        <Footprints size={16} className="steps-icon" />
+        <span>
+          {data?.totalSteps?.toLocaleString() || 0} of
+          {data?.dailyStepGoal?.toLocaleString() || "Unknown"} Steps
+        </span>
       </div>
 
-      <div className="metric floors">
-        <button
-          className="btn summary-details floors"
-          onClick={() => handleOpenDetails("floors")}
-        >
-          <DoorStairwell size={16} className="floors-icon" />
-          <span>
-            {data?.floorsAscended?.toLocaleString() || 0} of
-            {data?.floorsAscendedGoal?.toLocaleString() || "Unknown"} Floors
-            Ascended
-          </span>
-        </button>
+      <div
+        className="metric floors"
+        onClick={() => handleOpenDetails("floors")}
+        role="button"
+        tabIndex={0}
+      >
+        <DoorStairwell size={16} className="floors-icon" />
+        <span>
+          {data?.floorsAscended?.toLocaleString() || 0} of
+          {data?.floorsAscendedGoal?.toLocaleString() || "Unknown"} Floors
+          Ascended
+        </span>
       </div>
 
-      <div className="metric calories">
-        <button
-          className="btn summary-details calories"
-          onClick={() => handleOpenDetails("calories")}
-        >
-          <Flame size={16} className="calories-icon" />
-          <span>{data?.totalKilocalories?.toLocaleString() || 0}</span>
-        </button>
+      <div
+        className="metric calories"
+        onClick={() => handleOpenDetails("calories")}
+        role="button"
+        tabIndex={0}
+      >
+        <Flame size={16} className="calories-icon" />
+        <span>{data?.totalKilocalories?.toLocaleString() || 0}</span>
       </div>
 
-      <div className="metric heart-rate">
-        <button
-          className="btn summary-details heart-rate"
-          onClick={() => handleOpenDetails("heartRate")}
-        >
-          <HeartPulse size={16} className="heart-rate-icon" />
-          <span>{data?.restingHeartRate || "--"} BPM</span>
-        </button>
+      <div
+        className="metric heart-rate"
+        onClick={() => handleOpenDetails("heartRate")}
+        role="button"
+        tabIndex={0}
+      >
+        <HeartPulse size={16} className="heart-rate-icon" />
+        <span>{data?.restingHeartRate || "--"} BPM</span>
       </div>
 
-      <div className="metric stress">
-        <button
-          className="btn summary-details stress"
-          onClick={() => handleOpenDetails("stress")}
-        >
-          <FaceAngry size={16} className="stress-icon" />
-          <span>{data?.averageStressLevel || 0}</span>
-        </button>
+      <div
+        className="metric stress"
+        onClick={() => handleOpenDetails("stress")}
+        role="button"
+        tabIndex={0}
+      >
+        <FaceAngry size={16} className="stress-icon" />
+        <span>{data?.averageStressLevel || 0}</span>
       </div>
 
-      <div className="metric body-battery">
-        <button
-          className="btn summary-details body-battery"
-          onClick={() => handleOpenDetails("bodyBattery")}
-        >
-          <Activity size={16} className="body-battery-icon" />
-          <span>{data?.bodyBatteryMostRecentValue || "--"}</span>
-        </button>
+      <div
+        className="metric body-battery"
+        onClick={() => handleOpenDetails("bodyBattery")}
+        role="button"
+        tabIndex={0}
+      >
+        <Activity size={16} className="body-battery-icon" />
+        <span>{data?.bodyBatteryMostRecentValue || "--"}</span>
       </div>
 
-      <div className="metric hydration">
-        <button
-          className="btn summary-details hydration"
-          onClick={() => handleOpenDetails("hydration")}
-        >
-          <GlassWater size={16} className="hydration-icon" />
-          <span>
-            {data?.hydrationAmount || 0} of
-            {data?.hydrationGoal?.toLocaleString() || "Unknown"}
-          </span>
-        </button>
+      <div
+        className="metric hydration"
+        onClick={() => handleOpenDetails("hydration")}
+        role="button"
+        tabIndex={0}
+      >
+        <GlassWater size={16} className="hydration-icon" />
+        <span>
+          {data?.hydrationAmount || 0} of
+          {data?.hydrationGoal?.toLocaleString() || "Unknown"}
+        </span>
       </div>
 
-      <div className="metric respiration">
-        <button
-          className="btn summary-details respiration"
-          onClick={() => handleOpenDetails("respiration")}
-        >
-          <Wind size={16} className="respiration-icon" />
-          <span>{data?.respirationAverage || 0}</span>
-        </button>
+      <div
+        className="metric respiration"
+        onClick={() => handleOpenDetails("respiration")}
+        role="button"
+        tabIndex={0}
+      >
+        <Wind size={16} className="respiration-icon" />
+        <span>{data?.respirationAverage || 0}</span>
       </div>
 
-      <div className="metric intensity-minutes">
-        <button
-          className="btn summary-details intensity-minutes"
-          onClick={() => handleOpenDetails("intensityMinutes")}
-        >
-          <Clock size={16} className="intensity-minutes-icon" />
-          <span>{data?.totalIntensityMinutes || 0}</span>
-        </button>
+      <div
+        className="metric intensity-minutes"
+        onClick={() => handleOpenDetails("intensityMinutes")}
+        role="button"
+        tabIndex={0}
+      >
+        <Clock size={16} className="intensity-minutes-icon" />
+        <span>{data?.totalIntensityMinutes || 0}</span>
       </div>
     </div>
   );
@@ -185,58 +188,54 @@ const HealthCard = ({ type, data }) => {
     }
 
     return (
-      <div className="health-content activity-container">
-        <button
-          className={`btn activity-details ${activityString}`}
-          onClick={() => handleOpenDetails(activityString.toLowerCase())}
-        >
-          <div className="activity-main">
-            <ActivityIcon size={18} className={activityString} />
-            <div className="main-data">
-              <h4>
-                {activityString !== "Other"
-                  ? activityString
-                  : data?.activityName}
-              </h4>
-              <p>
-                {subtext1}
-                {subtext2}
-              </p>
-            </div>
+      <div
+        className="health-content activity-container"
+        onClick={() => handleOpenDetails(activityString.toLowerCase())}
+        role="button"
+        tabIndex={0}
+      >
+        <div className="activity-main">
+          <ActivityIcon size={18} className={activityString} />
+          <div className="main-data">
+            <h4>
+              {activityString !== "Other" ? activityString : data?.activityName}
+            </h4>
+            <p>
+              {subtext1}
+              {subtext2}
+            </p>
           </div>
+        </div>
 
-          <div className="activity-stats">
-            <div className="stats-badge duration">
-              <Clock size={12} className="duration-icon" />
-              <span className="duration-text">
-                {transformTimeFormat(data?.duration)}
-              </span>
-            </div>
+        <div className="activity-stats">
+          <div className="stats-badge duration">
+            <Clock size={12} className="duration-icon" />
+            <span className="duration-text">
+              {transformTimeFormat(data?.duration)}
+            </span>
           </div>
-        </button>
+        </div>
       </div>
     );
   };
 
   // Render Training Plan
   const renderTrainingPlan = () => (
-    <div className="health-content plan-container">
-      <button
-        className={`btn plan-details ${activityString}`}
-        onClick={() => handleOpenDetails()}
-      >
-        <div className="plan-main">
-          <ClipboardClock size={18} className="training-plan" />
-          <h4>{data?.name || "Active Training Plan"}</h4>
-          <p>{data?.status || "ACTIVE"}</p>
-        </div>
+    <div
+      className="health-content plan-container"
+      onClick={() => handleOpenDetails()}
+      role="button"
+      tabIndex={0}
+    >
+      <div className="plan-main">
+        <ClipboardClock size={18} className="training-plan" />
+        <h4>{data?.name || "Active Training Plan"}</h4>
+        <p>{data?.status || "ACTIVE"}</p>
+      </div>
 
-        <div className="plan-meta">
-          <span className="badge">
-            {`${data?.startDate} - ${data?.endDate}`}
-          </span>
-        </div>
-      </button>
+      <div className="plan-meta">
+        <span className="badge">{`${data?.startDate} - ${data?.endDate}`}</span>
+      </div>
     </div>
   );
 
@@ -244,17 +243,17 @@ const HealthCard = ({ type, data }) => {
   const renderWorkouts = () => {
     const workoutType = data?.sportTypeKey;
     return (
-      <div className="health-content workout-container">
-        <button
-          className="btn workout-details"
-          onClick={() => handleOpenDetails(workoutType.toLowerCase())}
-        >
+      <div
+        className="health-content workout-container"
+        onClick={() => handleOpenDetails(workoutType.toLowerCase())}
+        role="button"
+        tabIndex={0}
+      >
           <div className="workout-main">
             <CalendarClock size={18} className="workout" />
             <h4>{data?.title || "Scheduled Workout"}</h4>
             <p>{data?.date ? new Date(data?.date) : "Upcoming"}</p>
           </div>
-        </button>
       </div>
     );
   };
@@ -263,19 +262,33 @@ const HealthCard = ({ type, data }) => {
   const renderContent = () => {
     switch (type) {
       case "summary":
-        return renderSummary();
+        return renderDailySummary();
       case "activity":
         return renderActivity();
       case "training_plan":
         return renderTrainingPlan();
       case "calendar":
-        return renderCalendarEvent();
+        return renderWorkouts();
       default:
         return <p>Unknown Garmin Data</p>;
     }
   };
 
-  return <div className="health-card">{renderContent()}</div>;
+  return (
+    <div className="health-card">
+      {renderContent()}
+
+      {/* Conditionally render the DetailsCard component */}
+      {showDetails && (
+        <DetailsCard
+          type="health"
+          secondaryType={selectedSubType}
+          item={data}
+          onClose={handleCloseDetails}
+        />
+      )}
+    </div>
+  );
 };
 
 // Export the HealthCard component

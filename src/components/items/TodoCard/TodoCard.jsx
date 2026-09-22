@@ -19,11 +19,11 @@ const TodoCard = ({ todo, date }) => {
   // Local state to render the DetailsCard component conditionally
   const [showDetails, setShowDetails] = useState(false);
 
-  const completed = todo.isDaily ? !!todo.completedDates?.[date] : completed;
+  const completed = todo.isDaily ? !!todo.completedDates?.[date] : todo.completed;
 
   // Handlers
   const handleToggle = () => {
-    dispatch(toggleTodo({ id: todo.id, date: todo.date }));
+    dispatch(toggleTodo({ id: todo.id, date: date }));
   };
 
   const handleDelete = (e) => {
@@ -40,9 +40,14 @@ const TodoCard = ({ todo, date }) => {
   };
 
   return (
-    <div className={`todo-card ${completed ? "completed" : ""}`}>
+    <>
       {/* Button to access the details upon clicking the todo */}
-      <button className="btn todo-details" onClick={handleOpenDetails}>
+      <div
+        className={`todo-card ${completed ? "completed" : ""}`}
+        onClick={handleOpenDetails}
+        role="button"
+        tabIndex={0}
+      >
         {/* Checkbox toggle button */}
         <button
           className={`btn checkbox-btn ${completed ? "checked" : ""}`}
@@ -78,13 +83,18 @@ const TodoCard = ({ todo, date }) => {
         >
           <Trash2 size={14} />
         </button>
-      </button>
 
-      {/* Conditionally render the DetailsCard component */}
-      {showDetails && (
-        <DetailsCard type="todo" item={todo} date={date} onClose={handleCloseDetails} />
-      )}
-    </div>
+        {/* Conditionally render the DetailsCard component */}
+        {showDetails && (
+          <DetailsCard
+            type="todo"
+            item={todo}
+            date={date}
+            onClose={handleCloseDetails}
+          />
+        )}
+      </div>
+    </>
   );
 };
 
