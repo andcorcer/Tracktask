@@ -82,7 +82,7 @@ const TodoCard = ({ todo, date }) => {
 
       {/* Conditionally render the DetailsCard component */}
       {showDetails && (
-        <DetailsCard item={todo} date={date} onClose={handleCloseDetails} />
+        <DetailsCard type="todo" item={todo} date={date} onClose={handleCloseDetails} />
       )}
     </div>
   );
