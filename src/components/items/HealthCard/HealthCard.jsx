@@ -21,7 +21,7 @@ import {
 import "./HealthCard.css";
 
 // HealthCard Component
-const HealthCard = ({ type, data }) => {
+const HealthCard = ({ type, data, viewMode }) => {
   // Local state to render the DetailsCard component conditionally
   const [showDetails, setShowDetails] = useState(false);
   const [selectedSubType, setselectedSubType] = useState(null);
@@ -187,6 +187,39 @@ const HealthCard = ({ type, data }) => {
       subtext2 = `${transformTimeFormat(data?.duration / (data?.distance / 1000))} /km`;
     }
 
+    // We render the activities conditionally for the calendar in its different view modes
+    if (viewMode === "month") {
+      return (
+        <button
+          className="month-element activity-element"
+          onClick={() => handleOpenDetails(activityString.toLowerCase())}
+        >
+          <span>
+            <ActivityIcon size={10} className={activityString} />
+            {activityString !== "Other" ? activityString : data?.activityName}
+          </span>
+        </button>
+      );
+    } else if (viewMode === "week") {
+      return (
+        <div
+          className="week-element activity-element"
+          onClick={() => handleOpenDetails(activityString.toLowerCase())}
+          role="button"
+          tabIndex={0}
+        >
+          <h5>
+            <ActivityIcon size={14} className={activityString} />
+            {activityString !== "Other" ? activityString : data?.activityName}
+          </h5>
+          <span className="duration-text">
+            <Clock size={12} className="duration-icon" />
+            {transformTimeFormat(data?.duration)}
+          </span>
+        </div>
+      );
+    }
+
     return (
       <div
         className="health-content activity-container"
@@ -242,6 +275,37 @@ const HealthCard = ({ type, data }) => {
   // Render Workouts
   const renderWorkouts = () => {
     const workoutType = data?.sportTypeKey;
+
+    // We render workouts conditionally for the calendar in its different view modes
+    if (viewMode === "month") {
+      return (
+        <button
+          className="month-element workout-element"
+          onClick={() => handleOpenDetails(workoutType.toLowerCase())}
+        >
+          <span>
+            <CalendarClock size={10} className="workout" />
+            {data?.title || "Scheduled Workout"}
+          </span>
+        </button>
+      );
+    } else if (viewMode === "week") {
+      return (
+        <div
+          className="week-element workout-element"
+          onClick={() => handleOpenDetails(workoutType.toLowerCase())}
+          role="button"
+          tabIndex={0}
+        >
+          <div className="workout-main">
+            <CalendarClock size={14} className="workout" />
+            <h5>{data?.title || "Scheduled Workout"}</h5>
+            <p>{data?.date ? new Date(data?.date) : "Upcoming"}</p>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div
         className="health-content workout-container"
@@ -249,11 +313,11 @@ const HealthCard = ({ type, data }) => {
         role="button"
         tabIndex={0}
       >
-          <div className="workout-main">
-            <CalendarClock size={18} className="workout" />
-            <h4>{data?.title || "Scheduled Workout"}</h4>
-            <p>{data?.date ? new Date(data?.date) : "Upcoming"}</p>
-          </div>
+        <div className="workout-main">
+          <CalendarClock size={18} className="workout" />
+          <h4>{data?.title || "Scheduled Workout"}</h4>
+          <p>{data?.date ? new Date(data?.date) : "Upcoming"}</p>
+        </div>
       </div>
     );
   };
@@ -275,7 +339,7 @@ const HealthCard = ({ type, data }) => {
   };
 
   return (
-    <div className="health-card">
+    <div className={`health-card ${viewMode ? `${viewMode}-view` : ""}`}>
       {renderContent()}
 
       {/* Conditionally render the DetailsCard component */}
