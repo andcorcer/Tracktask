@@ -88,9 +88,13 @@ export const fetchEventById = createAsyncThunk(
 // Create Calendar Event
 export const createCalendarEvent = createAsyncThunk(
   "calendar/createCalendarEvent",
-  async ({ eventData, calendarId = "primary" } = {}, { rejectWithValue }) => {
+  async ({ eventData, calendarId = "primary" } = {}, { dispatch, rejectWithValue }) => {
     try {
       const data = await GoogleCalendarApi.createEvent(eventData, calendarId);
+
+      // We refetch the events upon creating a new one to update the state after a succesfull HTTP method
+      dispatch(fetchCalendarEvents({ calendarId }));
+
       return data;
     } catch (error) {
       return rejectWithValue(error.message || "Failed to create event");
@@ -146,9 +150,13 @@ export const fetchTaskById = createAsyncThunk(
 // Create Task
 export const createTask = createAsyncThunk(
   "calendar/createTask",
-  async ({ taskData, listId = "@default" } = {}, { rejectWithValue }) => {
+  async ({ taskData, listId = "@default" } = {}, { dispatch, rejectWithValue }) => {
     try {
       const data = await GoogleTasksApi.createTask(taskData, listId);
+
+      // We refetch the tasks upon creating a new one to update the state after a succesfull HTTP method
+      dispatch(fetchTasks({ listId }));
+
       return data;
     } catch (error) {
       return rejectWithValue(error.message || "Failed to create task");
@@ -159,9 +167,13 @@ export const createTask = createAsyncThunk(
 // Toggle Task
 export const toggleTask = createAsyncThunk(
   "calendar/toggleTask",
-  async ({ taskId, isCompleted, listId = "@default" } = {}, { rejectWithValue }) => {
+  async ({ taskId, isCompleted, listId = "@default" } = {}, { dispatch, rejectWithValue }) => {
     try {
-      const data = await GoogleTasksApi.toggleTask(taskId, listId, isCompleted);
+      const data = await GoogleTasksApi.toggleTask(taskId, isCompleted, listId);
+
+      // We refetch the tasks upon toggling one to update the state after a succesfull HTTP method
+      dispatch(fetchTasks({ listId }));
+      
       return data;
     } catch (error) {
       return rejectWithValue(error.message || "Failed to toggle task");

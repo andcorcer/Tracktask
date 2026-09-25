@@ -222,7 +222,7 @@ def get_workouts_in_time_range(
             events = []
 
         # Accepted "itemTypes" in Garmin's events returned
-        WORKOUT_TYPES = {"WORKOUT", "WORKOUT_TASK", "TRAINING_PLAN"}
+        WORKOUT_TYPES = {"WORKOUT", "WORKOUT_TASK"}
 
         for event in events:
             if not isinstance(event, dict):
