@@ -334,7 +334,7 @@ const HealthCard = ({ type, data, viewMode }) => {
         return renderActivity();
       case "training_plan":
         return renderTrainingPlan();
-      case "calendar":
+      case "workout":
         return renderWorkouts();
       default:
         return <p>Unknown Garmin Data</p>;
