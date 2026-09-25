@@ -19,10 +19,13 @@ const TodoCard = ({ todo, date }) => {
   // Local state to render the DetailsCard component conditionally
   const [showDetails, setShowDetails] = useState(false);
 
-  const completed = todo.isDaily ? !!todo.completedDates?.[date] : todo.completed;
+  const completed = todo.isDaily
+    ? !!todo.completedDates?.[date]
+    : todo.completed;
 
   // Handlers
-  const handleToggle = () => {
+  const handleToggle = (e) => {
+    e.stopPropagation(); // Doesn't affect parent elements
     dispatch(toggleTodo({ id: todo.id, date: date }));
   };
 
@@ -40,61 +43,58 @@ const TodoCard = ({ todo, date }) => {
   };
 
   return (
-    <>
-      {/* Button to access the details upon clicking the todo */}
-      <div
-        className={`todo-card ${completed ? "completed" : ""}`}
-        onClick={handleOpenDetails}
-        role="button"
-        tabIndex={0}
+    <div
+      className={`todo-card ${completed ? "completed" : ""}`}
+      onClick={handleOpenDetails}
+      role="button"
+      tabIndex={0}
+    >
+      {/* Checkbox toggle button */}
+      <button
+        className={`btn checkbox-btn ${completed ? "checked" : ""}`}
+        onClick={handleToggle}
+        aria-label={completed ? "Todo incomplete" : "Todo complete"}
       >
-        {/* Checkbox toggle button */}
-        <button
-          className={`btn checkbox-btn ${completed ? "checked" : ""}`}
-          onClick={handleToggle}
-          aria-label={completed ? "Todo incomplete" : "Todo complete"}
-        >
-          {completed ? <CheckCircle2 size={14} /> : <Circle size={14} />}
-        </button>
+        {completed ? <CheckCircle2 size={14} /> : <Circle size={14} />}
+      </button>
 
-        {/* Main task content */}
-        <div className="todo-content">
-          <p className="todo-text">{todo.data}</p>
-          <div className="todo-meta">
-            <span className="category-badge">
-              <Tag size={12} />
-              {todo.category}
+      {/* Main task content */}
+      <div className="todo-content">
+        <p className="todo-text">{todo.data}</p>
+        <div className="todo-meta">
+          <span className="category-badge">
+            <Tag size={12} />
+            {todo.category}
+          </span>
+          {todo.isDaily && (
+            <span className="daily-badge">
+              <Repeat size={12} />
+              Daily
             </span>
-            {todo.isDaily && (
-              <span className="daily-badge">
-                <Repeat size={12} />
-                Daily
-              </span>
-            )}
-          </div>
+          )}
         </div>
-
-        {/* Delete button */}
-        <button
-          className="btn delete-btn"
-          onClick={handleDelete}
-          title="Delete Todo"
-          aria-label="Delete Todo"
-        >
-          <Trash2 size={14} />
-        </button>
-
-        {/* Conditionally render the DetailsCard component */}
-        {showDetails && (
-          <DetailsCard
-            type="todo"
-            item={todo}
-            date={date}
-            onClose={handleCloseDetails}
-          />
-        )}
       </div>
-    </>
+
+      {/* Delete button */}
+      <button
+        className="btn delete-btn"
+        onClick={handleDelete}
+        title="Delete Todo"
+        aria-label="Delete Todo"
+      >
+        <Trash2 size={14} />
+      </button>
+
+      {/* Conditionally render the DetailsCard component */}
+      {showDetails && (
+        <DetailsCard
+          type="todo"
+          item={todo}
+          date={date}
+          onClose={handleCloseDetails}
+        />
+      )}
+    </div>
   );
 };
 

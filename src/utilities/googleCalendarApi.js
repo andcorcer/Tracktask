@@ -59,11 +59,12 @@ googleCalendarApi.interceptors.response.use(
 
 // Functions that formats dates to ISO for the API
 const formatDateToISO = (date) => {
-  const d = date ? new Date(date) : new Date();
+  if (!date) return null;
+  const d = new Date(date);
   if (isNaN(d.getTime())) {
     throw new Error(`Invalid date provided: ${date}`);
   }
-  return d.toISOString().split("T")[0]; // Return only the date part in YYYY-MM-DD format
+  return d.toISOString(); // Return full ISO date string
 };
 
 // Class containing static methods for interacting with the Google Calendar API
@@ -87,15 +88,20 @@ class GoogleCalendarApi {
    */
   static async getEventsByTimeFrame(timeMin, timeMax, calendarId = "primary") {
     // Make a GET request to retrieve all events within a given timeframe and using a specific calendar list ordered by start time
+    const params = {
+      singleEvents: true,
+      orderBy: "startTime",
+    };
+
+    // We only add dueMin and dueMax to the parameters if they're provided
+    if (timeMin) params.timeMin = formatDateToISO(timeMin);
+    if (timeMax) params.timeMax = formatDateToISO(timeMax);
+
+    // Make a GET request to retrieve all events within a given timeframe and using a specific calendar list ordered by start time
     const response = await googleCalendarApi.get(
       `/calendars/${encodeURIComponent(calendarId)}/events`,
       {
-        params: {
-          timeMin: formatDateToISO(timeMin),
-          timeMax: formatDateToISO(timeMax),
-          singleEvents: true,
-          orderBy: "startTime",
-        },
+        params,
       },
     );
     return response.data.items || [];

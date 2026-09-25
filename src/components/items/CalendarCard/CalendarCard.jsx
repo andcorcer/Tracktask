@@ -1,5 +1,6 @@
 // Import all dependencies
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import {
   SquareCheckBig,
   Square,
@@ -8,13 +9,60 @@ import {
   ClipboardList,
 } from "lucide-react";
 
+// Import Components
+import DetailsCard from "../../details/DetailsCard/DetailsCard";
+
+// Import Actions
+import { toggleTask } from "../../../store/slices/calendarSlice";
+
 // Import Styles
 import "./CalendarCard.css";
 
+// Function that transforms times from 00:00:00 format into 00:00 am
+const transformTimes = (startTime, endTime = null) => {
+  // We declare an options variable for .toLocaleTimeString method
+  const options = { hour: "2-digit", minute: "2-digit", hour12: true };
+
+  // We create date objects with the returned times of the event object
+  const start = new Date(startTime);
+
+  if (!endTime) return start.toLocaleTimeString("en-US", options).toLowerCase();
+
+  const end = new Date(endTime);
+
+  // We get the times in the format '00:00 AM/PM' using an options parameter
+  const startWithAbbreviation = start.toLocaleTimeString("en-US", options);
+  const endWithAbbreviation = end.toLocaleTimeString("en-US", options);
+
+  // We save the AM/PM abbreviation in different variables to compare
+  const [numStart, startAbbreviation] = startWithAbbreviation.split(" ");
+  const [numEnd, endAbbreviation] = endWithAbbreviation.split(" ");
+
+  if (startAbbreviation === endAbbreviation) {
+    return `${numStart} - ${numEnd} ${endAbbreviation.toLowerCase()}`;
+  } else {
+    return `${numStart} ${startAbbreviation.toLowerCase()} - ${numEnd} ${endAbbreviation.toLowerCase()}`;
+  }
+};
+
 // CalendarCard Component
-const CalendarCard = ({ type, data, viewMode }) => {
+const CalendarCard = ({ type, data, viewMode, taskListId }) => {
+  const dispatch = useDispatch(); // Get the dispatch function from Redux to dispatch actions
+
   // Local state to render the DetailsCard component conditionally
   const [showDetails, setShowDetails] = useState(false);
+
+  // Handlers
+  const handleToggleTask = (e, taskListId) => {
+    e.stopPropagation(); // Doesn't affect parent elements
+    dispatch(
+      toggleTask({
+        taskId: data.id,
+        isCompleted: data?.status === "needsAction", // If a task isn't completed we set isCompleted to true and vice versa
+        listId: taskListId,
+      }),
+    );
+  };
 
   const handleOpenDetails = () => {
     setShowDetails(true);
@@ -22,35 +70,6 @@ const CalendarCard = ({ type, data, viewMode }) => {
 
   const handleCloseDetails = () => {
     setShowDetails(false);
-  };
-
-  // Function that transforms times from 00:00:00 format into 00:00 am
-  const transformTimes = (startTime, endTime = null) => {
-    const startHours = startTime.split(":")[0];
-    const startMinutes = startTime.split(":")[1];
-
-    const formattedStartHours = startHours !== "00" ? startHours : "12";
-    const formattedStartMinutes = startMinutes !== "00" ? startMinutes : "";
-
-    if (startTime && !endTime) {
-      if (Number(startHours) >= 12)
-        return `${formattedStartHours}:${formattedStartMinutes} pm`;
-      else Number(startHours) < 12 && Number(endHours) < 12;
-      return `${formattedStartHours}:${formattedStartMinutes} am`;
-    }
-
-    const endHours = endTime.split(":")[0];
-    const endMinutes = endTime.split(":")[1];
-
-    const formattedEndHours = endHours !== "00" ? endHours : "12";
-    const formattedEndMinutes = endMinutes !== "00" ? endMinutes : "";
-
-    if (Number(startHours) >= 12 && Number(endHours) >= 12)
-      return `${formattedStartHours}:${formattedStartMinutes} - ${formattedEndHours}:${formattedEndMinutes} pm`;
-    else if (Number(startHours) < 12 && Number(endHours) < 12)
-      return `${formattedStartHours}:${formattedStartMinutes} - ${formattedEndHours}:${formattedEndMinutes} am`;
-    else
-      return `${formattedStartHours}:${formattedStartMinutes} am - ${formattedEndHours}:${formattedEndMinutes} pm`;
   };
 
   // Render Calendar List
@@ -90,20 +109,23 @@ const CalendarCard = ({ type, data, viewMode }) => {
   // Render Event
   const renderEvent = () => {
     // We retrieve the start time and en time for the event
-    const startTimeRange = data?.start?.dateTime.toISOString().split("T")[1];
-    const startTime = startTimeRange.split("-")[0];
-    const endTimeRange = data?.end?.dateTime.toISOString().split("T")[1];
-    const endTime = endTimeRange.split("-")[0];
+    const isDayEvent = data?.start?.dateTime ? false : true;
+    const startTime = data?.start?.dateTime;
+    const endTime = data?.end?.dateTime;
 
     // We render the events conditionally for the calendar in its different view modes
     if (viewMode === "month") {
       return (
         <button
-          className="month-element event-element"
+          className={`month-element event-element ${isDayEvent ? "day-event" : ""}`}
           onClick={handleOpenDetails}
         >
           <span>
-            <span className="start-time">{transformTimes(startTime)}</span>
+            {/* We render a span element conditionally to show the starting time only if the event is not daily */}
+            {!isDayEvent && (
+              <span className="start-time">{transformTimes(startTime)}</span>
+            )}
+
             <Calendar size={10} className="event" />
             {data?.summary || "(No title)"}
           </span>
@@ -112,7 +134,7 @@ const CalendarCard = ({ type, data, viewMode }) => {
     } else if (viewMode === "week") {
       return (
         <div
-          className="week-element activity-element"
+          className={`week-element event-element ${isDayEvent ? "day-event" : ""}`}
           onClick={handleOpenDetails}
           role="button"
           tabIndex={0}
@@ -121,16 +143,20 @@ const CalendarCard = ({ type, data, viewMode }) => {
             <Calendar size={14} className="event" />
             {data?.summary || "(No title)"}
           </h5>
-          <span className="time-range">
-            {transformTimes(startTime, endTime)}
-          </span>
+
+          {/* We render a span element conditionally to show the starting time only if the event is not daily */}
+          {!isDayEvent && (
+            <span className="time-range">
+              {transformTimes(startTime, endTime)}
+            </span>
+          )}
         </div>
       );
     }
 
     return (
       <div
-        className="week-element activity-element"
+        className={`calendar-content event-element ${isDayEvent ? "day-event" : ""}`}
         onClick={handleOpenDetails}
         role="button"
         tabIndex={0}
@@ -139,9 +165,14 @@ const CalendarCard = ({ type, data, viewMode }) => {
           <Calendar size={18} className="event" />
           <div className="main-data">
             <h4>{data?.summary || "(No title)"}</h4>
-            <span className="time-range">
-              {transformTimes(startTime, endTime)}
-            </span>
+
+            {/* We render a span element conditionally to show the starting time only if the event is not daily */}
+            {!isDayEvent && (
+              <span className="time-range">
+                {transformTimes(startTime, endTime)}
+              </span>
+            )}
+
             {data?.description && (
               <p className="description">{data?.description}</p>
             )}
@@ -173,7 +204,7 @@ const CalendarCard = ({ type, data, viewMode }) => {
     } else if (viewMode === "week") {
       return (
         <div
-          className="week-element activity-element"
+          className="week-element task-element"
           onClick={handleOpenDetails}
           role="button"
           tabIndex={0}
@@ -199,11 +230,16 @@ const CalendarCard = ({ type, data, viewMode }) => {
         tabIndex={0}
       >
         <div className="task-main">
-          {data?.status === "needsAction" ? (
-            <Square size={18} className="task" />
-          ) : (
-            <SquareCheckBig size={18} className="task" />
-          )}
+          <button
+            className="toggle-btn"
+            onClick={(e) => handleToggleTask(e, taskListId)}
+          >
+            {data?.status === "needsAction" ? (
+              <Square size={18} className="task" />
+            ) : (
+              <SquareCheckBig size={18} className="task" />
+            )}
+          </button>
           <div className="main-data">
             <h4>{data?.title || "(No title)"}</h4>
             <span className="notes">{data?.notes}</span>
