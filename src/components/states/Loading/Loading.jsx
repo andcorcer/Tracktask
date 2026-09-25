@@ -1,0 +1,17 @@
+// Import all dependencies
+import React from "react";
+
+// Import Styles
+import './Loading.css'
+
+// Loading Component 
+const Loading = () => {
+   return (
+    <div className="loading-container">
+      <p className="loading-message">⏳ Loading...</p>
+    </div>
+   ); 
+}
+
+// Export the Loading component
+export default Loading;
