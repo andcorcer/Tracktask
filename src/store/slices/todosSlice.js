@@ -50,7 +50,7 @@ const todosSlice = createSlice({
         isDaily: action.payload.isDaily || false,
         completed: false, // For non recurring todos
         completedDates: {}, // For daily todos
-        createdAt: new Date().toISOString().split("T")[0],
+        createdAt: new Date(action.payload.date).toISOString().split("T")[0],
         archivedAt: null, // Date for when a todo is deleted to preserve past completion history
       };
       state.items.push(newTodo); // Add the item to the todos
