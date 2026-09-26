@@ -1,10 +1,18 @@
 // Import all dependencies
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { CheckCircle2, Circle, Trash2, Tag, Repeat } from "lucide-react";
+import {
+  CheckCircle2,
+  Circle,
+  Trash2,
+  Tag,
+  Repeat,
+  MailOpen,
+} from "lucide-react";
 
 // Import Components
 import DetailsCard from "../../details/DetailsCard/DetailsCard";
+import Modal from "../../details/Modal/Modal";
 
 // Import Actions
 import { toggleTodo, deleteTodo } from "../store/todosSlice";
@@ -87,12 +95,14 @@ const TodoCard = ({ todo, date }) => {
 
       {/* Conditionally render the DetailsCard component */}
       {showDetails && (
-        <DetailsCard
-          type="todo"
-          item={todo}
-          date={date}
-          onClose={handleCloseDetails}
-        />
+        <Modal onClose={handleCloseDetails} title="Todo Details">
+          <DetailsCard
+            type="todo"
+            item={todo}
+            date={date}
+            onClose={handleCloseDetails}
+          />
+        </Modal>
       )}
     </div>
   );

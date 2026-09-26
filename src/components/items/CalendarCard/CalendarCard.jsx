@@ -11,6 +11,7 @@ import {
 
 // Import Components
 import DetailsCard from "../../details/DetailsCard/DetailsCard";
+import Modal from "../../details/Modal/Modal";
 
 // Import Actions
 import { toggleTask } from "../../../store/slices/calendarSlice";
@@ -271,7 +272,13 @@ const CalendarCard = ({ type, data, viewMode, taskListId }) => {
 
       {/* Conditionally render the DetailsCard component */}
       {showDetails && (
-        <DetailsCard type="calendar" item={data} onClose={handleCloseDetails} />
+        <Modal onClose={handleCloseDetails} title="Calendar Details">
+          <DetailsCard
+            type="calendar"
+            item={data}
+            onClose={handleCloseDetails}
+          />
+        </Modal>
       )}
     </div>
   );

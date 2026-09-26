@@ -19,15 +19,15 @@ import {
 
 // Import Components
 import DetailsCard from "../../details/DetailsCard/DetailsCard";
+import Modal from "../../details/Modal/Modal";
 
 // Import Styles
 import "./HealthCard.css";
 
 // Function that transforms a time passed in seconds to it's HH:MM:SS format
 const transformTimeFormat = (time) => {
-
   // Handle being unable to fetch a time
-  if (!time || typeof(time) !== "number") return "00:00";
+  if (!time || typeof time !== "number") return "00:00";
 
   const hours = Math.floor(time / 3600);
   const minutes = Math.floor((time % 3600) / 60);
@@ -71,7 +71,8 @@ const HealthCard = ({ type, data, viewMode }) => {
       >
         <Footprints size={16} className="steps-icon" />
         <span>
-          {data?.totalSteps?.toLocaleString() || 0} of {data?.dailyStepGoal?.toLocaleString() || "Unknown"} Steps
+          {data?.totalSteps?.toLocaleString() || 0} of{" "}
+          {data?.dailyStepGoal?.toLocaleString() || "Unknown"} Steps
         </span>
       </div>
 
@@ -83,7 +84,8 @@ const HealthCard = ({ type, data, viewMode }) => {
       >
         <DoorStairwell size={16} className="floors-icon" />
         <span>
-          {data?.floorsAscended?.toLocaleString() || 0} of {data?.floorsAscendedGoal?.toLocaleString() || "Unknown"} Floors
+          {data?.floorsAscended?.toLocaleString() || 0} of{" "}
+          {data?.floorsAscendedGoal?.toLocaleString() || "Unknown"} Floors
           Ascended
         </span>
       </div>
@@ -136,7 +138,8 @@ const HealthCard = ({ type, data, viewMode }) => {
       >
         <GlassWater size={16} className="hydration-icon" />
         <span>
-          {data?.hydrationAmount || 0} of {data?.hydrationGoal?.toLocaleString() || "Unknown"}
+          {data?.hydrationAmount || 0} of{" "}
+          {data?.hydrationGoal?.toLocaleString() || "Unknown"}
         </span>
       </div>
 
@@ -238,7 +241,7 @@ const HealthCard = ({ type, data, viewMode }) => {
               {activityString !== "Other" ? activityString : data?.activityName}
             </h4>
             <p>
-              {subtext1}   {subtext2}
+              {subtext1} {subtext2}
             </p>
           </div>
         </div>
@@ -270,7 +273,11 @@ const HealthCard = ({ type, data, viewMode }) => {
       </div>
 
       <div className="plan-meta">
-        <span className="badge">{data?.startDate && data?.endDate ? `${data?.startDate} - ${data?.endDate}` : "Ongoing"}</span>
+        <span className="badge">
+          {data?.startDate && data?.endDate
+            ? `${data?.startDate} - ${data?.endDate}`
+            : "Ongoing"}
+        </span>
       </div>
     </div>
   );
@@ -303,7 +310,11 @@ const HealthCard = ({ type, data, viewMode }) => {
           <div className="workout-main">
             <CalendarClock size={14} className="workout" />
             <h5>{data?.title || "Scheduled Workout"}</h5>
-            <p>{data?.date ? new Date(data?.date).toLocaleDateString() : "Upcoming"}</p>
+            <p>
+              {data?.date
+                ? new Date(data?.date).toLocaleDateString()
+                : "Upcoming"}
+            </p>
           </div>
         </div>
       );
@@ -319,7 +330,11 @@ const HealthCard = ({ type, data, viewMode }) => {
         <div className="workout-main">
           <CalendarClock size={18} className="workout" />
           <h4>{data?.title || "Scheduled Workout"}</h4>
-          <p>{data?.date ? new Date(data?.date).toLocaleDateString() : "Upcoming"}</p>
+          <p>
+            {data?.date
+              ? new Date(data?.date).toLocaleDateString()
+              : "Upcoming"}
+          </p>
         </div>
       </div>
     );
@@ -347,12 +362,14 @@ const HealthCard = ({ type, data, viewMode }) => {
 
       {/* Conditionally render the DetailsCard component */}
       {showDetails && (
-        <DetailsCard
-          type="health"
-          secondaryType={selectedSubType}
-          item={data}
-          onClose={handleCloseDetails}
-        />
+        <Modal onClose={handleCloseDetails} title="Health Details">
+          <DetailsCard
+            type="health"
+            secondaryType={selectedSubType}
+            item={data}
+            onClose={handleCloseDetails}
+          />
+        </Modal>
       )}
     </div>
   );

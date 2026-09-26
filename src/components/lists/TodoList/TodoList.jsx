@@ -6,6 +6,7 @@ import { Plus } from "lucide-react";
 // Import Components
 import TodoCard from "../../items/TodoCard/TodoCard";
 import TodoInput from "../../inputs/TodoInput/TodoInput";
+import Modal from "../../details/Modal/Modal";
 
 // Import Styles
 import "./TodoList.css";
@@ -16,14 +17,14 @@ const TodoList = ({ date, viewMode = "date" }) => {
   const todos = useSelector((state) => state.todos.items);
 
   // Local state to render the TodoInput component conditionally
-  const [showDetails, setShowDetails] = useState(false);
+  const [showInput, setShowInput] = useState(false);
 
   const handleOpenInput = () => {
-    setShowDetails(true);
+    setShowInput(true);
   };
 
   const handleCloseInput = () => {
-    setShowDetails(false);
+    setShowInput(false);
   };
 
   // We filter the todos to display only the ones given by the viewMode prop
@@ -85,7 +86,11 @@ const TodoList = ({ date, viewMode = "date" }) => {
       )}
 
       {/* Conditionally render the TodoInput component */}
-      {showDetails && <TodoInput date={date} onClose={handleCloseInput} />}
+      {showInput && (
+        <Modal onClose={handleCloseInput} title="Add Todo">
+          <TodoInput date={date} onClose={handleCloseInput} />
+        </Modal>
+      )}
     </div>
   );
 };
