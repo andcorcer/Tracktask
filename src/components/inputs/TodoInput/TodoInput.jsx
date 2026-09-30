@@ -8,6 +8,15 @@ import { createTodo } from "../../../store/slices/todosSlice";
 // Import Styles
 import "./TodoInput.css";
 
+// Function to get the current local date
+const getLocalDate = () => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDay()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 // TodoInput Component
 const TodoInput = ({ date, onClose }) => {
   const dispatch = useDispatch(); // Get the dispatch function from Redux to dispatch actions
@@ -25,19 +34,25 @@ const TodoInput = ({ date, onClose }) => {
     if (!data.trim()) return;
 
     // We determine the date using the passed down date or create a new one (We just grab the date and not the time)
-    const targetDate = date || new Date().toISOString().split("T")[0];
+    const targetDate = date || getLocalDate();
 
     dispatch(
       createTodo({ data: data.trim(), category, isDaily, date: targetDate }),
     );
 
     // After submiting we close the Modal component
-    onClose();
+    onClose?.();
+  };
+
+  const handleClear = () => {
+    setData("");
+    setCategory("General");
+    setIsDaily(false);
   };
 
   return (
     <form className="todo-input-form" onSubmit={handleSubmit}>
-      <div className="description">
+      <div className="form-group description">
         <label htmlFor="todo-data">Description</label>
         <input
           id="todo-data"
@@ -50,8 +65,8 @@ const TodoInput = ({ date, onClose }) => {
         />
       </div>
 
-      <div className="other-data">
-        <div className="category">
+      <div className="form-row other-data">
+        <div className="form-group category">
           <label htmlFor="todo-category">Category</label>
           <select
             id="todo-category"
@@ -66,7 +81,7 @@ const TodoInput = ({ date, onClose }) => {
           </select>
         </div>
 
-        <div className="daily">
+        <div className="form-group daily">
           <label htmlFor="todo-isDaily">Daily Habit</label>
           <input
             id="todo-isDaily"
@@ -77,15 +92,8 @@ const TodoInput = ({ date, onClose }) => {
         </div>
       </div>
 
-      <div className="form-actions">
-        <button
-          className="btn clear-btn"
-          onClick={() => {
-            setData("");
-            setCategory("General");
-            setIsDaily(false);
-          }}
-        >
+      <div className="form-group actions">
+        <button className="btn clear-btn" type="button" onClick={handleClear}>
           Clear
         </button>
 

@@ -10,6 +10,15 @@ import { createCalendarEvent } from "../../../store/slices/calendarSlice";
 // Import Styles
 import "./CalendarInput.css";
 
+// Function to get the current local date
+const getLocalDate = () => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDay()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 // CalendarInput Component
 const CalendarInput = ({ date, onClose }) => {
   const dispatch = useDispatch(); // Get the dispatch function from Redux to dispatch actions
@@ -20,9 +29,7 @@ const CalendarInput = ({ date, onClose }) => {
   const [entryType, setEntryType] = useState("event");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("General");
-  const [selectedDate, setSelectedDate] = useState(
-    date || new Date().toISOString().split("T")[0],
-  );
+  const [selectedDate, setSelectedDate] = useState(date || getLocalDate());
   const [startTime, setStartTime] = useState("00:00");
   const [endTime, setEndTime] = useState("00:00");
   const [isAllDay, setIsAllDay] = useState(false);
@@ -82,7 +89,7 @@ const CalendarInput = ({ date, onClose }) => {
     setEntryType("event");
     setTitle("");
     setDescription("");
-    setSelectedDate(date || new Date().toISOString().split("T")[0]);
+    setSelectedDate(date || getLocalDate());
     setStartTime("00:00");
     setEndTime("00:00");
     setIsAllDay(false);
@@ -97,6 +104,7 @@ const CalendarInput = ({ date, onClose }) => {
         <button
           type="button"
           className={`btn ${entryType === "event" ? "active" : ""}`}
+          onClick={() => setEntryType("event")}
         >
           <Calendar size={18} />
           Event
@@ -104,6 +112,7 @@ const CalendarInput = ({ date, onClose }) => {
         <button
           type="button"
           className={`btn ${entryType === "task" ? "active" : ""}`}
+          onClick={() => setEntryType("task")}
         >
           <SquareCheck size={18} />
           Task
@@ -112,7 +121,7 @@ const CalendarInput = ({ date, onClose }) => {
 
       {/* Target List */}
       <div className="form-group target-list">
-        <label htmlFor="target-List">
+        <label htmlFor="target-list">
           {entryType === "event" ? "Calendar List" : "Tasks List"}
         </label>
         {entryType === "event" ? (
@@ -234,7 +243,7 @@ const CalendarInput = ({ date, onClose }) => {
         <button
           className="btn submit-btn"
           type="submit"
-          disabled={!data.trim()}
+          disabled={!title.trim()}
         >
           {`Save ${entryType === "event" ? "Event" : "Task"}`}
         </button>

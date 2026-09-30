@@ -14,7 +14,7 @@ import "./TodoList.css";
 // TodoList Component
 const TodoList = ({ date, viewMode = "date" }) => {
   // We get the todos from the redux store
-  const todos = useSelector((state) => state.todos.items);
+  const todos = useSelector((state) => state.todos.items || []);
 
   // Local state to render the TodoInput component conditionally
   const [showInput, setShowInput] = useState(false);
@@ -52,7 +52,7 @@ const TodoList = ({ date, viewMode = "date" }) => {
         }
 
       default:
-        return null;
+        return false;
     }
   });
 
@@ -80,7 +80,7 @@ const TodoList = ({ date, viewMode = "date" }) => {
           <p>
             {viewMode === "date" && "No todos for this date."}
             {viewMode === "active" && "No active todos."}
-            {viewMode === "date" && "No archived todos."}
+            {viewMode === "archived" && "No archived todos."}
           </p>
         </div>
       )}
