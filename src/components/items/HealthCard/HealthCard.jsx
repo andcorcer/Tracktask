@@ -262,7 +262,7 @@ const HealthCard = ({ type, data, viewMode }) => {
   const renderTrainingPlan = () => (
     <div
       className="health-content plan-container"
-      onClick={() => handleOpenDetails()}
+      onClick={() => handleOpenDetails(type)}
       role="button"
       tabIndex={0}
     >

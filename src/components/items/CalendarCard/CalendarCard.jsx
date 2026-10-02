@@ -275,7 +275,9 @@ const CalendarCard = ({ type, data, viewMode, taskListId }) => {
         <Modal onClose={handleCloseDetails} title="Calendar Details">
           <DetailsCard
             type="calendar"
+            secondaryType={type}
             item={data}
+            taskListId={taskListId}
             onClose={handleCloseDetails}
           />
         </Modal>
