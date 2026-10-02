@@ -131,29 +131,6 @@ const HealthCard = ({ type, data, viewMode }) => {
       </div>
 
       <div
-        className="metric hydration"
-        onClick={() => handleOpenDetails("hydration")}
-        role="button"
-        tabIndex={0}
-      >
-        <GlassWater size={16} className="hydration-icon" />
-        <span>
-          {data?.hydrationAmount || 0} of{" "}
-          {data?.hydrationGoal?.toLocaleString() || "Unknown"}
-        </span>
-      </div>
-
-      <div
-        className="metric respiration"
-        onClick={() => handleOpenDetails("respiration")}
-        role="button"
-        tabIndex={0}
-      >
-        <Wind size={16} className="respiration-icon" />
-        <span>{data?.respirationAverage || 0}</span>
-      </div>
-
-      <div
         className="metric intensity-minutes"
         onClick={() => handleOpenDetails("intensityMinutes")}
         role="button"

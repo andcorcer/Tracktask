@@ -232,7 +232,7 @@ const CalendarCard = ({ type, data, viewMode, taskListId }) => {
       >
         <div className="task-main">
           <button
-            className="toggle-btn"
+            className="btn toggle-task-btn"
             onClick={(e) => handleToggleTask(e, taskListId)}
           >
             {data?.status === "needsAction" ? (
@@ -253,9 +253,9 @@ const CalendarCard = ({ type, data, viewMode, taskListId }) => {
   // Switch to render each item conditionally depending on which is it
   const renderContent = () => {
     switch (type) {
-      case "calendar_list":
+      case "calendarList":
         return renderCalendarList();
-      case "task_list":
+      case "taskList":
         return renderTaskList();
       case "event":
         return renderEvent();

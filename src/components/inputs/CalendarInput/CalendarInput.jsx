@@ -10,7 +10,7 @@ import { createCalendarEvent } from "../../../store/slices/calendarSlice";
 // Import Styles
 import "./CalendarInput.css";
 
-// Function to get the current local date
+// Function to get the current local date in YYYY-MM-DD format
 const getLocalDate = () => {
   const today = new Date();
   const year = today.getFullYear();
@@ -20,13 +20,13 @@ const getLocalDate = () => {
 };
 
 // CalendarInput Component
-const CalendarInput = ({ date, onClose }) => {
+const CalendarInput = ({ date, entryType, onClose }) => {
   const dispatch = useDispatch(); // Get the dispatch function from Redux to dispatch actions
 
   const { calendarList, tasksList } = useSelector((state) => state.calendar);
 
   // Local states to track what the input fields have
-  const [entryType, setEntryType] = useState("event");
+  const [entryType, setEntryType] = useState(entryType || "event");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("General");
   const [selectedDate, setSelectedDate] = useState(date || getLocalDate());

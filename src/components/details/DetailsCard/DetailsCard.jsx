@@ -9,6 +9,13 @@ import {
   Repeat,
   Trash2,
   MailPen,
+  Dumbbell,
+  SportShoe,
+  WavesLadder,
+  ClipboardClock,
+  CalendarClock,
+  Square,
+  SquareCheckBig,
 } from "lucide-react";
 
 // Import Components
@@ -40,6 +47,14 @@ const transformTimeFormat = (time) => {
     ? `${paddedHours}:${paddedMinutes}:${paddedSeconds}`
     : `${paddedMinutes}:${paddedSeconds}`;
 };
+// Function to get the current local date in YYYY-MM-DD format
+const getLocalDate = () => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDay()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
 
 // DetailsCard Component
 const DetailsCard = ({
@@ -53,13 +68,19 @@ const DetailsCard = ({
   const dispatch = useDispatch(); // Get the dispatch function from Redux to dispatch actions
   // Local state to render the CalendarInput component conditionally
   const [showInput, setShowInput] = useState(false);
+  const [entryType, setEntryType] = useState("event");
 
   // -----------------------------------------------------------------------------------------------------------------
   // RENDER CALENDARINPUT COMPONENT CONDITIONALLY
   // -----------------------------------------------------------------------------------------------------------------
 
+  const handleOpenInput = (type) => {
+    setShowInput(true);
+    setEntryType(type);
+  };
+
   if (showInput) {
-    return <CalendarInput date={date} onClose={() => setShowInput(false)} />;
+    return <CalendarInput date={date} entryType={entryType} onClose={() => setShowInput(false)} />;
   }
 
   // -----------------------------------------------------------------------------------------------------------------
@@ -133,7 +154,7 @@ const DetailsCard = ({
         {/* Actions */}
         <div className="details-actions">
           <button
-            className="btn delete-btn"
+            className="btn delete-todo-btn"
             onClick={handleDelete}
             title="Delete Todo"
             aria-label="Delete Todo"
@@ -152,19 +173,22 @@ const DetailsCard = ({
     // Convert secondaryType to a human-readable title
     const title = secondaryType
       .replace(/([A-Z])/g, " $1") // Add a space before each uppercase letter
-      .replace(/^./, (str) => str.toUpperCase()); // Capitalize the first letter ||
+      .replace(/^./, (str) => str.toUpperCase()); // Capitalize the first letter
 
-    // Array of all the meta items for the health details card depending on the secondaryType
+    // Array of all the meta items and icons for the health details card depending on the secondaryType
     let metaItems = [];
+    let icon = null;
 
     switch (secondaryType) {
       case "steps":
+        icon = <Footprints size={16} />;
         metaItems = [
           { label: "Total Steps", value: item?.totalSteps || 0 },
           { label: "Steps Goal", value: item?.stepsGoal || 0 },
         ];
         break;
       case "floors":
+        icon = <DoorStairwell size={16} />;
         metaItems = [
           { label: "Floors Ascended", value: item?.floorsAscended || 0 },
           { label: "Floors Descended", value: item?.floorsDescended || 0 },
@@ -172,6 +196,7 @@ const DetailsCard = ({
         ];
         break;
       case "calories":
+        icon = <Flame size={16} />;
         metaItems = [
           { label: "Total Kilocalories", value: item?.totalKilocalories || 0 },
           {
@@ -182,6 +207,7 @@ const DetailsCard = ({
         ];
         break;
       case "heartRate":
+        icon = <HeartPulse size={16} />;
         metaItems = [
           { label: "Minimum Heart Rate", value: item?.minHeartRate || 0 },
           { label: "Maximum Heart Rate", value: item?.maxHeartRate || 0 },
@@ -189,6 +215,7 @@ const DetailsCard = ({
         ];
         break;
       case "stress":
+        icon = <FaceAngry size={16} />;
         metaItems = [
           {
             label: "Average Stress Level",
@@ -204,6 +231,7 @@ const DetailsCard = ({
         ];
         break;
       case "bodyBattery":
+        icon = <Activity size={16} />;
         metaItems = [
           {
             label: "Latest Value",
@@ -214,6 +242,7 @@ const DetailsCard = ({
         ];
         break;
       case "intensityMinutes":
+        icon = <Clock size={16} />;
         metaItems = [
           {
             label: "Moderate Intensity Minutes",
@@ -232,6 +261,7 @@ const DetailsCard = ({
         ];
         break;
       case "activity strength":
+        icon = <Dumbbell size={16} />;
         metaItems = [
           { label: "Duration", value: transformTimeFormat(item?.duration) },
           {
@@ -243,6 +273,7 @@ const DetailsCard = ({
         ];
         break;
       case "activity running":
+        icon = <SportShoe size={16} />;
         metaItems = [
           {
             label: "Distance",
@@ -251,7 +282,9 @@ const DetailsCard = ({
           { label: "Duration", value: transformTimeFormat(item?.duration) },
           {
             label: "Pace",
-            value: `${transformTimeFormat(item?.duration / (item?.distance / 1000))} /km` || "--:--",
+            value:
+              `${transformTimeFormat(item?.duration / (item?.distance / 1000))} /km` ||
+              "--:--",
           },
           { label: "Average Heart Rate", value: `${item?.averageHR || 0} bpm` },
           {
@@ -262,15 +295,18 @@ const DetailsCard = ({
         break;
 
       case "activity swimming":
+        icon = <WavesLadder size={16} />;
         metaItems = [
           {
             label: "Distance",
-            value: `${(item?.distance || 0)} m`,
+            value: `${item?.distance || 0} m`,
           },
           { label: "Duration", value: transformTimeFormat(item?.duration) },
           {
             label: "Pace",
-            value: `${transformTimeFormat(item?.duration / (item?.distance / 100))} /100m` || "--:--",
+            value:
+              `${transformTimeFormat(item?.duration / (item?.distance / 100))} /100m` ||
+              "--:--",
           },
           { label: "Average Swolf", value: item?.averageSwolf || "--" },
           { label: "Total Strokes", value: item?.totalStrokes || "--" },
@@ -278,6 +314,7 @@ const DetailsCard = ({
         break;
 
       case "activity other":
+        icon = <Footprints size={16} />;
         metaItems = [
           { label: "Duration", value: transformTimeFormat(item?.duration) },
           {
@@ -292,6 +329,7 @@ const DetailsCard = ({
         ];
         break;
       case "trainingPlan":
+        icon = <ClipboardClock size={16} />;
         metaItems = [
           {
             label: "Name",
@@ -312,6 +350,7 @@ const DetailsCard = ({
         ];
         break;
       case "workout":
+        icon = <CalendarClock size={16} />;
         metaItems = [
           {
             label: "Name",
@@ -324,7 +363,7 @@ const DetailsCard = ({
           {
             label: "Date",
             value: item?.date
-              ? new Date(item?.date  + "T00:00:00").toLocaleDateString()
+              ? new Date(item?.date + "T00:00:00").toLocaleDateString()
               : "Upcoming",
           },
           {
@@ -333,13 +372,16 @@ const DetailsCard = ({
               item?.activityType?.typeKey.replace(/_/g, " ").toUpperCase() ||
               "N/A",
           },
-          { label: "Status", value: item?.isCompleted ? "Completed" : "Upcoming" }
+          {
+            label: "Status",
+            value: item?.isCompleted ? "Completed" : "Upcoming",
+          },
         ];
         break;
     }
 
     return (
-      <div className="details-card health-details">
+      <div className={`details-card health-details ${title}`}>
         {/* Description */}
         <div className="details-description">
           <h4 className="details-subtitle">{title}</h4>
@@ -359,7 +401,194 @@ const DetailsCard = ({
   // -----------------------------------------------------------------------------------------------------------------
   // CALENDAR DETAILS
   // -----------------------------------------------------------------------------------------------------------------
-  return <></>;
+  const renderCalendarDetails = () => {
+    // Convert secondaryType to a human-readable title
+    const title = secondaryType
+      .replace(/([A-Z])/g, " $1") // Add a space before each uppercase letter
+      .replace(/^./, (str) => str.toUpperCase()); // Capitalize the first letter
+
+    // Array of all the meta items and icons for the calendar details card depending on the secondaryType
+    let metaItems = [];
+    let icon = null;
+
+    // Handlers
+    const handleToggleTask = (e, taskListId) => {
+      e.stopPropagation(); // Doesn't affect parent elements
+      dispatch(
+        toggleTask({
+          taskId: data.id,
+          isCompleted: data?.status === "needsAction", // If a task isn't completed we set isCompleted to true and vice versa
+          listId: taskListId,
+        }),
+      );
+    };
+
+    switch (secondaryType) { 
+      case "taskList":
+        metaItems = [
+          {
+            label: "Title",
+            value: item?.title || "(No title)",
+          },
+          {
+            label: "Last Updated",
+            value: new Date(item?.updated).toISOString().split("T")[0] || "(No date)",
+          },
+        ];
+        break;
+      case "calendarList":
+        metaItems = [
+          {
+            label: "Title",
+            value: item?.summary || "(No title)",
+          },
+          {
+            label: "Description",
+            value: item?.description || "(No description)",
+          },
+          { 
+            label: "Access Role",
+            value: item?.accessRole || "reader",
+          },
+          {
+            label: "Timezone",
+            value: item?.timeZone || getLocalDate(),
+          }
+        ];
+        break;
+      case "event":
+        metaItems = [
+          {
+            label: "Title",
+            value: item?.summary || "(No title)",
+          },
+          {
+            label: "Description",
+            value: item?.description || "(No description)",
+          },
+          {
+            label: "Location",
+            value: item?.location || "(No location)",
+          },
+          {
+            label: "Status",
+            value: item?.status || "(No status)",
+          },
+          { 
+            label: "Date",
+            value: item?.start?.date ? item?.start?.date : item?.start?.dateTime?.split("T")[0] || "(No date)",
+          },
+        ];
+
+        item?.start?.dateTime && metaItems.push({
+          label: "Time",
+          value: (() => {
+            const formatTime = new Intl.DateTimeFormat("default", {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true,
+            });
+            const startTime = formatTime.format(new Date(item?.start?.dateTime));
+            const endTime = formatTime.format(new Date(item?.end?.dateTime));
+            return `${startTime} - ${endTime}`;
+          })(),
+        });
+        break;
+      case "task":
+        metaItems = [
+          {
+            label: "Title",
+            value: item?.title || "(No title)",
+          },
+          {
+            label: "Notes",
+            value: item?.notes || "(No notes)",
+          },
+          {
+            label: "Status",
+            value: item?.status || "(No status)",
+          },
+          {
+            label: "Due Date",
+            value: item?.due.split("T")[0] || "(No due date)",
+          },
+        ];
+
+        item?.completed && metaItems.push({
+          label: "Completed Time",
+          value: item?.completed?.split("T")[0] || "(No completed time)",
+        });
+        break;
+    }
+
+    return (
+      <div className={`details-card calendar-details ${title}`}>
+        {/* Checkbox toggle button */}
+        {secondaryType === "task" && (
+          <button
+            className="btn toggle-task-btn"
+            onClick={(e) => handleToggleTask(e, taskListId)}
+          >
+            {data?.status === "needsAction" ? (
+              <Square size={18} className="task" />
+            ) : (
+              <SquareCheckBig size={18} className="task" />
+            )}
+          </button>
+        )}
+
+        <div className="details-card calendar-details">
+
+          {/* Description */}
+          <div className="details-description">
+            <h4 className="details-subtitle">{title}</h4>
+          </div>
+
+          {/* Meta Information */}
+          <div className="details-meta">
+            {metaItems.map(({ label, value }) => (
+              <div className="details-meta-item">
+                <h4 className="details-subtitle">{label}</h4>
+                <span className="badge steps-badge">{value}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Actions */}
+          {(secondaryType === "calendarList" ||
+            secondaryType === "taskList") && (
+            <div className="details-actions">
+              <button
+                className={`btn add-${secondaryType === "calendarList" ? "calendar" : "task"}-btn`}
+                onClick={() => handleOpenInput(secondaryType)}
+                title={`Create ${secondaryType === "calendarList" ? "Calendar" : "Task"}`}
+                aria-label={`Create ${secondaryType === "calendarList" ? "Calendar" : "Task"}`}
+              >
+                <Plus size={16} />
+                {`Create ${secondaryType === "calendarList" ? "Calendar" : "Task"}`}
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  // Switch to render details conditionally depending on which item is it
+  const renderContent = () => {
+    switch (type) {
+      case "todo":
+        return renderTodoDetails();
+      case "health":
+        return renderHealthDetails();
+      case "calendar":
+        return renderCalendarDetails();
+      default:
+        return <p>Unknown Details Type</p>;
+    }
+  };
+  return <div>{renderContent()}</div>;
 };
 
+// Export the DetailsCard component
 export default DetailsCard;
