@@ -167,9 +167,9 @@ const HealthCard = ({ type, data, viewMode }) => {
 
   // Render Activity
   const renderActivity = () => {
-    const isStrength = data?.activityType?.includes("strength");
-    const isRunning = data?.activityType?.includes("running");
-    const isSwimming = data?.activityType?.includes("swimming");
+    const isStrength = data?.activityType?.typeKey?.includes("strength");
+    const isRunning = data?.activityType?.typeKey?.includes("running");
+    const isSwimming = data?.activityType?.typeKey?.includes("swimming");
 
     // We set initial values for the metrics displayed
     let ActivityIcon = Footprints;
@@ -284,14 +284,14 @@ const HealthCard = ({ type, data, viewMode }) => {
 
   // Render Workouts
   const renderWorkouts = () => {
-    const workoutType = data?.sportTypeKey;
+    const workoutType = data?.activityType?.typeKey;
 
     // We render workouts conditionally for the calendar in its different view modes
     if (viewMode === "month") {
       return (
         <button
           className="month-element workout-element"
-          onClick={() => handleOpenDetails(workoutType?.toLowerCase())}
+          onClick={() => handleOpenDetails("workout")}
         >
           <span>
             <CalendarClock size={10} className="workout" />
@@ -303,7 +303,7 @@ const HealthCard = ({ type, data, viewMode }) => {
       return (
         <div
           className="week-element workout-element"
-          onClick={() => handleOpenDetails(workoutType?.toLowerCase())}
+          onClick={() => handleOpenDetails("workout")}
           role="button"
           tabIndex={0}
         >
@@ -323,7 +323,7 @@ const HealthCard = ({ type, data, viewMode }) => {
     return (
       <div
         className="health-content workout-container"
-        onClick={() => handleOpenDetails(workoutType?.toLowerCase())}
+        onClick={() => handleOpenDetails("workout")}
         role="button"
         tabIndex={0}
       >
@@ -347,7 +347,7 @@ const HealthCard = ({ type, data, viewMode }) => {
         return renderDailySummary();
       case "activity":
         return renderActivity();
-      case "training_plan":
+      case "trainingPlan":
         return renderTrainingPlan();
       case "workout":
         return renderWorkouts();

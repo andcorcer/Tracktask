@@ -21,6 +21,26 @@ import { toggleTask } from "../store/tasksSlice";
 // Import Styles
 import "./DetailsCard.css";
 
+// Function that transforms a time passed in seconds to it's HH:MM:SS format
+const transformTimeFormat = (time) => {
+  // Handle being unable to fetch a time
+  if (!time || typeof time !== "number") return "00:00";
+
+  const hours = Math.floor(time / 3600);
+  const minutes = Math.floor((time % 3600) / 60);
+  const seconds = time % 60;
+
+  // We add padding to the times so that it follows the HH:MM:SS format
+  const paddedHours = hours < 10 ? `0${hours}` : hours;
+  const paddedMinutes = minutes < 10 ? `0${minutes}` : minutes;
+  const paddedSeconds = seconds < 10 ? `0${seconds}` : seconds;
+
+  // We return MM:SS format if time is under an hour
+  return hours
+    ? `${paddedHours}:${paddedMinutes}:${paddedSeconds}`
+    : `${paddedMinutes}:${paddedSeconds}`;
+};
+
 // DetailsCard Component
 const DetailsCard = ({
   type,
@@ -132,7 +152,7 @@ const DetailsCard = ({
     // Convert secondaryType to a human-readable title
     const title = secondaryType
       .replace(/([A-Z])/g, " $1") // Add a space before each uppercase letter
-      .replace(/^./, (str) => str.toUpperCase()); // Capitalize the first letter || 
+      .replace(/^./, (str) => str.toUpperCase()); // Capitalize the first letter ||
 
     // Array of all the meta items for the health details card depending on the secondaryType
     let metaItems = [];
@@ -176,7 +196,9 @@ const DetailsCard = ({
           },
           {
             label: "Stress Duration",
-            value: item?.stressDurationInMilliseconds || 0,
+            value:
+              transformTimeFormat(item?.stressDurationInMilliseconds / 1000) ||
+              0,
           },
           { label: "Stress Episodes", value: item?.stressEpisodes || 0 },
         ];
@@ -204,31 +226,134 @@ const DetailsCard = ({
           {
             label: "Total Intensity Minutes",
             value:
-              item?.moderateIntensityMinutes +
-                item?.vigorousIntensityMinutes * 2 || 0,
+              Number(item?.moderateIntensityMinutes) +
+                Number(item?.vigorousIntensityMinutes) * 2 || 0,
           },
         ];
         break;
-    };
+      case "activity strength":
+        metaItems = [
+          { label: "Duration", value: transformTimeFormat(item?.duration) },
+          {
+            label: "Calories Burned",
+            value: `${Math.round(item?.calories || 0)} kcal`,
+          },
+          { label: "Total Reps", value: item?.totalReps || 0 },
+          { label: "Average Heart Rate", value: `${item?.averageHR || 0} bpm` },
+        ];
+        break;
+      case "activity running":
+        metaItems = [
+          {
+            label: "Distance",
+            value: `${(item?.distance / 1000).toFixed(2)} km`,
+          },
+          { label: "Duration", value: transformTimeFormat(item?.duration) },
+          {
+            label: "Pace",
+            value: `${transformTimeFormat(item?.duration / (item?.distance / 1000))} /km` || "--:--",
+          },
+          { label: "Average Heart Rate", value: `${item?.averageHR || 0} bpm` },
+          {
+            label: "Maximum Heart Rate",
+            value: `${item?.maxHR || 0} bpm`,
+          },
+        ];
+        break;
+
+      case "activity swimming":
+        metaItems = [
+          {
+            label: "Distance",
+            value: `${(item?.distance || 0)} m`,
+          },
+          { label: "Duration", value: transformTimeFormat(item?.duration) },
+          {
+            label: "Pace",
+            value: `${transformTimeFormat(item?.duration / (item?.distance / 100))} /100m` || "--:--",
+          },
+          { label: "Average Swolf", value: item?.averageSwolf || "--" },
+          { label: "Total Strokes", value: item?.totalStrokes || "--" },
+        ];
+        break;
+
+      case "activity other":
+        metaItems = [
+          { label: "Duration", value: transformTimeFormat(item?.duration) },
+          {
+            label: "Calories Burned",
+            value: `${Math.round(item?.calories || 0)} kcal`,
+          },
+          { label: "Average Heart Rate", value: `${item?.averageHR || 0} bpm` },
+          {
+            label: "Maximum Heart Rate",
+            value: `${item?.maxHR || 0} bpm`,
+          },
+        ];
+        break;
+      case "trainingPlan":
+        metaItems = [
+          {
+            label: "Name",
+            value: item?.trainingPlanName || "Active Training Plan",
+          },
+          {
+            label: "Description",
+            value: item?.trainingPlanDescription || "No description available",
+          },
+          {
+            label: "Type",
+            value: item?.typeKey.replace(/_/g, " ").toUpperCase() || "N/A",
+          },
+          {
+            label: "Duration In Weeks",
+            value: `${item?.durationInWeeks} semanas` || "N/A",
+          },
+        ];
+        break;
+      case "workout":
+        metaItems = [
+          {
+            label: "Name",
+            value: item?.title || item?.workoutName || "Upcoming Workout",
+          },
+          {
+            label: "Description",
+            value: item?.description || "No description available",
+          },
+          {
+            label: "Date",
+            value: item?.date
+              ? new Date(item?.date  + "T00:00:00").toLocaleDateString()
+              : "Upcoming",
+          },
+          {
+            label: "Type",
+            value:
+              item?.activityType?.typeKey.replace(/_/g, " ").toUpperCase() ||
+              "N/A",
+          },
+          { label: "Status", value: item?.isCompleted ? "Completed" : "Upcoming" }
+        ];
+        break;
+    }
 
     return (
-          <div className="details-card health-details">
-            {/* Description */}
-            <div className="details-description">
-              <h4 className="details-subtitle">{title}</h4>
+      <div className="details-card health-details">
+        {/* Description */}
+        <div className="details-description">
+          <h4 className="details-subtitle">{title}</h4>
+        </div>
+        <div className="details-meta">
+          {metaItems.map(({ label, value }) => (
+            <div className="details-meta-item">
+              <h4 className="details-subtitle">{label}</h4>
+              <span className="badge steps-badge">{value}</span>
             </div>
-            <div className="details-meta">
-              {metaItems.map(({ label, value }) => (
-               <div className="details-meta-item">
-                <h4 className="details-subtitle">{label}</h4>
-                <span className="badge steps-badge">
-                  {value}
-                </span>
-              </div>
-              ))}
-            </div>
-          </div>
-        );
+          ))}
+        </div>
+      </div>
+    );
   };
 
   // -----------------------------------------------------------------------------------------------------------------
