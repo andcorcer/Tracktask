@@ -7,7 +7,6 @@ import {
   Trash2,
   Tag,
   Repeat,
-  MailOpen,
 } from "lucide-react";
 
 // Import Components

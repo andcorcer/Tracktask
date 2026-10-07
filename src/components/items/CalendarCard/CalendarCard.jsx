@@ -21,6 +21,7 @@ import "./CalendarCard.css";
 
 // Function that transforms times from 00:00:00 format into 00:00 am
 const transformTimes = (startTime, endTime = null) => {
+  if (!startTime) return "";
   // We declare an options variable for .toLocaleTimeString method
   const options = { hour: "2-digit", minute: "2-digit", hour12: true };
 

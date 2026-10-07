@@ -1,7 +1,7 @@
 // Import all dependencies
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Calendar, SquareCheck } from "lucide-react";
+import { Calendar, SquareCheck  } from "lucide-react";
 
 // Import Actions
 import { createTask } from "../../../store/slices/calendarSlice";
@@ -15,7 +15,7 @@ const getLocalDate = () => {
   const today = new Date();
   const year = today.getFullYear();
   const month = String(today.getMonth() + 1).padStart(2, "0");
-  const day = String(today.getDay()).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 };
 
@@ -26,7 +26,9 @@ const CalendarInput = ({ date, entryType, onClose }) => {
   const { calendarList, tasksList } = useSelector((state) => state.calendar);
 
   // Local states to track what the input fields have
-  const [entryType, setEntryType] = useState(entryType || "event");
+  const [currentEntryType, setCurrentEntryType] = useState(
+    entryType || "event",
+  );
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("General");
   const [selectedDate, setSelectedDate] = useState(date || getLocalDate());
@@ -51,7 +53,7 @@ const CalendarInput = ({ date, entryType, onClose }) => {
     if (!title.trim()) return;
 
     // If the enrty Type is event
-    if (entryType === "event") {
+    if (currentEntryType === "event") {
       const eventData = {
         summary: title.trim(),
         description: description.trim(),
@@ -86,7 +88,7 @@ const CalendarInput = ({ date, entryType, onClose }) => {
   };
 
   const handleClear = () => {
-    setEntryType("event");
+    setCurrentEntryType("event");
     setTitle("");
     setDescription("");
     setSelectedDate(date || getLocalDate());
@@ -103,16 +105,16 @@ const CalendarInput = ({ date, entryType, onClose }) => {
       <div className="form-group entry-type">
         <button
           type="button"
-          className={`btn ${entryType === "event" ? "active" : ""}`}
-          onClick={() => setEntryType("event")}
+          className={`btn ${currentEntryType === "event" ? "active" : ""}`}
+          onClick={() => setCurrentEntryType("event")}
         >
           <Calendar size={18} />
           Event
         </button>
         <button
           type="button"
-          className={`btn ${entryType === "task" ? "active" : ""}`}
-          onClick={() => setEntryType("task")}
+          className={`btn ${currentEntryType === "task" ? "active" : ""}`}
+          onClick={() => setCurrentEntryType("task")}
         >
           <SquareCheck size={18} />
           Task
@@ -122,9 +124,9 @@ const CalendarInput = ({ date, entryType, onClose }) => {
       {/* Target List */}
       <div className="form-group target-list">
         <label htmlFor="target-list">
-          {entryType === "event" ? "Calendar List" : "Tasks List"}
+          {currentEntryType === "event" ? "Calendar List" : "Tasks List"}
         </label>
-        {entryType === "event" ? (
+        {currentEntryType === "event" ? (
           <select
             id="target-list"
             value={calendarListId}
@@ -166,7 +168,7 @@ const CalendarInput = ({ date, entryType, onClose }) => {
           />
         </div>
 
-        {entryType === "event" && (
+        {currentEntryType === "event" && (
           <div className="form-group all-day">
             <label htmlFor="all-day-checkbox">
               <input
@@ -184,7 +186,7 @@ const CalendarInput = ({ date, entryType, onClose }) => {
       {/* Time Selectors */}
       {!isAllDay && (
         <div className="form-row">
-          {entryType === "event" && (
+          {currentEntryType === "event" && (
             <div className="form-group start-time">
               <label htmlFor="start-time">Start Time</label>
               <input
@@ -198,7 +200,7 @@ const CalendarInput = ({ date, entryType, onClose }) => {
 
           <div className="form-group end-time">
             <label htmlFor="end-time">
-              {entryType === "event" ? "End Time" : "Due Time"}
+              {currentEntryType === "event" ? "End Time" : "Due Time"}
             </label>
             <input
               id="end-time"
@@ -245,7 +247,7 @@ const CalendarInput = ({ date, entryType, onClose }) => {
           type="submit"
           disabled={!title.trim()}
         >
-          {`Save ${entryType === "event" ? "Event" : "Task"}`}
+          {`Save ${currentEntryType === "event" ? "Event" : "Task"}`}
         </button>
       </div>
     </form>

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import {
   Plus,
-  CheckCircle2,
+  CircleCheck,
   Circle,
   Tag,
   Repeat,
@@ -16,6 +16,14 @@ import {
   CalendarClock,
   Square,
   SquareCheckBig,
+  Footprints,
+  Flame,
+  Activity,
+  HeartPulse,
+  FaceAngry,
+  DoorStairwell,
+  Calendar1,
+  ClipboardList,
 } from "lucide-react";
 
 // Import Components
@@ -23,7 +31,7 @@ import CalendarInput from "../CalendarInput/CalendarInput";
 
 // Import Actions
 import { toggleTodo, deleteTodo } from "../store/todosSlice";
-import { toggleTask } from "../store/tasksSlice";
+import { toggleTask } from "../../../store/slices/calendarSlice";
 
 // Import Styles
 import "./DetailsCard.css";
@@ -52,7 +60,7 @@ const getLocalDate = () => {
   const today = new Date();
   const year = today.getFullYear();
   const month = String(today.getMonth() + 1).padStart(2, "0");
-  const day = String(today.getDay()).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 };
 
@@ -80,7 +88,13 @@ const DetailsCard = ({
   };
 
   if (showInput) {
-    return <CalendarInput date={date} entryType={entryType} onClose={() => setShowInput(false)} />;
+    return (
+      <CalendarInput
+        date={date}
+        entryType={entryType}
+        onClose={() => setShowInput(false)}
+      />
+    );
   }
 
   // -----------------------------------------------------------------------------------------------------------------
@@ -111,7 +125,7 @@ const DetailsCard = ({
             onClick={handleToggle}
             aria-label={completed ? "Todo incomplete" : "Todo complete"}
           >
-            {completed ? <CheckCircle2 size={20} /> : <Circle size={20} />}
+            {completed ? <CircleCheck size={20} /> : <Circle size={20} />}
             <span className="checkbox-label">
               {completed ? "Completed" : "Incompleted"}
             </span>
@@ -387,10 +401,13 @@ const DetailsCard = ({
           <h4 className="details-subtitle">{title}</h4>
         </div>
         <div className="details-meta">
-          {metaItems.map(({ label, value }) => (
-            <div className="details-meta-item">
+          {metaItems.map(({ label, value }, index) => (
+            <div className="details-meta-item" key={index}>
               <h4 className="details-subtitle">{label}</h4>
-              <span className="badge steps-badge">{value}</span>
+              <span className="badge details-badge">
+                {icon && icon}
+                {value}
+              </span>
             </div>
           ))}
         </div>
@@ -416,15 +433,16 @@ const DetailsCard = ({
       e.stopPropagation(); // Doesn't affect parent elements
       dispatch(
         toggleTask({
-          taskId: data.id,
-          isCompleted: data?.status === "needsAction", // If a task isn't completed we set isCompleted to true and vice versa
+          taskId: item?.id,
+          isCompleted: item?.status === "needsAction", // If a task isn't completed we set isCompleted to true and vice versa
           listId: taskListId,
         }),
       );
     };
 
-    switch (secondaryType) { 
+    switch (secondaryType) {
       case "taskList":
+        icon = <ClipboardList size={20} />;
         metaItems = [
           {
             label: "Title",
@@ -432,11 +450,14 @@ const DetailsCard = ({
           },
           {
             label: "Last Updated",
-            value: new Date(item?.updated).toISOString().split("T")[0] || "(No date)",
+            value: item?.updated
+              ? new Date(item?.updated).toISOString().split("T")[0]
+              : "(No date)",
           },
         ];
         break;
       case "calendarList":
+        icon = <CalendarClock size={20} />;
         metaItems = [
           {
             label: "Title",
@@ -446,17 +467,18 @@ const DetailsCard = ({
             label: "Description",
             value: item?.description || "(No description)",
           },
-          { 
+          {
             label: "Access Role",
             value: item?.accessRole || "reader",
           },
           {
             label: "Timezone",
             value: item?.timeZone || getLocalDate(),
-          }
+          },
         ];
         break;
       case "event":
+        icon = <Calendar1 size={20} />;
         metaItems = [
           {
             label: "Title",
@@ -474,27 +496,33 @@ const DetailsCard = ({
             label: "Status",
             value: item?.status || "(No status)",
           },
-          { 
+          {
             label: "Date",
-            value: item?.start?.date ? item?.start?.date : item?.start?.dateTime?.split("T")[0] || "(No date)",
+            value: item?.start?.date
+              ? item?.start?.date
+              : item?.start?.dateTime?.split("T")[0] || "(No date)",
           },
         ];
 
-        item?.start?.dateTime && metaItems.push({
-          label: "Time",
-          value: (() => {
-            const formatTime = new Intl.DateTimeFormat("default", {
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: true,
-            });
-            const startTime = formatTime.format(new Date(item?.start?.dateTime));
-            const endTime = formatTime.format(new Date(item?.end?.dateTime));
-            return `${startTime} - ${endTime}`;
-          })(),
-        });
+        item?.start?.dateTime &&
+          metaItems.push({
+            label: "Time",
+            value: (() => {
+              const formatTime = new Intl.DateTimeFormat("default", {
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true,
+              });
+              const startTime = formatTime.format(
+                new Date(item?.start?.dateTime),
+              );
+              const endTime = formatTime.format(new Date(item?.end?.dateTime));
+              return `${startTime} - ${endTime}`;
+            })(),
+          });
         break;
       case "task":
+        icon = <ClipboardList size={20} />;
         metaItems = [
           {
             label: "Title",
@@ -510,14 +538,17 @@ const DetailsCard = ({
           },
           {
             label: "Due Date",
-            value: item?.due.split("T")[0] || "(No due date)",
+            value: item?.due ? item?.due.split("T")[0] : "(No due date)",
           },
         ];
 
-        item?.completed && metaItems.push({
-          label: "Completed Time",
-          value: item?.completed?.split("T")[0] || "(No completed time)",
-        });
+        item?.completed &&
+          metaItems.push({
+            label: "Completed Time",
+            value: item?.completed
+              ? item?.completed.split("T")[0]
+              : "(No completed time)",
+          });
         break;
     }
 
@@ -529,7 +560,7 @@ const DetailsCard = ({
             className="btn toggle-task-btn"
             onClick={(e) => handleToggleTask(e, taskListId)}
           >
-            {data?.status === "needsAction" ? (
+            {item?.status === "needsAction" ? (
               <Square size={18} className="task" />
             ) : (
               <SquareCheckBig size={18} className="task" />
@@ -537,39 +568,35 @@ const DetailsCard = ({
           </button>
         )}
 
-        <div className="details-card calendar-details">
-
-          {/* Description */}
-          <div className="details-description">
-            <h4 className="details-subtitle">{title}</h4>
-          </div>
-
-          {/* Meta Information */}
-          <div className="details-meta">
-            {metaItems.map(({ label, value }) => (
-              <div className="details-meta-item">
-                <h4 className="details-subtitle">{label}</h4>
-                <span className="badge steps-badge">{value}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* Actions */}
-          {(secondaryType === "calendarList" ||
-            secondaryType === "taskList") && (
-            <div className="details-actions">
-              <button
-                className={`btn add-${secondaryType === "calendarList" ? "calendar" : "task"}-btn`}
-                onClick={() => handleOpenInput(secondaryType)}
-                title={`Create ${secondaryType === "calendarList" ? "Calendar" : "Task"}`}
-                aria-label={`Create ${secondaryType === "calendarList" ? "Calendar" : "Task"}`}
-              >
-                <Plus size={16} />
-                {`Create ${secondaryType === "calendarList" ? "Calendar" : "Task"}`}
-              </button>
-            </div>
-          )}
+        {/* Description */}
+        <div className="details-description">
+          <h4 className="details-subtitle">{title}</h4>
         </div>
+
+        {/* Meta Information */}
+        <div className="details-meta">
+          {metaItems.map(({ label, value }, index) => (
+            <div className="details-meta-item" key={index}>
+              <h4 className="details-subtitle">{label}</h4>
+              <span className="badge steps-badge">{value}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Actions */}
+        {(secondaryType === "calendarList" || secondaryType === "taskList") && (
+          <div className="details-actions">
+            <button
+              className={`btn add-${secondaryType === "calendarList" ? "calendar" : "task"}-btn`}
+              onClick={() => handleOpenInput(secondaryType)}
+              title={`Create ${secondaryType === "calendarList" ? "Calendar" : "Task"}`}
+              aria-label={`Create ${secondaryType === "calendarList" ? "Calendar" : "Task"}`}
+            >
+              <Plus size={16} />
+              {`Create ${secondaryType === "calendarList" ? "Calendar" : "Task"}`}
+            </button>
+          </div>
+        )}
       </div>
     );
   };
@@ -587,7 +614,11 @@ const DetailsCard = ({
         return <p>Unknown Details Type</p>;
     }
   };
-  return <div>{renderContent()}</div>;
+  return (
+    <div>
+      {renderContent()}
+    </div>
+  );
 };
 
 // Export the DetailsCard component

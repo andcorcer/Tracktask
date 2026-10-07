@@ -7,8 +7,6 @@ import {
   DoorStairwell,
   Flame,
   HeartPulse,
-  GlassWater,
-  Wind,
   Clock,
   FaceAngry,
   Dumbbell,
@@ -48,16 +46,16 @@ const transformTimeFormat = (time) => {
 const HealthCard = ({ type, data, viewMode }) => {
   // Local state to render the DetailsCard component conditionally
   const [showDetails, setShowDetails] = useState(false);
-  const [selectedSubType, setselectedSubType] = useState(null);
+  const [selectedSubType, setSelectedSubType] = useState(null);
 
   const handleOpenDetails = (secondaryType) => {
     setShowDetails(true);
-    setselectedSubType(secondaryType);
+    setSelectedSubType(secondaryType);
   };
 
   const handleCloseDetails = () => {
     setShowDetails(false);
-    setselectedSubType(null);
+    setSelectedSubType(null);
   };
 
   // Render Daily Summary
@@ -163,7 +161,7 @@ const HealthCard = ({ type, data, viewMode }) => {
       ActivityIcon = SportShoe;
       activityString = "Running";
       subtext1 = `${(data?.distance / 1000).toFixed(2)} km`;
-      subtext2 = `${transformTimeFormat(data?.duration / (data?.distance / 1000))} /km`;
+      subtext2 = data?.distance ? `${transformTimeFormat(data?.duration / (data?.distance / 1000))} /km` : "--";
     } else if (isSwimming) {
       ActivityIcon = WavesLadder;
       activityString = "Swimming";
@@ -176,7 +174,7 @@ const HealthCard = ({ type, data, viewMode }) => {
       return (
         <button
           className="month-element activity-element"
-          onClick={() => handleOpenDetails(activityString?.toLowerCase())}
+          onClick={() => handleOpenDetails(`activity ${activityString?.toLowerCase()}`)}
         >
           <span>
             <ActivityIcon size={10} className={activityString} />
@@ -188,7 +186,7 @@ const HealthCard = ({ type, data, viewMode }) => {
       return (
         <div
           className="week-element activity-element"
-          onClick={() => handleOpenDetails(activityString?.toLowerCase())}
+          onClick={() => handleOpenDetails(`activity ${activityString?.toLowerCase()}`)}
           role="button"
           tabIndex={0}
         >
@@ -207,7 +205,7 @@ const HealthCard = ({ type, data, viewMode }) => {
     return (
       <div
         className="health-content activity-container"
-        onClick={() => handleOpenDetails(activityString?.toLowerCase())}
+        onClick={() => handleOpenDetails(`activity ${activityString?.toLowerCase()}`)}
         role="button"
         tabIndex={0}
       >
