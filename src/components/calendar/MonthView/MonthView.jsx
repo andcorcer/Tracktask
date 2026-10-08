@@ -15,4 +15,5 @@ const MonthView = () => {
    ); 
 }
 
+// Export the MonthView component
 export default MonthView;

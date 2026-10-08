@@ -15,4 +15,5 @@ const WeekView = () => {
    ); 
 }
 
+// Export the WeekView component
 export default WeekView;

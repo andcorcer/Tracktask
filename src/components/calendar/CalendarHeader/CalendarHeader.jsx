@@ -1,6 +1,12 @@
 // Import all dependencies
 import React, { useState } from "react";
-import { CircleChevronRight, CircleChevronLeft, Calendar, CalendarDays, CalendarRange } from "lucide-react";
+import {
+  CircleChevronRight,
+  CircleChevronLeft,
+  Calendar,
+  CalendarDays,
+  CalendarRange,
+} from "lucide-react";
 
 // Import Styles
 import "./CalendarHeader.css";
@@ -33,19 +39,10 @@ const getWeekRange = (providedDate) => {
 const CalendarHeader = ({
   date = new Date(),
   isHomePage = false,
+  viewMode = "day",
   onViewChange,
   onNavigate,
 }) => {
-  // Local state to handle the view mode
-  const [viewMode, setViewMode] = useState("day"); // Default view mode is "day"
-
-  // Handlers
-  const handleViewModeChange = (mode) => {
-    if (isHomePage) return; // Prevent changing view mode on the home page
-    setViewMode(mode);
-    onViewChange?.(mode); // Notify parent component of the view mode change
-  };
-
   return (
     <header className="calendar-header">
       {/* Date Actions */}
@@ -86,37 +83,39 @@ const CalendarHeader = ({
         </h2>
       </div>
 
-      {/* View Mode Switcher */}
-      <div
-        className="view-mode-switcher"
-        role="radiogroup"
-        aria-label="Calendar View Options"
-      >
-        <button
-          type="button"
-          className={`btn view-btn ${viewMode === "day" ? "active" : ""}`}
-          onClick={() => handleViewModeChange("day")}
+      {/* View Mode Switcher (only when not on the home page) */}
+      {!isHomePage && (
+        <div
+          className="view-mode-switcher"
+          role="radiogroup"
+          aria-label="Calendar View Options"
         >
-          <Calendar size={16} />
-          <span>Day</span>
-        </button>
-        <button
-          type="button"
-          className={`btn view-btn ${viewMode === "week" ? "active" : ""}`}
-          onClick={() => handleViewModeChange("week")}
-        >
-          <CalendarDays size={16} />
-          <span>Week</span>
-        </button>
-        <button
-          type="button"
-          className={`btn view-btn ${viewMode === "month" ? "active" : ""}`}
-          onClick={() => handleViewModeChange("month")}
-        >
-          <CalendarRange size={16} />
-          <span>Month</span>
-        </button>
-      </div>
+          <button
+            type="button"
+            className={`btn view-btn ${viewMode === "day" ? "active" : ""}`}
+            onClick={() => onViewChange("day")}
+          >
+            <Calendar size={16} />
+            <span>Day</span>
+          </button>
+          <button
+            type="button"
+            className={`btn view-btn ${viewMode === "week" ? "active" : ""}`}
+            onClick={() => onViewChange("week")}
+          >
+            <CalendarDays size={16} />
+            <span>Week</span>
+          </button>
+          <button
+            type="button"
+            className={`btn view-btn ${viewMode === "month" ? "active" : ""}`}
+            onClick={() => onViewChange("month")}
+          >
+            <CalendarRange size={16} />
+            <span>Month</span>
+          </button>
+        </div>
+      )}
     </header>
   );
 };

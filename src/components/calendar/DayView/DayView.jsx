@@ -15,4 +15,5 @@ const DayView = () => {
    ); 
 }
 
+// Export the DayView component
 export default DayView;
