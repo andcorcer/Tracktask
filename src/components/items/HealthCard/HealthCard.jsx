@@ -7,8 +7,6 @@ import {
   DoorStairwell,
   Flame,
   HeartPulse,
-  GlassWater,
-  Wind,
   Clock,
   FaceAngry,
   Dumbbell,
@@ -48,16 +46,16 @@ const transformTimeFormat = (time) => {
 const HealthCard = ({ type, data, viewMode }) => {
   // Local state to render the DetailsCard component conditionally
   const [showDetails, setShowDetails] = useState(false);
-  const [selectedSubType, setselectedSubType] = useState(null);
+  const [selectedSubType, setSelectedSubType] = useState(null);
 
   const handleOpenDetails = (secondaryType) => {
     setShowDetails(true);
-    setselectedSubType(secondaryType);
+    setSelectedSubType(secondaryType);
   };
 
   const handleCloseDetails = () => {
     setShowDetails(false);
-    setselectedSubType(null);
+    setSelectedSubType(null);
   };
 
   // Render Daily Summary
@@ -131,29 +129,6 @@ const HealthCard = ({ type, data, viewMode }) => {
       </div>
 
       <div
-        className="metric hydration"
-        onClick={() => handleOpenDetails("hydration")}
-        role="button"
-        tabIndex={0}
-      >
-        <GlassWater size={16} className="hydration-icon" />
-        <span>
-          {data?.hydrationAmount || 0} of{" "}
-          {data?.hydrationGoal?.toLocaleString() || "Unknown"}
-        </span>
-      </div>
-
-      <div
-        className="metric respiration"
-        onClick={() => handleOpenDetails("respiration")}
-        role="button"
-        tabIndex={0}
-      >
-        <Wind size={16} className="respiration-icon" />
-        <span>{data?.respirationAverage || 0}</span>
-      </div>
-
-      <div
         className="metric intensity-minutes"
         onClick={() => handleOpenDetails("intensityMinutes")}
         role="button"
@@ -167,9 +142,9 @@ const HealthCard = ({ type, data, viewMode }) => {
 
   // Render Activity
   const renderActivity = () => {
-    const isStrength = data?.activityType?.includes("strength");
-    const isRunning = data?.activityType?.includes("running");
-    const isSwimming = data?.activityType?.includes("swimming");
+    const isStrength = data?.activityType?.typeKey?.includes("strength");
+    const isRunning = data?.activityType?.typeKey?.includes("running");
+    const isSwimming = data?.activityType?.typeKey?.includes("swimming");
 
     // We set initial values for the metrics displayed
     let ActivityIcon = Footprints;
@@ -186,7 +161,7 @@ const HealthCard = ({ type, data, viewMode }) => {
       ActivityIcon = SportShoe;
       activityString = "Running";
       subtext1 = `${(data?.distance / 1000).toFixed(2)} km`;
-      subtext2 = `${transformTimeFormat(data?.duration / (data?.distance / 1000))} /km`;
+      subtext2 = data?.distance ? `${transformTimeFormat(data?.duration / (data?.distance / 1000))} /km` : "--";
     } else if (isSwimming) {
       ActivityIcon = WavesLadder;
       activityString = "Swimming";
@@ -199,7 +174,7 @@ const HealthCard = ({ type, data, viewMode }) => {
       return (
         <button
           className="month-element activity-element"
-          onClick={() => handleOpenDetails(activityString?.toLowerCase())}
+          onClick={() => handleOpenDetails(`activity ${activityString?.toLowerCase()}`)}
         >
           <span>
             <ActivityIcon size={10} className={activityString} />
@@ -211,7 +186,7 @@ const HealthCard = ({ type, data, viewMode }) => {
       return (
         <div
           className="week-element activity-element"
-          onClick={() => handleOpenDetails(activityString?.toLowerCase())}
+          onClick={() => handleOpenDetails(`activity ${activityString?.toLowerCase()}`)}
           role="button"
           tabIndex={0}
         >
@@ -230,7 +205,7 @@ const HealthCard = ({ type, data, viewMode }) => {
     return (
       <div
         className="health-content activity-container"
-        onClick={() => handleOpenDetails(activityString?.toLowerCase())}
+        onClick={() => handleOpenDetails(`activity ${activityString?.toLowerCase()}`)}
         role="button"
         tabIndex={0}
       >
@@ -262,7 +237,7 @@ const HealthCard = ({ type, data, viewMode }) => {
   const renderTrainingPlan = () => (
     <div
       className="health-content plan-container"
-      onClick={() => handleOpenDetails()}
+      onClick={() => handleOpenDetails(type)}
       role="button"
       tabIndex={0}
     >
@@ -284,14 +259,14 @@ const HealthCard = ({ type, data, viewMode }) => {
 
   // Render Workouts
   const renderWorkouts = () => {
-    const workoutType = data?.sportTypeKey;
+    const workoutType = data?.activityType?.typeKey;
 
     // We render workouts conditionally for the calendar in its different view modes
     if (viewMode === "month") {
       return (
         <button
           className="month-element workout-element"
-          onClick={() => handleOpenDetails(workoutType?.toLowerCase())}
+          onClick={() => handleOpenDetails("workout")}
         >
           <span>
             <CalendarClock size={10} className="workout" />
@@ -303,7 +278,7 @@ const HealthCard = ({ type, data, viewMode }) => {
       return (
         <div
           className="week-element workout-element"
-          onClick={() => handleOpenDetails(workoutType?.toLowerCase())}
+          onClick={() => handleOpenDetails("workout")}
           role="button"
           tabIndex={0}
         >
@@ -323,7 +298,7 @@ const HealthCard = ({ type, data, viewMode }) => {
     return (
       <div
         className="health-content workout-container"
-        onClick={() => handleOpenDetails(workoutType?.toLowerCase())}
+        onClick={() => handleOpenDetails("workout")}
         role="button"
         tabIndex={0}
       >
@@ -347,7 +322,7 @@ const HealthCard = ({ type, data, viewMode }) => {
         return renderDailySummary();
       case "activity":
         return renderActivity();
-      case "training_plan":
+      case "trainingPlan":
         return renderTrainingPlan();
       case "workout":
         return renderWorkouts();

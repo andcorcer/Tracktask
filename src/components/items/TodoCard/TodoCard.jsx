@@ -7,7 +7,6 @@ import {
   Trash2,
   Tag,
   Repeat,
-  MailOpen,
 } from "lucide-react";
 
 // Import Components
@@ -70,12 +69,12 @@ const TodoCard = ({ todo, date }) => {
       <div className="todo-content">
         <p className="todo-text">{todo.data}</p>
         <div className="todo-meta">
-          <span className="category-badge">
+          <span className="badge category-badge">
             <Tag size={12} />
             {todo.category}
           </span>
           {todo.isDaily && (
-            <span className="daily-badge">
+            <span className="badge daily-badge">
               <Repeat size={12} />
               Daily
             </span>

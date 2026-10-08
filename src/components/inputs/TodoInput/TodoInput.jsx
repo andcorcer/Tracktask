@@ -13,7 +13,7 @@ const getLocalDate = () => {
   const today = new Date();
   const year = today.getFullYear();
   const month = String(today.getMonth() + 1).padStart(2, "0");
-  const day = String(today.getDay()).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 };
 
@@ -52,6 +52,7 @@ const TodoInput = ({ date, onClose }) => {
 
   return (
     <form className="todo-input-form" onSubmit={handleSubmit}>
+      {/* Description Input */}
       <div className="form-group description">
         <label htmlFor="todo-data">Description</label>
         <input
@@ -65,6 +66,7 @@ const TodoInput = ({ date, onClose }) => {
         />
       </div>
 
+      {/* Category and Daily Habit */}
       <div className="form-row other-data">
         <div className="form-group category">
           <label htmlFor="todo-category">Category</label>
@@ -92,6 +94,7 @@ const TodoInput = ({ date, onClose }) => {
         </div>
       </div>
 
+      {/* Action Buttons */}
       <div className="form-group actions">
         <button className="btn clear-btn" type="button" onClick={handleClear}>
           Clear

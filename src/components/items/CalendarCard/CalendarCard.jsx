@@ -21,6 +21,7 @@ import "./CalendarCard.css";
 
 // Function that transforms times from 00:00:00 format into 00:00 am
 const transformTimes = (startTime, endTime = null) => {
+  if (!startTime) return "";
   // We declare an options variable for .toLocaleTimeString method
   const options = { hour: "2-digit", minute: "2-digit", hour12: true };
 
@@ -232,7 +233,7 @@ const CalendarCard = ({ type, data, viewMode, taskListId }) => {
       >
         <div className="task-main">
           <button
-            className="toggle-btn"
+            className="btn toggle-task-btn"
             onClick={(e) => handleToggleTask(e, taskListId)}
           >
             {data?.status === "needsAction" ? (
@@ -253,9 +254,9 @@ const CalendarCard = ({ type, data, viewMode, taskListId }) => {
   // Switch to render each item conditionally depending on which is it
   const renderContent = () => {
     switch (type) {
-      case "calendar_list":
+      case "calendarList":
         return renderCalendarList();
-      case "task_list":
+      case "taskList":
         return renderTaskList();
       case "event":
         return renderEvent();
@@ -275,7 +276,9 @@ const CalendarCard = ({ type, data, viewMode, taskListId }) => {
         <Modal onClose={handleCloseDetails} title="Calendar Details">
           <DetailsCard
             type="calendar"
+            secondaryType={type}
             item={data}
+            taskListId={taskListId}
             onClose={handleCloseDetails}
           />
         </Modal>

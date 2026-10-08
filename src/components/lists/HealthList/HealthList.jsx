@@ -35,8 +35,8 @@ const HealthList = ({ type, startDate, endDate, trainingPlan }) => {
   const upcomingWorkouts = useSelector(
     (state) => state.garmin.upcomingWorkouts.items,
   );
-  const isLoading = (state) => state.garmin.isLoading;
-  const error = (state) => state.garmin.error;
+  const isLoading = useSelector((state) => state.garmin.isLoading);
+  const error = useSelector((state) => state.garmin.error);
 
   // We create a local state to pass onto the retry function so that it refetches all data
   const [retryCount, setRetryCount] = useState(0);
@@ -62,7 +62,7 @@ const HealthList = ({ type, startDate, endDate, trainingPlan }) => {
         }
         break;
 
-      case "training_plan":
+      case "trainingPlan":
         dispatch(fetchTrainingPlans());
         break;
 
@@ -123,7 +123,7 @@ const HealthList = ({ type, startDate, endDate, trainingPlan }) => {
           </div>
         );
 
-      case "training_plan":
+      case "trainingPlan":
         return trainingPlans.length > 0 ? (
           trainingPlans.map((trainingPlan, index) => (
             <HealthCard
@@ -149,7 +149,7 @@ const HealthList = ({ type, startDate, endDate, trainingPlan }) => {
           ))
         ) : (
           <div className="empty-list">
-            <p>No training plans found.</p>
+            <p>No upcoming workouts found.</p>
           </div>
         );
 
