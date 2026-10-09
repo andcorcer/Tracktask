@@ -6,17 +6,6 @@ import { useSelector } from "react-redux";
 import HealthCard from "../../items/HealthCard/HealthCard";
 import CalendarCard from "../../items/CalendarCard/CalendarCard";
 
-// Import Actions
-import {
-  fetchTasks,
-  fetchCalendarEvents,
-} from "../../../store/slices/calendarSlice";
-import { setSelectedDate, setDateRange } from "../../../store/slices/dateSlice";
-import {
-  fetchActivitiesInTimeRange,
-  fetchUpcomingWorkouts,
-} from "../../../store/slices/garminSlice";
-
 // Import Styles
 import "./DayView.css";
 
@@ -40,16 +29,21 @@ const getHoursArray = () => {
   return hours;
 };
 
+const HOURS = getHoursArray();
+
 // Function that safely parses the local time and GMT time returned by the garmin api
 const parseGarminTime = (startTimeLocal, GMTTime) => {
   if (startTimeLocal) {
     const localIsoTime = startTimeLocal.replace(" ", "T");
     const localDate = new Date(localIsoTime);
     if (!isNaN(localDate.getTime())) return new Date(localDate);
-
-    // Fallback to GMT time if local time is invalid
-    return GMTTime ? new Date(GMTTime) : null;
   }
+  if (GMTTime) {
+    // Fallback to GMT time if local time is invalid
+    const gmtDate = new Date(GMTTime);
+    if (!isNaN(gmtDate.getTime())) return new Date(gmtDate);
+  }
+  return null;
 };
 
 // DayView Component
@@ -114,45 +108,53 @@ const DayView = ({ currentDate = new Date() }) => {
           startRow,
           endRow: startRow + durationRows,
         });
+      }
+    });
 
-        // Normalize workouts
-        workouts.forEach((workout) => {
-          const workoutDate = parseGarminTime(
-            workout.startTimeLocal,
-            workout.startTimeGMT,
-          );
-          if (workoutDate) {
-            allDay.push({
-              id: workout.id,
-              type: "workout",
-              data: workout,
-            });
-          }
+    // Normalize workouts
+    workouts.forEach((workout) => {
+      const workoutDate = parseGarminTime(
+        workout.startTimeLocal,
+        workout.startTimeGMT,
+      );
+      if (workoutDate) {
+        allDay.push({
+          id: workout.id,
+          type: "workout",
+          data: workout,
         });
       }
     });
 
+    // Sort timed items by their start row
+    timed.sort((a, b) => a.startRow - b.startRow);
+
     return { allDayItems: allDay, timedItems: timed };
   }, [events, tasks, activities, workouts]);
 
+  // Get the day of the week for the current date
+  const dayNumber = new Date(currentDate).getDate();
+  const dayName = new Date(currentDate)
+    .toLocaleDateString("en-US", { weekday: "short" })
+    .toUpperCase();
+
   return (
     <div className="day-view-container">
+      {/* Date Display */}
+      <div className="day-column-grid-header">
+        <div className="date">
+          <span className="day-name">{dayName}</span>
+          <div className="date-circle">{dayNumber}</div>
+        </div>
+      </div>
+
       {/* Render all-day items */}
       {allDayItems.length > 0 && (
         <div className="all-day-banner">
           <span className="all-day-label">All Day</span>
           <div className="all-day-items">
             {allDayItems.map((item) => {
-              if (item.type === "event")
-                return (
-                  <CalendarCard
-                    key={item.id}
-                    type={item.type}
-                    data={item.data}
-                    viewMode="day"
-                  />
-                );
-              else if (item.type === "task")
+              if (item.type === "event" || item.type === "task")
                 return (
                   <CalendarCard
                     key={item.id}
@@ -175,7 +177,56 @@ const DayView = ({ currentDate = new Date() }) => {
         </div>
       )}
 
-      {/* Hourly Calendar Grid */}
+      {/* Hourly Calendar Grid (96 rows for 15-minute intervals) */}
+      <div className="time-grid-scroll-container">
+        <div className="time-grid">
+          {/* Time labels for each hour */}
+          {HOURS.map((hour) => (
+            <div key={hour} className="time-grid-label">
+              {hour}
+            </div>
+          ))}
+
+          {/* Content borders for grid-hour-rows */}
+          {HOURS.map((hour, index) => (
+            <div
+              key={`line-${hour}-${index + 1}`}
+              className="grid-hour-row"
+              style={{
+                gridRowStart: index * 4 + 1,
+                gridRowEnd: (index + 1) * 4 + 1,
+              }}
+            />
+          ))}
+
+          {/* Item Cards */}
+          {timedItems.map((item) => {
+            return (
+              <div
+                className="timed-card-wrapper"
+                key={item.id}
+                style={{ gridRowStart: item.startRow, gridRowEnd: item.endRow }}
+              >
+                {item.type === "event" || item.type === "task" ? (
+                  <CalendarCard
+                    key={item.id}
+                    type={item.type}
+                    data={item.data}
+                    viewMode="day"
+                  />
+                ) : (
+                  <HealthCard
+                    key={item.id}
+                    type={item.type}
+                    data={item.data}
+                    viewMode="day"
+                  />
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 };
