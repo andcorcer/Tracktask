@@ -58,8 +58,6 @@ const DayView = ({ currentDate = new Date() }) => {
     (state) => state.garmin.upcomingWorkouts.items || [],
   );
 
-  const dateString = currentDate.toISOString().split("T")[0];
-
   // Normalize all states
   const { allDayItems, timedItems } = useMemo(() => {
     const allDay = [];
@@ -182,7 +180,14 @@ const DayView = ({ currentDate = new Date() }) => {
         <div className="time-grid">
           {/* Time labels for each hour */}
           {HOURS.map((hour) => (
-            <div key={hour} className="time-grid-label">
+            <div
+              key={hour}
+              className="time-grid-label"
+              style={{
+                gridRowStart: index * 4 + 1,
+                gridRowEnd: (index + 1) * 4 + 1,
+              }}
+            >
               {hour}
             </div>
           ))}
@@ -209,14 +214,12 @@ const DayView = ({ currentDate = new Date() }) => {
               >
                 {item.type === "event" || item.type === "task" ? (
                   <CalendarCard
-                    key={item.id}
                     type={item.type}
                     data={item.data}
                     viewMode="day"
                   />
                 ) : (
                   <HealthCard
-                    key={item.id}
                     type={item.type}
                     data={item.data}
                     viewMode="day"
