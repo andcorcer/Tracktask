@@ -85,8 +85,8 @@ const parseGarminTime = (startTimeLocal, GMTTime) => {
 
 // WeekView Component
 const WeekView = ({ currentDate = new Date(), onViewChange }) => {
-   const dispatch = useDispatch();
-   
+  const dispatch = useDispatch();
+
   // Events, tasks, activities, workouts and startDate states from the store
   const tasks = useSelector((state) => state.calendar.tasks.items || []);
   const events = useSelector((state) => state.calendar.events.items || []);
@@ -188,7 +188,7 @@ const WeekView = ({ currentDate = new Date(), onViewChange }) => {
         const durationRows = activity.duration
           ? Math.max(1, Math.round(activity.duration / 900))
           : 4;
-        timedByDay[dateToIndexMap[getDateString(activity, "activity")]]?.push({
+        timedByDay[dayIndex]?.push({
           id: activity.id,
           type: "activity",
           data: activity,
@@ -219,125 +219,133 @@ const WeekView = ({ currentDate = new Date(), onViewChange }) => {
     );
 
     return { allDayItemsByDay: allDayByDay, timedItemsbyDay: timedByDay };
-  }, [events, tasks, activities, workouts]);
+  }, [events, tasks, activities, workouts, weekDates]);
+
+  // We convert the current date to a string for easy comparison with the week dates
+  const currentDateString = currentDate.toISOString().split("T")[0];
 
   return (
     <div className="week-view-container">
-      {weekDates.map((day) => (
-        <div key={day.index} className="week-day-column">
-          <div className={`date ${day.dayName ? day.dayName : ""}`}>
-            {/* Date Display */}
-            <div className="day-column-grid-header">
-              <div className="date">
-                <span className="day-name">{day.dayName}</span>
-                <div
-                  onClick={() => {
-                    onViewChange("day");
-                    dispatch(
-                      setSelectedDate({
-                        selectedDate: day.date.toISOString().split("T")[0],
-                      }),
-                    );
-                  }}
-                  role="button"
-                  tabIndex={0}
-                  className={`date-circle ${day.date === currentDate ? "active" : ""}`}
-                >
-                  {day.dayNumber}
-                </div>
-              </div>
-            </div>
-
-            {/* Render all-day items */}
-            {allDayItemsByDay[day.index].length > 0 && (
-              <div className="all-day-banner">
-                <span className="all-day-label">All Day</span>
-                <div className="all-day-items">
-                  {allDayItemsByDay[day.index].map((item) => {
-                    if (item.type === "event" || item.type === "task")
-                      return (
-                        <CalendarCard
-                          key={item.id}
-                          type={item.type}
-                          data={item.data}
-                          viewMode="day"
-                        />
-                      );
-                    else
-                      return (
-                        <HealthCard
-                          key={item.id}
-                          type={item.type}
-                          data={item.data}
-                          viewMode="day"
-                        />
-                      );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* Hourly Calendar Grid (96 rows for 15-minute intervals) */}
-            <div className="time-grid-scroll-container">
-              <div className="time-grid">
-                {/* Time labels for each hour */}
-                {HOURS.map((hour) => (
-                  <div
-                    key={hour}
-                    className="time-grid-label"
-                    style={{
-                      gridRowStart: index * 4 + 1,
-                      gridRowEnd: (index + 1) * 4 + 1,
-                    }}
-                  >
-                    {hour}
-                  </div>
-                ))}
-
-                {/* Content borders for grid-hour-rows */}
-                {HOURS.map((hour, index) => (
-                  <div
-                    key={`line-${hour}-${index + 1}`}
-                    className="grid-hour-row"
-                    style={{
-                      gridRowStart: index * 4 + 1,
-                      gridRowEnd: (index + 1) * 4 + 1,
-                    }}
-                  />
-                ))}
-
-                {/* Item Cards */}
-                {timedItemsbyDay[day.index].map((item) => {
-                  return (
-                    <div
-                      className="timed-card-wrapper"
-                      key={item.id}
-                      style={{
-                        gridRowStart: item.startRow,
-                        gridRowEnd: item.endRow,
-                      }}
-                    >
-                      {item.type === "event" || item.type === "task" ? (
-                        <CalendarCard
-                          type={item.type}
-                          data={item.data}
-                          viewMode="week"
-                        />
-                      ) : (
-                        <HealthCard
-                          type={item.type}
-                          data={item.data}
-                          viewMode="week"
-                        />
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
+      {/* Header for all 7 days of the week */}
+      <div className="week-grid-header">
+        {weekDates.map((day) => (
+          <div key={day.dateString} className="day-column-grid-header">
+            <span className="day-name">{day.dayName}</span>
+            <div
+              onClick={() => {
+                onViewChange("day");
+                dispatch(
+                  setSelectedDate({
+                    selectedDate: day.date.toISOString().split("T")[0],
+                  }),
+                );
+              }}
+              role="button"
+              tabIndex={0}
+              className={`date-circle ${day.dateString === currentDateString ? "active" : ""}`}
+            >
+              {day.dayNumber}
             </div>
           </div>
+        ))}
+      </div>
+
+      {/* Render all-day items */}
+      <div className="week-all-day-banner">
+        <span className="all-day-label">All Day</span>
+        {weekDates.map((day) => (
+          <div
+            key={`all-day ${day.dateString}`}
+            className="all-day-column"
+            style={{ gridColumnStart: day.index + 2 }}
+          >
+            {allDayItemsByDay[day.index].map((item) => {
+              if (item.type === "event" || item.type === "task")
+                return (
+                  <CalendarCard
+                    key={item.id}
+                    type={item.type}
+                    data={item.data}
+                    viewMode="week"
+                  />
+                );
+              else
+                return (
+                  <HealthCard
+                    key={item.id}
+                    type={item.type}
+                    data={item.data}
+                    viewMode="week"
+                  />
+                );
+            })}
+          </div>
+        ))}
+      </div>
+
+      {/* Hourly Calendar Grid (96 rows for 15-minute intervals) */}
+      <div className="time-grid-scroll-container">
+        <div className="week-time-grid">
+          {/* Time labels for each hour */}
+          {HOURS.map((hour, index) => (
+            <div
+              key={hour}
+              className="time-grid-label"
+              style={{
+                gridRowStart: index * 4 + 1,
+                gridRowEnd: (index + 1) * 4 + 1,
+              }}
+            >
+              {hour}
+            </div>
+          ))}
+
+          {/* Content borders for grid-hour-rows */}
+          {HOURS.map((hour, index) => (
+            <div
+              key={`line-${hour}-${index + 1}`}
+              className="grid-hour-row"
+              style={{
+                gridRowStart: index * 4 + 1,
+                gridRowEnd: (index + 1) * 4 + 1,
+                gridColumn: "2 / -1", // Span all columns except the time label column
+              }}
+            />
+          ))}
+
+          {/* Item Cards */}
+          {weekDates.map((day) =>
+            timedItemsbyDay[day.index].map((item) => {
+              return (
+                <div
+                  className="timed-card-wrapper"
+                  key={item.id}
+                  style={{
+                    gridRowStart: item.startRow,
+                    gridRowEnd: item.endRow,
+                    gridColumnStart: day.index + 2,
+                    gridColumnEnd: day.index + 3,
+                  }}
+                >
+                  {item.type === "event" || item.type === "task" ? (
+                    <CalendarCard
+                      type={item.type}
+                      data={item.data}
+                      viewMode="week"
+                    />
+                  ) : (
+                    <HealthCard
+                      type={item.type}
+                      data={item.data}
+                      viewMode="week"
+                    />
+                  )}
+                </div>
+              );
+            }),
+          )}
         </div>
-      ))}
+      </div>
     </div>
   );
 };

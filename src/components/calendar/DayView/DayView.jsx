@@ -179,7 +179,7 @@ const DayView = ({ currentDate = new Date() }) => {
       <div className="time-grid-scroll-container">
         <div className="time-grid">
           {/* Time labels for each hour */}
-          {HOURS.map((hour) => (
+          {HOURS.map((hour, index) => (
             <div
               key={hour}
               className="time-grid-label"
