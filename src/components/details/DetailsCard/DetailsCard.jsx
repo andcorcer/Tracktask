@@ -71,7 +71,6 @@ const DetailsCard = ({
   item,
   date,
   taskListId,
-  onClose,
 }) => {
   const dispatch = useDispatch(); // Get the dispatch function from Redux to dispatch actions
   // Local state to render the CalendarInput component conditionally
