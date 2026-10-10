@@ -1,13 +1,10 @@
 // Import all dependencies
 import React, { useMemo } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
 // Import Components
 import HealthCard from "../../items/HealthCard/HealthCard";
 import CalendarCard from "../../items/CalendarCard/CalendarCard";
-
-// Import Actions
-import { setSelectedDate } from "../../../store/slices/dateSlice";
 
 // Import Styles
 import "./WeekView.css";
@@ -85,7 +82,6 @@ const parseGarminTime = (startTimeLocal, GMTTime) => {
 
 // WeekView Component
 const WeekView = ({ currentDate = new Date(), onViewChange }) => {
-  const dispatch = useDispatch();
 
   // Events, tasks, activities, workouts and startDate states from the store
   const tasks = useSelector((state) => state.calendar.tasks.items || []);
@@ -202,7 +198,7 @@ const WeekView = ({ currentDate = new Date(), onViewChange }) => {
     workouts.forEach((workout) => {
       const workoutDateString = getDateString(workout, "workout");
       const dayIndex = dateToIndexMap[workoutDateString];
-      if (dayIndex === undefined) return; // Skip activities that are not in the current week
+      if (dayIndex === undefined) return; // Skip workouts that are not in the current week
 
       if (workoutDateString) {
         allDayByDay[dayIndex]?.push({
@@ -232,17 +228,10 @@ const WeekView = ({ currentDate = new Date(), onViewChange }) => {
           <div key={day.dateString} className="day-column-grid-header">
             <span className="day-name">{day.dayName}</span>
             <div
-              onClick={() => {
-                onViewChange("day");
-                dispatch(
-                  setSelectedDate({
-                    selectedDate: day.date.toISOString().split("T")[0],
-                  }),
-                );
-              }}
+              onClick={() => onViewChange("day", day.date)}
               role="button"
               tabIndex={0}
-              className={`date-circle ${day.dateString === currentDateString ? "active" : ""}`}
+              className={`date-circle ${day.dateString === new Date().toISOString().split("T")[0] ? "active" : ""}`}
             >
               {day.dayNumber}
             </div>

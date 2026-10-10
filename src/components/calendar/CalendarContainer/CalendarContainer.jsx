@@ -25,28 +25,41 @@ import "./CalendarContainer.css";
 // Function to get the display format for the container component using the current date based on the view mode
 const getDateRange = (date, viewMode) => {
   const start = new Date(date);
-  const end = new Date(date);
+  let end = new Date(date);
 
   switch (viewMode) {
     case "day":
+
       // Set the start and end times for the day view
       start.setHours(0, 0, 0, 0); // Set the start time to the beginning of the day
       end.setHours(23, 59, 59, 999); // Set the end time to the end of the day
       break;
+
     case "week":
+
       const dayOfWeek = start.getDay();
       start.setDate(start.getDate() - dayOfWeek); // Sunday as the first day of the week
       start.setHours(0, 0, 0, 0); // Set the start time to the beginning of the day
       end.setDate(start.getDate() + 6); // Saturday as the last day of the week
       end.setHours(23, 59, 59, 999); // Set the end time to the end of the week
       break;
+
     case "month":
-      start.setDate(1); // Set to the first day of the month
+
+      // Get the first day of the current month
+      const firstDayOfMonth = new Date(start.getFullYear(), start.getMonth(), 1);
+
+      // We move to the start of the week that contains the first day of the month
+      start.setTime(firstDayOfMonth.getTime()); // We equal times so that we don't go over or under
+      start.setDate(start.getDate() - start.getDay()); // Move to the start of the week containing the first day of the month
       start.setHours(0, 0, 0, 0); // Set the start time to the beginning of the day
-      end.setMonth(start.getMonth() + 1);
-      end.setDate(0); // Set to the last day of the previous month (effectively the last day of the current month)
+
+      // Get the last day in the 6 * 7 grid
+      end = new Date(start);
+      end.setDate(start.getDate() + 41); // Set to the last day in the 6 * 7 grid (42 days total)
       end.setHours(23, 59, 59, 999); // Set the end time to the end of the day
       break;
+
     default:
       break;
   }
@@ -61,8 +74,8 @@ const getDateRange = (date, viewMode) => {
 const CalendarContainer = ({ isHomePage = false, initialViewMode = "day" }) => {
   const dispatch = useDispatch(); // Redux dispatch function
 
-  const selectedDate = useSelector((state) => state.date.selectedDate);
-  const currentDate = useMemo(() => new Date(selectedDate), [selectedDate]);
+  const date = useSelector((state) => state.date.selectedDate);
+  const selectedDate = useMemo(() => new Date(date), [date]);
 
   const [viewMode, setViewMode] = useState(
     isHomePage ? "day" : initialViewMode,
@@ -70,7 +83,7 @@ const CalendarContainer = ({ isHomePage = false, initialViewMode = "day" }) => {
 
   // Get the date range for the current view mode
   const viewRange = isHomePage ? "day" : viewMode;
-  const { startDate, endDate } = useMemo(() => getDateRange(currentDate, viewRange), [currentDate, viewRange]);
+  const { startDate, endDate } = useMemo(() => getDateRange(selectedDate, viewRange), [selectedDate, viewRange]);
 
   // Call all async thunks whenever the date range changes
   useEffect(() => {
@@ -85,7 +98,7 @@ const CalendarContainer = ({ isHomePage = false, initialViewMode = "day" }) => {
 
   // Navigation handler for the calendar (e.g., next/previous month, week, or day)
   const handleNavigation = (direction) => {
-    const newDate = new Date(currentDate);
+    const newDate = new Date(selectedDate);
     // Handle "today" navigation
     if (direction === "today") {
       dispatch(
@@ -112,28 +125,37 @@ const CalendarContainer = ({ isHomePage = false, initialViewMode = "day" }) => {
   };
 
   // View mode change handler
-  const handleViewModeChange = (mode) => {
-    if (!isHomePage) setViewMode(mode);
+  const handleViewModeChange = (mode, selectedDate) => {
+    if (!isHomePage) {
+      setViewMode(mode);
+      if (selectedDate) {
+        dispatch(
+          setSelectedDate({
+            selectedDate: selectedDate.toISOString().split("T")[0],
+          }),
+        );
+      }
+    }
   };
 
   // Function to render the corresponding calendar view based on the current view mode
   const renderCalendarView = () => {
     switch (viewMode) {
       case "day":
-        return <DayView currentDate={currentDate} />;
+        return <DayView selectedDate={selectedDate} />;
       case "week":
-        return <WeekView currentDate={currentDate} />;
+        return <WeekView selectedDate={selectedDate} onViewChange={handleViewModeChange} />;
       case "month":
-        return <MonthView currentDate={currentDate} />;
+        return <MonthView selectedDate={selectedDate} onViewChange={handleViewModeChange} />;
       default:
-        return <DayView currentDate={currentDate} />;
+        return <DayView selectedDate={selectedDate} />;
     }
   };
 
   return (
     <div className="calendar-container">
       <CalendarHeader
-        date={currentDate}
+        date={selectedDate}
         isHomePage={isHomePage}
         viewMode={viewMode}
         onViewChange={handleViewModeChange}

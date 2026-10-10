@@ -142,7 +142,11 @@ const DayView = ({ currentDate = new Date() }) => {
       <div className="day-column-grid-header">
         <div className="date">
           <span className="day-name">{dayName}</span>
-          <div className="date-circle">{dayNumber}</div>
+          <div
+            className={`date-circle ${new Date(currentDate).toISOString().split("T")[0] === new Date().toISOString().split("T")[0] ? "active" : ""}`}
+          >
+            {dayNumber}
+          </div>
         </div>
       </div>
 
