@@ -59,7 +59,7 @@ const parseGarminTime = (startTimeLocal, GMTTime) => {
 };
 
 // MonthView Component
-const MonthView = ({ currentDate = new Date(), onViewChange }) => {
+const MonthView = ({ selectedDate = new Date(), onViewChange }) => {
   // Events, tasks, activities, workouts and startDate states from the store
   const tasks = useSelector((state) => state.calendar.tasks.items || []);
   const events = useSelector((state) => state.calendar.events.items || []);
@@ -77,7 +77,7 @@ const MonthView = ({ currentDate = new Date(), onViewChange }) => {
     if (!startDate || !endDate) return [];
 
     const start = new Date(startDate);
-    const targetMonth = currentDate.getMonth();
+    const targetMonth = selectedDate.getMonth();
 
     return Array.from({ length: 42 }, (_, i) => {
       const date = new Date(start);
@@ -92,7 +92,7 @@ const MonthView = ({ currentDate = new Date(), onViewChange }) => {
         isCurrentMonth: date.getMonth() === targetMonth,
       };
     });
-  }, [startDate, currentDate]);
+  }, [startDate, selectedDate]);
 
   // Normalize all states
   const { allDayItemsByDay, timedItemsbyDay } = useMemo(() => {
@@ -175,7 +175,7 @@ const MonthView = ({ currentDate = new Date(), onViewChange }) => {
   }, [events, tasks, activities, workouts, monthDates]);
 
   // We convert the current date to a string for easy comparison with the month dates
-  const currentDateString = currentDate.toISOString().split("T")[0];
+  const currentDateString = selectedDate.toISOString().split("T")[0];
 
   return (
     <div className="month-view-container">

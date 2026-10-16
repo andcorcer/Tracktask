@@ -71,15 +71,11 @@ const getDateRange = (date, viewMode) => {
 };
 
 // CalendarContainer Component
-const CalendarContainer = ({ isHomePage = false, initialViewMode = "day" }) => {
+const CalendarContainer = ({ isHomePage = false, viewMode = "day", onViewChange }) => {
   const dispatch = useDispatch(); // Redux dispatch function
 
   const date = useSelector((state) => state.date.selectedDate);
   const selectedDate = useMemo(() => new Date(date), [date]);
-
-  const [viewMode, setViewMode] = useState(
-    isHomePage ? "day" : initialViewMode,
-  ); // Local state to handle the view mode
 
   // Get the date range for the current view mode
   const viewRange = isHomePage ? "day" : viewMode;
@@ -124,29 +120,15 @@ const CalendarContainer = ({ isHomePage = false, initialViewMode = "day" }) => {
     );
   };
 
-  // View mode change handler
-  const handleViewModeChange = (mode, selectedDate) => {
-    if (!isHomePage) {
-      setViewMode(mode);
-      if (selectedDate) {
-        dispatch(
-          setSelectedDate({
-            selectedDate: selectedDate.toISOString().split("T")[0],
-          }),
-        );
-      }
-    }
-  };
-
   // Function to render the corresponding calendar view based on the current view mode
   const renderCalendarView = () => {
     switch (viewMode) {
       case "day":
         return <DayView selectedDate={selectedDate} />;
       case "week":
-        return <WeekView selectedDate={selectedDate} onViewChange={handleViewModeChange} />;
+        return <WeekView selectedDate={selectedDate} onViewChange={onViewChange} />;
       case "month":
-        return <MonthView selectedDate={selectedDate} onViewChange={handleViewModeChange} />;
+        return <MonthView selectedDate={selectedDate} onViewChange={onViewChange} />;
       default:
         return <DayView selectedDate={selectedDate} />;
     }
@@ -158,7 +140,7 @@ const CalendarContainer = ({ isHomePage = false, initialViewMode = "day" }) => {
         date={selectedDate}
         isHomePage={isHomePage}
         viewMode={viewMode}
-        onViewChange={handleViewModeChange}
+        onViewChange={onViewChange}
         onNavigate={handleNavigation}
       />
       <main className="calendar-body">{renderCalendarView()}</main>

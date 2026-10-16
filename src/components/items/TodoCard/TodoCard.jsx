@@ -14,7 +14,7 @@ import DetailsCard from "../../details/DetailsCard/DetailsCard";
 import Modal from "../../details/Modal/Modal";
 
 // Import Actions
-import { toggleTodo, deleteTodo } from "../store/todosSlice";
+import { toggleTodo, deleteTodo } from "../../../store/slices/todosSlice";
 
 // Import Styles
 import "./TodoCard.css";

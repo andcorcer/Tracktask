@@ -47,7 +47,7 @@ const parseGarminTime = (startTimeLocal, GMTTime) => {
 };
 
 // DayView Component
-const DayView = ({ currentDate = new Date() }) => {
+const DayView = ({ selectedDate = new Date() }) => {
   // Events, tasks, activities and workouts states from the store
   const tasks = useSelector((state) => state.calendar.tasks.items || []);
   const events = useSelector((state) => state.calendar.events.items || []);
@@ -131,8 +131,8 @@ const DayView = ({ currentDate = new Date() }) => {
   }, [events, tasks, activities, workouts]);
 
   // Get the day of the week for the current date
-  const dayNumber = new Date(currentDate).getDate();
-  const dayName = new Date(currentDate)
+  const dayNumber = new Date(selectedDate).getDate();
+  const dayName = new Date(selectedDate)
     .toLocaleDateString("en-US", { weekday: "short" })
     .toUpperCase();
 
@@ -143,7 +143,7 @@ const DayView = ({ currentDate = new Date() }) => {
         <div className="date">
           <span className="day-name">{dayName}</span>
           <div
-            className={`date-circle ${new Date(currentDate).toISOString().split("T")[0] === new Date().toISOString().split("T")[0] ? "active" : ""}`}
+            className={`date-circle ${new Date(selectedDate).toISOString().split("T")[0] === new Date().toISOString().split("T")[0] ? "active" : ""}`}
           >
             {dayNumber}
           </div>

@@ -8,7 +8,7 @@ import {
   Tag,
   Repeat,
   Trash2,
-  MailPen,
+  CalendarPlus,
   Dumbbell,
   SportShoe,
   WavesLadder,
@@ -21,16 +21,16 @@ import {
   Activity,
   HeartPulse,
   FaceAngry,
-  DoorStairwell,
+  TrendingUp,
   Calendar1,
   ClipboardList,
 } from "lucide-react";
 
 // Import Components
-import CalendarInput from "../CalendarInput/CalendarInput";
+import CalendarInput from "../../inputs/CalendarInput/CalendarInput";
 
 // Import Actions
-import { toggleTodo, deleteTodo } from "../store/todosSlice";
+import { toggleTodo, deleteTodo } from "../../../store/slices/todosSlice";
 import { toggleTask } from "../../../store/slices/calendarSlice";
 
 // Import Styles
@@ -158,7 +158,7 @@ const DetailsCard = ({
           <div className="details-meta-item">
             <h4 className="details-subtitle">Created</h4>
             <span className="badge daily-badge">
-              <MailPen size={16} />
+              <CalendarPlus size={16} />
               {item.createdAt || date}
             </span>
           </div>
@@ -201,7 +201,7 @@ const DetailsCard = ({
         ];
         break;
       case "floors":
-        icon = <DoorStairwell size={16} />;
+        icon = <TrendingUp size={16} />;
         metaItems = [
           { label: "Floors Ascended", value: item?.floorsAscended || 0 },
           { label: "Floors Descended", value: item?.floorsDescended || 0 },

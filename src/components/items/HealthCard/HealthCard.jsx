@@ -4,7 +4,7 @@ import {
   Activity,
   SportShoe,
   Footprints,
-  DoorStairwell,
+  TrendingUp,
   Flame,
   HeartPulse,
   Clock,
@@ -80,7 +80,7 @@ const HealthCard = ({ type, data, viewMode }) => {
         role="button"
         tabIndex={0}
       >
-        <DoorStairwell size={16} className="floors-icon" />
+        <TrendingUp size={16} className="floors-icon" />
         <span>
           {data?.floorsAscended?.toLocaleString() || 0} of{" "}
           {data?.floorsAscendedGoal?.toLocaleString() || "Unknown"} Floors
