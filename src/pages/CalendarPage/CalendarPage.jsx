@@ -37,12 +37,14 @@ const CalendarPage = () => {
       </main>
 
       {/* Other Sidebar Content */}
-      <aside className="calendar-page-aside">
-        <div className="calendar-todos-container">
-         <h3 className="calendar-todos-date">Todos for {dateString}</h3>
-          <TodoList date={date} />
-        </div>
-      </aside>
+      { viewMode === "day" && (
+        <aside className="calendar-page-aside">
+          <div className="calendar-todos-container">
+            <h3 className="calendar-todos-date">Todos for {dateString}</h3>
+            <TodoList date={date} />
+          </div>
+        </aside>
+      )}
     </div>
   );
 };
