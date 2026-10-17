@@ -15,7 +15,7 @@ import {
   fetchTrainingPlans,
   fetchUpcomingWorkouts,
   fetchWorkoutsForTrainingPlan,
-} from "../store/garminSlice";
+} from "../../../store/slices/garminSlice";
 
 // Import Styles
 import "./HealthList.css";
