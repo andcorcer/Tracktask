@@ -1,6 +1,12 @@
 // Import all dependencies
 import axios from "axios";
-import { store } from "../store/store";
+
+// Variable to hold the token provider
+let tokenProvider = null;
+
+export const setCalendarTokenProvider = (provider) => {
+  tokenProvider = provider;
+};
 
 // Create an instance of axios with the base URL for Google Calendar API
 const googleCalendarApi = axios.create({
@@ -13,8 +19,8 @@ const googleCalendarApi = axios.create({
 // Interceptor to add the access token to the request headers upon request
 googleCalendarApi.interceptors.request.use(
   (config) => {
-    const token = store.getState().authentication?.google?.accessToken;
-    if (token) {
+    if (tokenProvider) {
+      const token = tokenProvider();
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;

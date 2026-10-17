@@ -10,12 +10,19 @@ import App from "./components/App/App.jsx";
 // Import Store
 import { store } from "./store/store.js";
 
+// Import provider setters for Google APIs
+import { setCalendarTokenProvider } from "./utilities/googleCalendarApi.js";
+import { setTasksTokenProvider } from "./utilities/googleTasksApi.js";
+
 // Import Styles
 import "./index.css";
 
 // Save the client id from the environment variable to a constant
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
+// Safely set the Google Api's token providers
+setCalendarTokenProvider(() => store.getState().authentication?.google?.accessToken);
+setTasksTokenProvider(() => store.getState().authentication?.google?.accessToken);
 
 // Render the app in the root element of the HTML document, wrapping it with StrictMode, Provider for Redux store, and GoogleOAuthProvider for Google OAuth functionality.
 createRoot(document.getElementById("root")).render(

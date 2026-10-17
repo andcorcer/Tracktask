@@ -81,7 +81,7 @@ const parseGarminTime = (startTimeLocal, GMTTime) => {
 };
 
 // WeekView Component
-const WeekView = ({ currentDate = new Date(), onViewChange }) => {
+const WeekView = ({ selectedDate = new Date(), onViewChange }) => {
 
   // Events, tasks, activities, workouts and startDate states from the store
   const tasks = useSelector((state) => state.calendar.tasks.items || []);
@@ -218,7 +218,7 @@ const WeekView = ({ currentDate = new Date(), onViewChange }) => {
   }, [events, tasks, activities, workouts, weekDates]);
 
   // We convert the current date to a string for easy comparison with the week dates
-  const currentDateString = currentDate.toISOString().split("T")[0];
+  const currentDateString = selectedDate.toISOString().split("T")[0];
 
   return (
     <div className="week-view-container">
@@ -231,7 +231,7 @@ const WeekView = ({ currentDate = new Date(), onViewChange }) => {
               onClick={() => onViewChange("day", day.date)}
               role="button"
               tabIndex={0}
-              className={`date-circle ${day.dateString === new Date().toISOString().split("T")[0] ? "active" : ""}`}
+              className={`date-circle ${day.dateString === currentDateString ? "active" : ""}`}
             >
               {day.dayNumber}
             </div>
