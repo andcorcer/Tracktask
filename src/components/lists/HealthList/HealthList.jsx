@@ -21,7 +21,7 @@ import {
 import "./HealthList.css";
 
 // HealthList Component
-const HealthList = ({ type, startDate, endDate, trainingPlan }) => {
+const HealthList = ({ type, startDate, endDate, trainingPlan, itemLimit, onAllView }) => {
   const dispatch = useDispatch(); // Get the dispatch function from Redux to dispatch actions
 
   // We get all 'Health' states from the store
@@ -109,8 +109,9 @@ const HealthList = ({ type, startDate, endDate, trainingPlan }) => {
         );
 
       case "activity":
-        return activities.length > 0 ? (
-          activities.map((activity, index) => (
+        const displayedActivities = itemLimit ? activities.slice(0, itemLimit) : activities;
+        return displayedActivities.length > 0 ? (
+          displayedActivities.map((activity, index) => (
             <HealthCard
               key={activity.id || index}
               type={type}
@@ -124,8 +125,9 @@ const HealthList = ({ type, startDate, endDate, trainingPlan }) => {
         );
 
       case "trainingPlan":
-        return trainingPlans.length > 0 ? (
-          trainingPlans.map((trainingPlan, index) => (
+        const displayedTrainingPlans = itemLimit ? trainingPlans.slice(0, itemLimit) : trainingPlans;
+        return displayedTrainingPlans.length > 0 ? (
+          displayedTrainingPlans.map((trainingPlan, index) => (
             <HealthCard
               key={trainingPlan.id || index}
               type={type}
@@ -139,8 +141,9 @@ const HealthList = ({ type, startDate, endDate, trainingPlan }) => {
         );
 
       case "workout":
-        return upcomingWorkouts.length > 0 ? (
-          upcomingWorkouts.map((workout, index) => (
+        const displayedUpcomingWorkouts = itemLimit ? upcomingWorkouts.slice(0, itemLimit) : upcomingWorkouts;
+        return displayedUpcomingWorkouts.length > 0 ? (
+          displayedUpcomingWorkouts.map((workout, index) => (
             <HealthCard
               key={workout.id || index}
               type={type}
@@ -154,7 +157,7 @@ const HealthList = ({ type, startDate, endDate, trainingPlan }) => {
         );
 
       default:
-        break;
+        return null;
     }
   };
 
