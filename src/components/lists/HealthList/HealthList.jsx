@@ -21,7 +21,7 @@ import {
 import "./HealthList.css";
 
 // HealthList Component
-const HealthList = ({ type, startDate, endDate, trainingPlan, itemLimit, onAllView }) => {
+const HealthList = ({ type, startDate, endDate, trainingPlan, itemLimit }) => {
   const dispatch = useDispatch(); // Get the dispatch function from Redux to dispatch actions
 
   // We get all 'Health' states from the store
