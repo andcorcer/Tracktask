@@ -14,8 +14,8 @@ import './HomePage.css'
 const HomePage = () => {
    // Get states from the store
    const date = useSelector((state) => state.date.selectedDate);
-   const activities = useSelector((state) => state.garmin.activities.items) || [];
-   const workouts = useSelector((state) => state.garmin.workouts.items) || [];
+   const activities = useSelector((state) => state.garmin.activities?.items || []);
+   const workouts = useSelector((state) => state.garmin.workouts?.items || []);
 
    const startDate = new Date(new Date(date).setHours(0, 0, 0, 0)).toISOString();
    const endDate = new Date(new Date(date).setHours(23, 59, 59, 999)).toISOString();

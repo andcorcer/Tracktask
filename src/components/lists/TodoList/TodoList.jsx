@@ -1,5 +1,5 @@
 // Import all dependencies
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Plus } from "lucide-react";
 
@@ -12,12 +12,15 @@ import Modal from "../../details/Modal/Modal";
 import "./TodoList.css";
 
 // TodoList Component
-const TodoList = ({ date, viewMode = "date" }) => {
+const TodoList = ({ date, viewMode = "date", itemsLimit }) => {
   // We get the todos from the redux store
   const todos = useSelector((state) => state.todos.items || []);
 
   // Local state to render the TodoInput component conditionally
   const [showInput, setShowInput] = useState(false);
+
+  // Local state to keep track of the number of displayed todos
+  const [displayedCount, setDisplayedCount] = useState(itemsLimit || 10);
 
   const handleOpenInput = () => {
     setShowInput(true);
@@ -26,6 +29,11 @@ const TodoList = ({ date, viewMode = "date" }) => {
   const handleCloseInput = () => {
     setShowInput(false);
   };
+
+  // Reset displayedCount when itemsLimit or viewMode change
+  useEffect(() => {
+    setDisplayedCount(itemsLimit || 10);
+  }, [itemsLimit, viewMode]);
 
   // We filter the todos to display only the ones given by the viewMode prop
   const filteredTodos = todos.filter((todo) => {
@@ -56,6 +64,9 @@ const TodoList = ({ date, viewMode = "date" }) => {
     }
   });
 
+  // Variable of the todos to display based on the itemsLimit prop
+  const displayedTodos = filteredTodos.slice(0, displayedCount);
+
   return (
     <div className="todo-list-container">
       {viewMode === "date" && (
@@ -68,10 +79,10 @@ const TodoList = ({ date, viewMode = "date" }) => {
         </button>
       )}
 
-      {/* We render todos conditionally weather filteredTodos has any items or not */}
-      {filteredTodos.length > 0 ? (
+      {/* We render todos conditionally weather displayedTodos has any items or not */}
+      {displayedTodos.length > 0 ? (
         <div className="todo-list">
-          {filteredTodos.map((todo) => (
+          {displayedTodos.map((todo) => (
             <TodoCard key={todo.id} todo={todo} date={date} />
           ))}
         </div>
@@ -82,6 +93,18 @@ const TodoList = ({ date, viewMode = "date" }) => {
             {viewMode === "active" && "No active todos."}
             {viewMode === "archived" && "No archived todos."}
           </p>
+        </div>
+      )}
+
+      {/* Button to load more todos */}
+      {filteredTodos.length > displayedCount && (
+        <div className="load-more-container">
+          <button
+            className="btn load-more-btn"
+            onClick={() => setDisplayedCount((prev) => prev + 10)}
+          >
+            Load More ({Math.max(0, filteredTodos.length - displayedCount)} remaining)
+          </button>
         </div>
       )}
 
