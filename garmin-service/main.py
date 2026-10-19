@@ -75,13 +75,18 @@ def get_garmin_client():
         except Exception as e:
             # Throw an HTTPException with status code 401 for failed token and a detailed error message if tokens fail
             raise HTTPException(
-                status_code=401, detail=f"Failed Token. Possible expiration"
+                status_code=401, detail=f"Failed Token. Possible expiration: {str(e)}"
             )
     # Throw an HTTPException with status code 401 error for users that haven't logged in
     raise HTTPException(
         status_code=401, detail=f"Garmin not Authenticated. Please log in."
     )
 
+# Route to check the status of the python microservice
+@app.get("/")
+def health_check():
+    """Status check to verify the microservice is running."""
+    return {"status": "online"}
 
 # Route to handle Logging In using an email and password passed in the POST request
 @app.post("/api/garmin/login")
@@ -91,11 +96,9 @@ def login(credentials: GarminCredentials):
 
     try:
         client = Garmin(email=credentials.email, password=credentials.password)
-        client.login()
-
         # Makes a directory to dump the access credentials for persistant profile
         os.makedirs(SESSION_DIR, exist_ok=True)
-        client.garth.dump(SESSION_DIR)
+        client.login(SESSION_DIR)
 
         garmin_client = client
         # Returns a JSON message for the Front-End

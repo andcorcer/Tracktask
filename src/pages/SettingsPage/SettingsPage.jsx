@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 // Import Actions
-import { clearTodos } from "../../store/slices/todosSlice";
+import { deleteTodosPermanently } from "../../store/slices/todosSlice";
 import {
   checkGarminStatus,
   loginGarminUser,
@@ -29,7 +29,7 @@ import {
 import "./SettingsPage.css";
 
 // Google Authentication Configuration
-const CLIENT_ID = `${process.env.VITE_GOOGLE_CLIENT_ID}.apps.googleusercontent.com`;
+const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 const SCOPES =
   "https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/tasks";
 
@@ -50,7 +50,7 @@ const SettingsPage = () => {
   const [garminPassword, setGarminPassword] = useState("");
 
   // Local state to check if the python backend is running
-  const [isBackendStatus, setBackendStatus] = useState(null);
+  const [backendConnectionStatus, setBackendConnectionStatus] = useState(null);
 
   // Local state to set the theme
   const [isDarkMode, setIsDarkMode] = useState(() => {
@@ -59,6 +59,11 @@ const SettingsPage = () => {
 
   // Variable that maintains a reference to the Google token client
   const tokenClientRef = useRef(null);
+
+  // Dispatch the garmin status on mount
+  useEffect(() => {
+    dispatch(checkGarminStatus());
+  }, [dispatch]);
 
   // Effect to initialize the Google token client
   useEffect(() => {
@@ -93,9 +98,8 @@ const SettingsPage = () => {
   // Handler functions
   const handleGarminLogin = (e) => {
     e.preventDefault();
-    const { email, password } = e.target.elements;
-    dispatch(loginGarminUser({ email: email.value, password: password.value }));
-    console.log("Logging into Garmin with:", email.value);
+    dispatch(loginGarminUser({ email: garminEmail, password: garminPassword }));
+    console.log("Logging into Garmin with:", garminEmail);
   };
 
   const handleGarminLogout = () => {
@@ -128,17 +132,23 @@ const SettingsPage = () => {
 
   // Test backend connection
   const testBackendConnection = async () => {
-    setBackendStatus("checking");
+    setBackendConnectionStatus("checking");
     try {
-      const response = await fetch("http://localhost:8000/api/garmin/status");
+      const response = await fetch("http://localhost:8000/");
       if (response.ok) {
-        setBackendStatus("online");
+        setBackendConnectionStatus("online");
+        // Inmediate check of Garmin status after confirming backend is online
+        dispatch(checkGarminStatus());
       } else {
-        setBackendStatus("offline");
+        setBackendConnectionStatus("offline");
       }
     } catch (error) {
-      setBackendStatus("offline");
+      setBackendConnectionStatus("offline");
     }
+  };
+
+  const toggleDarkMode = () => {
+    setIsDarkMode((prevMode) => !prevMode);
   };
 
   return (
@@ -272,8 +282,11 @@ const SettingsPage = () => {
             </button>
             {backendConnectionStatus && (
               <span>
-                backendConnectionStatus === "checking" ? "Checking port 8000" :
-                backendConnectionStatus === "connected" ? "Python Microservice Connected on port 8000" : "Python Microservice Disconnected, Verify that main.py is running"
+                {backendConnectionStatus === "checking"
+                  ? "Checking port 8000"
+                  : backendConnectionStatus === "online"
+                    ? "Python Microservice Connected on port 8000"
+                    : "Python Microservice Disconnected, Verify that main.py is running"}
               </span>
             )}
           </div>
@@ -287,18 +300,23 @@ const SettingsPage = () => {
 
           <div className="card-body">
             <p className="card-description">
-              Customize the appearance of the application by selecting your preferred theme.
+              Customize the appearance of the application by selecting your
+              preferred theme.
             </p>
-            
+
             <span className="toggle-label">
-               {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
-               <span className="toggle-text">
-                 {isDarkMode ? "Dark Mode" : "Light Mode"}
-               </span>
+              {isDarkMode ? <Sun size={16} /> : <Moon size={16} />}
+              <span className="toggle-text">
+                {isDarkMode ? "Dark Mode" : "Light Mode"}
+              </span>
             </span>
 
-            <button type="button" className="btn btn-secondary" onClick={toggleDarkMode}>
-              {isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}   
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={toggleDarkMode}
+            >
+              {isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
             </button>
           </div>
         </section>
@@ -311,14 +329,23 @@ const SettingsPage = () => {
 
           <div className="card-body">
             <p className="card-description">
-              Clear Garmin data and cache to maintain optimal performance of the application.
+              Clear Garmin data and cache to maintain optimal performance of the
+              application.
             </p>
 
-            <button type="button" className="btn btn-secondary" onClick={handleClearGarmin}>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={handleClearGarmin}
+            >
               Clear Garmin Data
             </button>
 
-            <button type="button" className="btn btn-secondary" onClick={handleDeletePermanently}>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={handleDeletePermanently}
+            >
               Clear Todos from cache
             </button>
           </div>
