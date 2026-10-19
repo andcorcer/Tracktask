@@ -19,6 +19,27 @@ import { deleteTodosPermanently } from "../../store/slices/todosSlice";
 // Import Styles
 import "./TodosPage.css";
 
+// Function that gets the local current date
+const getLocalCurrentDate = () => {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+};
+
+// Function that safely parses a date string into a local Date object
+const parseLocalDate = (date) => {
+  if (!date) return getLocalCurrentDate();
+  const [year, month, day] = date.split("-").map(Number);
+  return new Date(year, month - 1, day);
+};
+
+// Function that safely formats a local Date object into "YYYY-MM-DD" format
+const formatLocalDate = (date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 // TodosPage Component
 const TodosPage = () => {
   const dispatch = useDispatch();
@@ -27,7 +48,7 @@ const TodosPage = () => {
 
   // Get the selected date from the store
   const date = useSelector((state) => state.date.selectedDate);
-  const selectedDate = useMemo(() => new Date(date), [date]);
+  const selectedDate = useMemo(() => parseLocalDate(date), [date]);
 
   // Get todos from the store
   const todos = useSelector((state) => state.todos.items || []);
@@ -39,7 +60,7 @@ const TodosPage = () => {
     if (direction === "today") {
       dispatch(
         setSelectedDate({
-          selectedDate: new Date().toISOString().split("T")[0],
+          selectedDate: formatLocalDate(getLocalCurrentDate()),
         }),
       );
       return;
@@ -52,7 +73,7 @@ const TodosPage = () => {
       newDate.setDate(newDate.getDate() - 1);
     }
     dispatch(
-      setSelectedDate({ selectedDate: newDate.toISOString().split("T")[0] }),
+      setSelectedDate({ selectedDate: formatLocalDate(newDate) }),
     );
   };
 

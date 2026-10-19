@@ -20,6 +20,27 @@ import { setSelectedDate } from "../../store/slices/dateSlice";
 // Import Styles
 import "./HealthPage.css";
 
+// Function that gets the local current date
+const getLocalCurrentDate = () => {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+};
+
+// Function that safely parses a date string into a local Date object
+const parseLocalDate = (date) => {
+  if (!date) return getLocalCurrentDate();
+  const [year, month, day] = date.split("-").map(Number);
+  return new Date(year, month - 1, day);
+};
+
+// Function that safely formats a local Date object into "YYYY-MM-DD" format
+const formatLocalDate = (date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 // HealthPage Component
 const HealthPage = () => {
   const dispatch = useDispatch();
@@ -29,7 +50,7 @@ const HealthPage = () => {
 
   // Get the selected date from the store
   const date = useSelector((state) => state.date.selectedDate);
-  const selectedDate = useMemo(() => new Date(date), [date]);
+  const selectedDate = useMemo(() => parseLocalDate(date), [date]);
 
   // Handler to handle navigation
   const handleNavigation = (direction) => {
@@ -38,7 +59,7 @@ const HealthPage = () => {
     if (direction === "today") {
       dispatch(
         setSelectedDate({
-          selectedDate: new Date().toISOString().split("T")[0],
+          selectedDate: formatLocalDate(getLocalCurrentDate()),
         }),
       );
       return;
@@ -51,7 +72,7 @@ const HealthPage = () => {
       newDate.setDate(newDate.getDate() - 1);
     }
     dispatch(
-      setSelectedDate({ selectedDate: newDate.toISOString().split("T")[0] }),
+      setSelectedDate({ selectedDate: formatLocalDate(newDate) }),
     );
   };
 
@@ -133,7 +154,7 @@ const HealthPage = () => {
         <section className="health-section">
           <div className="section-header">
             <h3 className="section-title">
-              <CalendarClock size={20} /> Recent Workouts
+              <CalendarClock size={20} /> Upcoming Workouts
             </h3>
             <button
               type="button"
@@ -191,7 +212,6 @@ const HealthPage = () => {
                     ? "workout"
                     : "trainingPlan"
               }
-              itemLimit={0}
             />
           </div>
         </Modal>

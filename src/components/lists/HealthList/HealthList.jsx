@@ -28,12 +28,12 @@ const HealthList = ({ type, startDate, endDate, trainingPlan, itemLimit }) => {
   const healthMetrics = useSelector(
     (state) => state.garmin.healthMetrics.items,
   );
-  const activities = useSelector((state) => state.garmin.activities.items);
+  const activities = useSelector((state) => state.garmin.activities.items || []);
   const trainingPlans = useSelector(
-    (state) => state.garmin.trainingPlans.items,
+    (state) => state.garmin.trainingPlans.items || [],
   );
   const upcomingWorkouts = useSelector(
-    (state) => state.garmin.upcomingWorkouts.items,
+    (state) => state.garmin.upcomingWorkouts.items || [],
   );
   const isLoading = useSelector((state) => state.garmin.isLoading);
   const error = useSelector((state) => state.garmin.error);
@@ -109,7 +109,9 @@ const HealthList = ({ type, startDate, endDate, trainingPlan, itemLimit }) => {
         );
 
       case "activity":
-        const displayedActivities = itemLimit ? activities.slice(0, itemLimit) : activities;
+        // Make sure that activities is always an array
+        const safeActivities = Array.isArray(activities) ? activities : [];
+        const displayedActivities = itemLimit ? safeActivities.slice(0, itemLimit) : safeActivities;
         return displayedActivities.length > 0 ? (
           displayedActivities.map((activity, index) => (
             <HealthCard
@@ -125,7 +127,9 @@ const HealthList = ({ type, startDate, endDate, trainingPlan, itemLimit }) => {
         );
 
       case "trainingPlan":
-        const displayedTrainingPlans = itemLimit ? trainingPlans.slice(0, itemLimit) : trainingPlans;
+        // Make sure that trainingPlans is always an array
+        const safeTrainingPlans = Array.isArray(trainingPlans) ? trainingPlans : [];
+        const displayedTrainingPlans = itemLimit ? safeTrainingPlans.slice(0, itemLimit) : safeTrainingPlans;
         return displayedTrainingPlans.length > 0 ? (
           displayedTrainingPlans.map((trainingPlan, index) => (
             <HealthCard
@@ -141,7 +145,9 @@ const HealthList = ({ type, startDate, endDate, trainingPlan, itemLimit }) => {
         );
 
       case "workout":
-        const displayedUpcomingWorkouts = itemLimit ? upcomingWorkouts.slice(0, itemLimit) : upcomingWorkouts;
+        // Make sure that upcomingWorkouts is always an array
+        const safeUpcomingWorkouts = Array.isArray(upcomingWorkouts) ? upcomingWorkouts : [];
+        const displayedUpcomingWorkouts = itemLimit ? safeUpcomingWorkouts.slice(0, itemLimit) : safeUpcomingWorkouts;
         return displayedUpcomingWorkouts.length > 0 ? (
           displayedUpcomingWorkouts.map((workout, index) => (
             <HealthCard

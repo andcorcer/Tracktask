@@ -32,9 +32,9 @@ const transformTimeFormat = (time) => {
   const seconds = time % 60;
 
   // We add padding to the times so that it follows the HH:MM:SS format
-  const paddedHours = hours < 10 ? `0${hours}` : hours;
-  const paddedMinutes = minutes < 10 ? `0${minutes}` : minutes;
-  const paddedSeconds = seconds < 10 ? `0${seconds}` : seconds;
+  const paddedHours = String(hours).padStart(2, "0");
+  const paddedMinutes = String(minutes).padStart(2, "0");
+  const paddedSeconds = String(Math.floor(seconds)).padStart(2, "0");
 
   // We return MM:SS format if time is under an hour
   return hours
@@ -70,7 +70,7 @@ const HealthCard = ({ type, data, viewMode }) => {
         <Footprints size={16} className="steps-icon" />
         <span>
           {data?.totalSteps?.toLocaleString() || 0} of{" "}
-          {data?.dailyStepGoal?.toLocaleString() || "Unknown"} Steps
+          {data?.dailyStepGoal?.toLocaleString() || "Goal"} Steps
         </span>
       </div>
 
@@ -82,9 +82,12 @@ const HealthCard = ({ type, data, viewMode }) => {
       >
         <TrendingUp size={16} className="floors-icon" />
         <span>
-          {data?.floorsAscended?.toLocaleString() || 0} of{" "}
-          {data?.floorsAscendedGoal?.toLocaleString() || "Unknown"} Floors
-          Ascended
+          {Math.floor(data?.floorsAscended || 0).toLocaleString()} of{" "}
+          {Number.isNaN(Math.floor(data?.floorsAscendedGoal)) ||
+          data?.floorsAscendedGoal === null
+            ? "Goal"
+            : Math.floor(data?.floorsAscendedGoal).toLocaleString()}{" "}
+          Floors
         </span>
       </div>
 
@@ -161,7 +164,9 @@ const HealthCard = ({ type, data, viewMode }) => {
       ActivityIcon = SportShoe;
       activityString = "Running";
       subtext1 = `${(data?.distance / 1000).toFixed(2)} km`;
-      subtext2 = data?.distance ? `${transformTimeFormat(data?.duration / (data?.distance / 1000))} /km` : "--";
+      subtext2 = data?.distance
+        ? `${transformTimeFormat(data?.duration / (data?.distance / 1000))} /km`
+        : "--";
     } else if (isSwimming) {
       ActivityIcon = WavesLadder;
       activityString = "Swimming";
@@ -174,7 +179,9 @@ const HealthCard = ({ type, data, viewMode }) => {
       return (
         <button
           className="month-element activity-element"
-          onClick={() => handleOpenDetails(`activity ${activityString?.toLowerCase()}`)}
+          onClick={() =>
+            handleOpenDetails(`activity ${activityString?.toLowerCase()}`)
+          }
         >
           <span>
             <ActivityIcon size={10} className={activityString} />
@@ -186,7 +193,9 @@ const HealthCard = ({ type, data, viewMode }) => {
       return (
         <div
           className="week-element activity-element"
-          onClick={() => handleOpenDetails(`activity ${activityString?.toLowerCase()}`)}
+          onClick={() =>
+            handleOpenDetails(`activity ${activityString?.toLowerCase()}`)
+          }
           role="button"
           tabIndex={0}
         >
@@ -205,7 +214,9 @@ const HealthCard = ({ type, data, viewMode }) => {
     return (
       <div
         className="health-content activity-container"
-        onClick={() => handleOpenDetails(`activity ${activityString?.toLowerCase()}`)}
+        onClick={() =>
+          handleOpenDetails(`activity ${activityString?.toLowerCase()}`)
+        }
         role="button"
         tabIndex={0}
       >

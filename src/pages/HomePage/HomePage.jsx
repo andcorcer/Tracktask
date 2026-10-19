@@ -10,6 +10,13 @@ import HealthList from "../../components/lists/HealthList/HealthList";
 // Import Styles
 import './HomePage.css'
 
+// Function that safely parses a date string into a local Date object
+const parseLocalDate = (date) => {
+  if (!date) return getLocalCurrentDate();
+  const [year, month, day] = date.split("-").map(Number);
+  return new Date(year, month - 1, day);
+};
+
 // HomePage Component 
 const HomePage = () => {
    // Get states from the store
@@ -17,10 +24,11 @@ const HomePage = () => {
    const activities = useSelector((state) => state.garmin.activities?.items || []);
    const workouts = useSelector((state) => state.garmin.workouts?.items || []);
 
-   const startDate = new Date(new Date(date).setHours(0, 0, 0, 0)).toISOString();
-   const endDate = new Date(new Date(date).setHours(23, 59, 59, 999)).toISOString();
+   const startDate = date;
+   const endDate = date;
 
-   const dateString = new Date(date).toLocaleDateString('en-US', {
+   const localDateObject = parseLocalDate(date);
+   const dateString = localDateObject.toLocaleDateString('en-US', {
       weekday: 'long',
       month: 'short',
       day: 'numeric',
