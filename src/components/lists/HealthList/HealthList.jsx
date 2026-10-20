@@ -15,25 +15,25 @@ import {
   fetchTrainingPlans,
   fetchUpcomingWorkouts,
   fetchWorkoutsForTrainingPlan,
-} from "../store/garminSlice";
+} from "../../../store/slices/garminSlice";
 
 // Import Styles
 import "./HealthList.css";
 
 // HealthList Component
-const HealthList = ({ type, startDate, endDate, trainingPlan }) => {
+const HealthList = ({ type, startDate, endDate, trainingPlan, itemLimit }) => {
   const dispatch = useDispatch(); // Get the dispatch function from Redux to dispatch actions
 
   // We get all 'Health' states from the store
   const healthMetrics = useSelector(
     (state) => state.garmin.healthMetrics.items,
   );
-  const activities = useSelector((state) => state.garmin.activities.items);
+  const activities = useSelector((state) => state.garmin.activities.items || []);
   const trainingPlans = useSelector(
-    (state) => state.garmin.trainingPlans.items,
+    (state) => state.garmin.trainingPlans.items || [],
   );
   const upcomingWorkouts = useSelector(
-    (state) => state.garmin.upcomingWorkouts.items,
+    (state) => state.garmin.upcomingWorkouts.items || [],
   );
   const isLoading = useSelector((state) => state.garmin.isLoading);
   const error = useSelector((state) => state.garmin.error);
@@ -109,8 +109,11 @@ const HealthList = ({ type, startDate, endDate, trainingPlan }) => {
         );
 
       case "activity":
-        return activities.length > 0 ? (
-          activities.map((activity, index) => (
+        // Make sure that activities is always an array
+        const safeActivities = Array.isArray(activities) ? activities : [];
+        const displayedActivities = itemLimit ? safeActivities.slice(0, itemLimit) : safeActivities;
+        return displayedActivities.length > 0 ? (
+          displayedActivities.map((activity, index) => (
             <HealthCard
               key={activity.id || index}
               type={type}
@@ -124,8 +127,11 @@ const HealthList = ({ type, startDate, endDate, trainingPlan }) => {
         );
 
       case "trainingPlan":
-        return trainingPlans.length > 0 ? (
-          trainingPlans.map((trainingPlan, index) => (
+        // Make sure that trainingPlans is always an array
+        const safeTrainingPlans = Array.isArray(trainingPlans) ? trainingPlans : [];
+        const displayedTrainingPlans = itemLimit ? safeTrainingPlans.slice(0, itemLimit) : safeTrainingPlans;
+        return displayedTrainingPlans.length > 0 ? (
+          displayedTrainingPlans.map((trainingPlan, index) => (
             <HealthCard
               key={trainingPlan.id || index}
               type={type}
@@ -139,8 +145,11 @@ const HealthList = ({ type, startDate, endDate, trainingPlan }) => {
         );
 
       case "workout":
-        return upcomingWorkouts.length > 0 ? (
-          upcomingWorkouts.map((workout, index) => (
+        // Make sure that upcomingWorkouts is always an array
+        const safeUpcomingWorkouts = Array.isArray(upcomingWorkouts) ? upcomingWorkouts : [];
+        const displayedUpcomingWorkouts = itemLimit ? safeUpcomingWorkouts.slice(0, itemLimit) : safeUpcomingWorkouts;
+        return displayedUpcomingWorkouts.length > 0 ? (
+          displayedUpcomingWorkouts.map((workout, index) => (
             <HealthCard
               key={workout.id || index}
               type={type}
@@ -154,7 +163,7 @@ const HealthList = ({ type, startDate, endDate, trainingPlan }) => {
         );
 
       default:
-        break;
+        return null;
     }
   };
 

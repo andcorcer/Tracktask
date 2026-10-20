@@ -46,15 +46,16 @@ const transformTimeFormat = (time) => {
   const seconds = time % 60;
 
   // We add padding to the times so that it follows the HH:MM:SS format
-  const paddedHours = hours < 10 ? `0${hours}` : hours;
-  const paddedMinutes = minutes < 10 ? `0${minutes}` : minutes;
-  const paddedSeconds = seconds < 10 ? `0${seconds}` : seconds;
+  const paddedHours = String(hours).padStart(2, "0");
+  const paddedMinutes = String(minutes).padStart(2, "0");
+  const paddedSeconds = String(Math.floor(seconds)).padStart(2, "0");
 
   // We return MM:SS format if time is under an hour
   return hours
     ? `${paddedHours}:${paddedMinutes}:${paddedSeconds}`
     : `${paddedMinutes}:${paddedSeconds}`;
 };
+
 // Function to get the current local date in YYYY-MM-DD format
 const getLocalDate = () => {
   const today = new Date();
@@ -65,13 +66,7 @@ const getLocalDate = () => {
 };
 
 // DetailsCard Component
-const DetailsCard = ({
-  type,
-  secondaryType,
-  item,
-  date,
-  taskListId,
-}) => {
+const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
   const dispatch = useDispatch(); // Get the dispatch function from Redux to dispatch actions
   // Local state to render the CalendarInput component conditionally
   const [showInput, setShowInput] = useState(false);
@@ -203,9 +198,15 @@ const DetailsCard = ({
       case "floors":
         icon = <TrendingUp size={16} />;
         metaItems = [
-          { label: "Floors Ascended", value: item?.floorsAscended || 0 },
+          {
+            label: "Floors Ascended",
+            value: Math.floor(item?.floorsAscended || 0),
+          },
           { label: "Floors Descended", value: item?.floorsDescended || 0 },
-          { label: "Floors Goal", value: item?.floorsAscendedGoal || 0 },
+          {
+            label: "Floors Goal",
+            value: Math.floor(item?.floorsAscendedGoal || 0),
+          },
         ];
         break;
       case "calories":
@@ -613,11 +614,7 @@ const DetailsCard = ({
         return <p>Unknown Details Type</p>;
     }
   };
-  return (
-    <div>
-      {renderContent()}
-    </div>
-  );
+  return <div>{renderContent()}</div>;
 };
 
 // Export the DetailsCard component

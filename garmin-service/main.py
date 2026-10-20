@@ -75,12 +75,19 @@ def get_garmin_client():
         except Exception as e:
             # Throw an HTTPException with status code 401 for failed token and a detailed error message if tokens fail
             raise HTTPException(
-                status_code=401, detail=f"Failed Token. Possible expiration"
+                status_code=401, detail=f"Failed Token. Possible expiration: {str(e)}"
             )
     # Throw an HTTPException with status code 401 error for users that haven't logged in
     raise HTTPException(
         status_code=401, detail=f"Garmin not Authenticated. Please log in."
     )
+
+
+# Route to check the status of the python microservice
+@app.get("/")
+def health_check():
+    """Status check to verify the microservice is running."""
+    return {"status": "online"}
 
 
 # Route to handle Logging In using an email and password passed in the POST request
@@ -91,11 +98,9 @@ def login(credentials: GarminCredentials):
 
     try:
         client = Garmin(email=credentials.email, password=credentials.password)
-        client.login()
-
         # Makes a directory to dump the access credentials for persistant profile
         os.makedirs(SESSION_DIR, exist_ok=True)
-        client.garth.dump(SESSION_DIR)
+        client.login(SESSION_DIR)
 
         garmin_client = client
         # Returns a JSON message for the Front-End
@@ -173,7 +178,16 @@ def get_recent_activities(start: int = 0, limit: int = 10):
     client = get_garmin_client()
 
     try:
-        activities = client.get_activities(start, limit)
+        try: 
+            safe_start = int(start)
+        except (TypeError, ValueError):
+            safe_start = 0
+
+        try:
+            safe_limit = int(limit)
+        except (TypeError, ValueError):
+            safe_limit = 10
+        activities = client.get_activities(safe_start, safe_limit)
         return activities
 
     except Exception as e:
@@ -209,42 +223,36 @@ def get_workouts_in_time_range(
     upcoming_workouts = []
 
     try:
-        calendar_data = client.get_calendar(query_start, query_end)
-        # We make events an array of the returned data
+        start_d = date.fromisoformat(query_start)
+        end_d = date.fromisoformat(query_end)
+        workouts = client.get_scheduled_workouts(start_d.year, start_d.month)
 
-        if isinstance(calendar_data, dict):
-            events = calendar_data.get(
-                "calendarItems", []
-            )  # Gets the calendarItems key if a dictionary is returned
-        elif isinstance(calendar_data, list):
-            events = calendar_data  # returns the fetched data as an array if it isn't a dicionary
-        else:
-            events = []
-
-        # Accepted "itemTypes" in Garmin's events returned
-        WORKOUT_TYPES = {"WORKOUT", "WORKOUT_TASK"}
-
-        for event in events:
-            if not isinstance(event, dict):
-                continue
-
-            item_type = event.get("itemType")
-
-            if item_type in WORKOUT_TYPES:
-                # Logic to fetch workouts from a given training plan
-                if training_plan_id:
-                    event_training_plan_id = event.get("trainingPlanId") or event.get(
-                        "planId"
-                    )  # We get the plan id for the current event
-                    if event_training_plan_id is not None and str(
-                        event_training_plan_id
-                    ) == str(
-                        training_plan_id
-                    ):  # We compare the wanted plan id with the current event's plan id
-                        upcoming_workouts.append(event)
+        # If the ending month is not the same as the starting month, we need to fetch workouts for the ending month as well
+        if start_d.month != end_d.month or start_d.year != end_d.year:
+            workouts_end = client.get_scheduled_workouts(end_d.year, end_d.month)
+            if isinstance(workouts_end, list):
+                if isinstance(workouts, list):
+                    workouts.extend(workouts_end)
                 else:
-                    # If no training plan is provided we just return all workouts
-                    upcoming_workouts.append(event)
+                    workouts = workouts_end
+        if not isinstance(workouts, list):
+            workouts = []
+
+        for workout in workouts:
+
+            if training_plan_id:
+                workout_training_plan_id = workout.get("trainingPlanId") or workout.get(
+                    "planId"
+                )  # We get the plan id for the current event
+                if workout_training_plan_id is not None and str(
+                    workout_training_plan_id
+                ) == str(
+                    training_plan_id
+                ):  # We compare the wanted plan id with the current event's plan id
+                    upcoming_workouts.append(workout)
+            else:
+                # If no training plan is provided we just return all workouts
+                upcoming_workouts.append(workout)
 
         return upcoming_workouts
 
