@@ -4,6 +4,15 @@ import { createSlice } from "@reduxjs/toolkit";
 // Location in the local storage where the todos will be stored
 const LOCAL_STORAGE_KEY = "tracktask_app_todos";
 
+// Helper function to get the local date (YYYY-MM-DD)
+const getLocalISOString = (dateInput = new Date()) => {
+  const d = new Date(dateInput);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}; 
+
 // Helper function to get todos from the local storage
 const loadTodosFromLocalStorage = () => {
   try {
@@ -50,7 +59,7 @@ const todosSlice = createSlice({
         isDaily: action.payload.isDaily || false,
         completed: false, // For non recurring todos
         completedDates: {}, // For daily todos
-        createdAt: new Date(action.payload.date).toISOString().split("T")[0],
+        createdAt: getLocalISOString(action.payload.date),
         archivedAt: null, // Date for when a todo is deleted to preserve past completion history
       };
       state.items.push(newTodo); // Add the item to the todos
@@ -77,7 +86,7 @@ const todosSlice = createSlice({
     deleteTodo: (state, action) => {
       const todo = state.items.find((todo) => todo.id === action.payload); // We get the desired todo using it's id
       if (todo) {
-        todo.archivedAt = new Date().toISOString().split("T")[0]; // We archive the todo to be able to show it before it was deleted
+        todo.archivedAt = getLocalISOString(); // We archive the todo to be able to show it before it was deleted
         saveTodosToLocalStorage(state.items); // Save the updated todos state to localStorage
       }
     },
@@ -91,7 +100,7 @@ const todosSlice = createSlice({
     },
 
     clearTodos: (state) => {
-      const currentDate = new Date().toISOString().split("T")[0];
+      const currentDate = getLocalISOString();
       state.items.forEach((todo) => {
         if (!todo.archivedAt) todo.archivedAt = currentDate;
       });

@@ -10,7 +10,7 @@ const initialState = {
   healthMetrics: {
     selectedMetricId: null,
     summaryDate: null,
-    items: null,
+    items: [],
   },
 
   // Completed Activities with a 'selectedActivityId' to inspect a given activitie's details

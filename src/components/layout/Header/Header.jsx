@@ -3,7 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 // Import Components
-import Navbar from "../Navbar/Navbar.jsx";
+import Navbar from "../Navbar/Navbar";
 
 // Import Styles
 import "./Header.css";

@@ -56,6 +56,8 @@ class GarminCredentials(BaseModel):
 # Variable to hold the Garmin client instance, initialized as None
 garmin_client = None
 
+# Variable to hold the Garmin email used for login, initialized as None
+garmin_email = None
 
 def get_garmin_client():
     """Helper function to log in via session tokens or return an error for the Front_end to request a log in"""
@@ -68,7 +70,7 @@ def get_garmin_client():
     # Uses session tokens in for logging in if they've been saved
     if os.path.exists(SESSION_DIR):
         try:
-            client = Garmin()
+            client = Garmin(email=garmin_email, password="")
             client.login(SESSION_DIR)
             garmin_client = client
             return garmin_client
@@ -95,6 +97,8 @@ def health_check():
 def login(credentials: GarminCredentials):
     """Authenticate with Garmin using email and password, then save session tokens for persistant access."""
     global garmin_client
+    global garmin_email
+
 
     try:
         client = Garmin(email=credentials.email, password=credentials.password)
@@ -103,6 +107,7 @@ def login(credentials: GarminCredentials):
         client.login(SESSION_DIR)
 
         garmin_client = client
+        garmin_email = credentials.email
         # Returns a JSON message for the Front-End
         return {
             "status": "connected",
@@ -239,6 +244,13 @@ def get_workouts_in_time_range(
             workouts = []
 
         for workout in workouts:
+
+            # Filter workouts based on the date range
+            workout_date_str = workout.get("date")
+            if workout_date_str:
+                workout_date = date.fromisoformat(workout_date_str.split("T")[0])
+                if workout_date < start_d or workout_date > end_d:
+                    continue
 
             if training_plan_id:
                 workout_training_plan_id = workout.get("trainingPlanId") or workout.get(

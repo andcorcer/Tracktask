@@ -12,7 +12,7 @@ import './HomePage.css'
 
 // Function that safely parses a date string into a local Date object
 const parseLocalDate = (date) => {
-  if (!date) return getLocalCurrentDate();
+  if (!date) return new Date();
   const [year, month, day] = date.split("-").map(Number);
   return new Date(year, month - 1, day);
 };
@@ -21,8 +21,8 @@ const parseLocalDate = (date) => {
 const HomePage = () => {
    // Get states from the store
    const date = useSelector((state) => state.date.selectedDate);
-   const activities = useSelector((state) => state.garmin.activities?.items || []);
-   const workouts = useSelector((state) => state.garmin.workouts?.items || []);
+   const activities = useSelector((state) => state.garmin.activities?.items);
+   const workouts = useSelector((state) => state.garmin.upcomingWorkouts?.items);
 
    const startDate = date;
    const endDate = date;
@@ -60,7 +60,7 @@ const HomePage = () => {
          {workouts.length > 0 && (
             <div className="dashboard-widget workouts-widget">
                <h3 className="widget-title">Scheduled Workouts for {dateString}</h3>
-               <HealthList type="workouts" startDate={startDate} endDate={endDate} />
+               <HealthList type="workout" startDate={startDate} endDate={endDate} />
             </div>
          )}
 
@@ -68,7 +68,7 @@ const HomePage = () => {
          {activities.length > 0 && (
             <div className="dashboard-widget activities-widget">
                <h3 className="widget-title">Recorded Activities for {dateString}</h3>
-               <HealthList type="activities" startDate={startDate} endDate={endDate} />
+               <HealthList type="activity" startDate={startDate} endDate={endDate} />
             </div>
          )}
       </aside>

@@ -42,6 +42,15 @@ const transformTimeFormat = (time) => {
     : `${paddedMinutes}:${paddedSeconds}`;
 };
 
+// Function that formats a date to it's local date
+const formatLocalDate = (date) => {
+  if (!date) return "Upcoming";
+  const cleanedDate = date.split("T")[0];
+  const [year, month, day] = cleanedDate.split("-");
+  const localDate = new Date(year, month - 1, day);
+  return localDate.toLocaleDateString();
+};
+
 // HealthCard Component
 const HealthCard = ({ type, data, viewMode }) => {
   // Local state to render the DetailsCard component conditionally
@@ -297,9 +306,7 @@ const HealthCard = ({ type, data, viewMode }) => {
             <CalendarClock size={14} className="workout" />
             <h5>{data?.title || "Scheduled Workout"}</h5>
             <p>
-              {data?.date
-                ? new Date(data?.date).toLocaleDateString()
-                : "Upcoming"}
+              {formatLocalDate(data?.date)}
             </p>
           </div>
         </div>
@@ -317,9 +324,7 @@ const HealthCard = ({ type, data, viewMode }) => {
           <CalendarClock size={18} className="workout" />
           <h4>{data?.title || "Scheduled Workout"}</h4>
           <p>
-            {data?.date
-              ? new Date(data?.date).toLocaleDateString()
-              : "Upcoming"}
+            {formatLocalDate(data?.date)}
           </p>
         </div>
       </div>

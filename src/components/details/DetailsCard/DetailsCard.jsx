@@ -376,9 +376,12 @@ const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
           },
           {
             label: "Date",
-            value: item?.date
-              ? new Date(item?.date + "T00:00:00").toLocaleDateString()
-              : "Upcoming",
+            value: (() => {
+              if (!item?.date) return "Upcoming";
+              const cleanedDate = item.date.split("T")[0];
+              const [year, month, day] = cleanedDate.split("-");
+              return new Date(year, month - 1, day).toLocaleDateString();
+            })
           },
           {
             label: "Type",
@@ -473,7 +476,7 @@ const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
           },
           {
             label: "Timezone",
-            value: item?.timeZone || getLocalDate(),
+            value: item?.timeZone || "UTC",
           },
         ];
         break;
