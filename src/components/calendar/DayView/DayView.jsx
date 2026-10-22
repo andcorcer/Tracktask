@@ -8,6 +8,7 @@ import CalendarCard from "../../items/CalendarCard/CalendarCard";
 
 // Import Styles
 import "./DayView.css";
+import { format } from "date-fns";
 
 // Function that returns the rows in the calendar grid using the time range (each row represents 15 minutes)
 const getGridRows = (timeString, defaultHour = 1) => {
@@ -46,17 +47,21 @@ const parseGarminTime = (startTimeLocal, GMTTime) => {
   return null;
 };
 
+const formatLocalDate = (date) => {
+  const dateObj = new Date(date);
+  const year = dateObj.getFullYear();
+  const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
+  const day = dateObj.getDate().toString().padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 // DayView Component
 const DayView = ({ selectedDate = new Date() }) => {
   // Events, tasks, activities and workouts states from the store
-  const tasks = useSelector((state) => state.calendar.tasks.items || []);
-  const events = useSelector((state) => state.calendar.events.items || []);
-  const activities = useSelector(
-    (state) => state.garmin.activities.items || [],
-  );
-  const workouts = useSelector(
-    (state) => state.garmin.upcomingWorkouts.items || [],
-  );
+  const tasks = useSelector((state) => state.calendar.tasks.items);
+  const events = useSelector((state) => state.calendar.events.items);
+  const activities = useSelector((state) => state.garmin.activities.items);
+  const workouts = useSelector((state) => state.garmin.upcomingWorkouts.items);
 
   // Normalize all states
   const { allDayItems, timedItems } = useMemo(() => {
@@ -143,7 +148,7 @@ const DayView = ({ selectedDate = new Date() }) => {
         <div className="date">
           <span className="day-name">{dayName}</span>
           <div
-            className={`date-circle ${new Date(selectedDate).toISOString().split("T")[0] === new Date().toISOString().split("T")[0] ? "active" : ""}`}
+            className={`date-circle ${formatLocalDate(selectedDate) === formatLocalDate(new Date()) ? "active" : ""}`}
           >
             {dayNumber}
           </div>

@@ -13,62 +13,34 @@ import "./MonthView.css";
 const getDateString = (item, type) => {
   // Normalize event dates to "YYYY-MM-DD" string
   if (type === "event") {
-    const date = new Date(item.start?.dateTime || item.start?.date);
-    if (!isNaN(date.getTime())) return date.toISOString().split("T")[0];
+    const date = item.start?.dateTime || item.start?.date;
+    return date ? date.split("T")[0] : null;
   }
 
   // Normalize task dates to "YYYY-MM-DD" string
   if (type === "task") {
-    const date = new Date(item.due);
-    if (!isNaN(date.getTime())) return date.toISOString().split("T")[0];
+    return item?.due ? item.due.split("T")[0] : null;
   }
 
   // Normalize activity dates to "YYYY-MM-DD" string
   if (type === "activity") {
-    if (item?.startTimeLocal) {
-      const date = new Date(item.startTimeLocal.split(" ")[0]);
-      if (!isNaN(date.getTime())) return date.toISOString().split("T")[0];
-    }
-    if (item?.startTimeGMT) {
-      const gmtDate = new Date(item?.startTimeGMT.split(" ")[0]);
-      if (!isNaN(gmtDate.getTime())) return gmtDate.toISOString().split("T")[0];
-    }
+    if (item?.startTimeLocal) return item.startTimeLocal.split(" ")[0];
+    if (item?.startTimeGMT) return item.startTimeGMT.split(" ")[0];
   }
 
   // Normalize workout dates to "YYYY-MM-DD" string
   if (type === "workout") {
-    if (item?.date) {
-      return item.date;
-    }
+    return item?.date ? item.date.split("T")[0] : null;
   }
-};
-
-// Function that safely parses the local time and GMT time returned by the garmin api
-const parseGarminTime = (startTimeLocal, GMTTime) => {
-  if (startTimeLocal) {
-    const localIsoTime = startTimeLocal.replace(" ", "T");
-    const localDate = new Date(localIsoTime);
-    if (!isNaN(localDate.getTime())) return new Date(localDate);
-  }
-  if (GMTTime) {
-    // Fallback to GMT time if local time is invalid
-    const gmtDate = new Date(GMTTime);
-    if (!isNaN(gmtDate.getTime())) return new Date(gmtDate);
-  }
-  return null;
 };
 
 // MonthView Component
 const MonthView = ({ selectedDate = new Date(), onViewChange }) => {
   // Events, tasks, activities, workouts and startDate states from the store
-  const tasks = useSelector((state) => state.calendar.tasks.items || []);
-  const events = useSelector((state) => state.calendar.events.items || []);
-  const activities = useSelector(
-    (state) => state.garmin.activities.items || [],
-  );
-  const workouts = useSelector(
-    (state) => state.garmin.upcomingWorkouts.items || [],
-  );
+  const tasks = useSelector((state) => state.calendar.tasks.items);
+  const events = useSelector((state) => state.calendar.events.items);
+  const activities = useSelector((state) => state.garmin.activities.items);
+  const workouts = useSelector((state) => state.garmin.upcomingWorkouts.items);
   const startDate = useSelector((state) => state.calendar.startDate);
   const endDate = useSelector((state) => state.calendar.endDate);
 
@@ -179,22 +151,24 @@ const MonthView = ({ selectedDate = new Date(), onViewChange }) => {
 
   return (
     <div className="month-view-container">
-
       {/* Header for all 7 days of the week */}
       <div className="month-grid-header">
-          <div className="weekday-column-grid-header">
-            <span className="day-name">S</span>
-            <span className="day-name">M</span>
-            <span className="day-name">T</span>
-            <span className="day-name">W</span>
-            <span className="day-name">T</span>
-            <span className="day-name">F</span>
-            <span className="day-name">S</span>
-          </div>
+        <div className="weekday-column-grid-header">
+          <span className="day-name">S</span>
+          <span className="day-name">M</span>
+          <span className="day-name">T</span>
+          <span className="day-name">W</span>
+          <span className="day-name">T</span>
+          <span className="day-name">F</span>
+          <span className="day-name">S</span>
+        </div>
       </div>
 
       {monthDates.map((day) => (
-        <div key={day.dateString} className={`month-day-container ${!day.isCurrentMonth ? "not-current-month" : ""}`}>
+        <div
+          key={day.dateString}
+          className={`month-day-container ${!day.isCurrentMonth ? "not-current-month" : ""}`}
+        >
           {/* Header for all days of the month */}
           <div className="month-day-grid-header">
             <div
@@ -209,9 +183,7 @@ const MonthView = ({ selectedDate = new Date(), onViewChange }) => {
 
           {/* Render all-day items */}
           <div className="month-all-day-banner">
-            <div
-              className="all-day-card-wrapper"
-            >
+            <div className="all-day-card-wrapper">
               {allDayItemsByDay[day.index].map((item) => {
                 if (item.type === "event" || item.type === "task") {
                   return (

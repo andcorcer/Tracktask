@@ -30,7 +30,7 @@ const CalendarInput = ({ date, entryType, onClose }) => {
     entryType || "event",
   );
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("General");
+  const [description, setDescription] = useState("");
   const [selectedDate, setSelectedDate] = useState(date || getLocalDate());
   const [startTime, setStartTime] = useState("00:00");
   const [endTime, setEndTime] = useState("00:00");
@@ -71,7 +71,7 @@ const CalendarInput = ({ date, entryType, onClose }) => {
         };
       }
 
-      dispatch(createCalendarEvent({ eventData, calendarListId }));
+      dispatch(createCalendarEvent({ eventData, calendarId: calendarListId }));
     } else {
       // If the enrty Type is task
       const taskData = {
@@ -135,7 +135,7 @@ const CalendarInput = ({ date, entryType, onClose }) => {
             <option value="primary">Primary Calendar List</option>
             {calendarList?.items.map((list) => (
               <option key={list.id} value={list.id}>
-                {list.title}
+                {list.summary}
               </option>
             ))}
           </select>

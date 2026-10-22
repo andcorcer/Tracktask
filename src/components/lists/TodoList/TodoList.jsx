@@ -14,7 +14,7 @@ import "./TodoList.css";
 // TodoList Component
 const TodoList = ({ date, viewMode = "date", itemsLimit }) => {
   // We get the todos from the redux store
-  const todos = useSelector((state) => state.todos.items || []);
+  const todos = useSelector((state) => state.todos.items);
 
   // Local state to render the TodoInput component conditionally
   const [showInput, setShowInput] = useState(false);
@@ -103,7 +103,8 @@ const TodoList = ({ date, viewMode = "date", itemsLimit }) => {
             className="btn load-more-btn"
             onClick={() => setDisplayedCount((prev) => prev + 10)}
           >
-            Load More ({Math.max(0, filteredTodos.length - displayedCount)} remaining)
+            Load More ({Math.max(0, filteredTodos.length - displayedCount)}{" "}
+            remaining)
           </button>
         </div>
       )}

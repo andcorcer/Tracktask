@@ -99,7 +99,7 @@ class GoogleCalendarApi {
       orderBy: "startTime",
     };
 
-    // We only add dueMin and dueMax to the parameters if they're provided
+    // We only add timeMin and timeMax to the parameters if they're provided
     if (timeMin) params.timeMin = formatDateToISO(timeMin);
     if (timeMax) params.timeMax = formatDateToISO(timeMax);
 

@@ -35,33 +35,24 @@ const HOURS = getHoursArray();
 const getDateString = (item, type) => {
   // Normalize event dates to "YYYY-MM-DD" string
   if (type === "event") {
-    const date = new Date(item.start?.dateTime || item.start?.date);
-    if (!isNaN(date.getTime())) return date.toISOString().split("T")[0];
+    const date = item.start?.dateTime || item.start?.date;
+    return date ? date.split("T")[0] : null;
   }
 
   // Normalize task dates to "YYYY-MM-DD" string
   if (type === "task") {
-    const date = new Date(item.due);
-    if (!isNaN(date.getTime())) return date.toISOString().split("T")[0];
+    return item?.due ? item.due.split("T")[0] : null;
   }
 
   // Normalize activity dates to "YYYY-MM-DD" string
   if (type === "activity") {
-    if (item?.startTimeLocal) {
-      const date = new Date(item.startTimeLocal.split(" ")[0]);
-      if (!isNaN(date.getTime())) return date.toISOString().split("T")[0];
-    }
-    if (item?.startTimeGMT) {
-      const gmtDate = new Date(item?.startTimeGMT.split(" ")[0]);
-      if (!isNaN(gmtDate.getTime())) return gmtDate.toISOString().split("T")[0];
-    }
+    if (item?.startTimeLocal) return item.startTimeLocal.split(" ")[0];
+    if (item?.startTimeGMT) return item.startTimeGMT.split(" ")[0];
   }
 
   // Normalize workout dates to "YYYY-MM-DD" string
   if (type === "workout") {
-    if (item?.date) {
-      return item.date;
-    }
+    return item?.date ? item.date.split("T")[0] : null;
   }
 };
 
@@ -82,16 +73,11 @@ const parseGarminTime = (startTimeLocal, GMTTime) => {
 
 // WeekView Component
 const WeekView = ({ selectedDate = new Date(), onViewChange }) => {
-
   // Events, tasks, activities, workouts and startDate states from the store
-  const tasks = useSelector((state) => state.calendar.tasks.items || []);
-  const events = useSelector((state) => state.calendar.events.items || []);
-  const activities = useSelector(
-    (state) => state.garmin.activities.items || [],
-  );
-  const workouts = useSelector(
-    (state) => state.garmin.upcomingWorkouts.items || [],
-  );
+  const tasks = useSelector((state) => state.calendar.tasks.items);
+  const events = useSelector((state) => state.calendar.events.items);
+  const activities = useSelector((state) => state.garmin.activities.items);
+  const workouts = useSelector((state) => state.garmin.upcomingWorkouts.items);
   const startDate = useSelector((state) => state.calendar.startDate);
 
   // We get all dates in the current week based on the startDate from the store

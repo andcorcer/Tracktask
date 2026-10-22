@@ -21,9 +21,10 @@ import {
   logoutGoogle,
 } from "../../store/slices/authenticationSlice";
 import {
-  clearSelections,
+  clearSelections as clearGarminSelections,
   clearGarminDataError,
 } from "../../store/slices/garminSlice";
+import { clearSelections as clearGoogleSelections } from "../../store/slices/calendarSlice";
 
 // Import Styles
 import "./SettingsPage.css";
@@ -104,6 +105,7 @@ const SettingsPage = () => {
 
   const handleGarminLogout = () => {
     dispatch(logoutGarmin());
+    dispatch(clearGarminSelections());
   };
 
   const handleGooglePopUpLogin = () => {
@@ -116,12 +118,7 @@ const SettingsPage = () => {
 
   const handleGoogleLogout = () => {
     dispatch(logoutGoogle());
-  };
-
-  // Handle Clear Garmin
-  const handleClearGarmin = () => {
-    dispatch(clearSelections());
-    dispatch(clearGarminDataError());
+    dispatch(clearGoogleSelections());
   };
 
   // Handle permanent deletion of todos and cache liberation
@@ -329,24 +326,15 @@ const SettingsPage = () => {
 
           <div className="card-body">
             <p className="card-description">
-              Clear Garmin data and cache to maintain optimal performance of the
-              application.
+              Clear the local storage memory
             </p>
-
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={handleClearGarmin}
-            >
-              Clear Garmin Data
-            </button>
 
             <button
               type="button"
               className="btn btn-secondary"
               onClick={handleDeletePermanently}
             >
-              Clear Todos from cache
+              Clear Cache
             </button>
           </div>
         </section>

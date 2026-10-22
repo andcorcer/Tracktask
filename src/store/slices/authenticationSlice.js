@@ -67,7 +67,7 @@ const authenticationSlice = createSlice({
     // Garmin Authentication Actions
     logoutGarmin: (state) => {
       state.garmin.status = "disconnected";
-      state.garmin.message = "Succesfully logged out of Garmin";
+      state.garmin.message = "Successfully logged out of Garmin";
       state.garmin.user = null;
     },
 
@@ -75,7 +75,7 @@ const authenticationSlice = createSlice({
     setGoogleAuthenticationCredentials: (state, action) => {
       state.google.accessToken = action.payload.accessToken;
       state.google.status = "connected";
-      state.google.message = "Succesfully logged in to Google";
+      state.google.message = "Successfully logged in to Google";
       if (action.payload.user) {
         state.google.user = action.payload.user;
       }
@@ -85,7 +85,7 @@ const authenticationSlice = createSlice({
     logoutGoogle: (state) => {
       state.google.accessToken = null;
       state.google.status = "disconnected";
-      state.google.message = "Succesfully logged out of Google";
+      state.google.message = "Successfully logged out of Google";
       state.google.user = null;
     },
 
@@ -130,7 +130,7 @@ const authenticationSlice = createSlice({
         state.isLoading = false;
         state.garmin.status = action.payload?.status || "connected";
         state.garmin.message =
-          action.payload?.message || "Succesfully logged in to Garmin";
+          action.payload?.message || "Successfully logged in to Garmin";
         state.error = null;
       })
       // Rejected
