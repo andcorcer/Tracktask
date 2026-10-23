@@ -35,7 +35,7 @@ const SCOPES =
   "https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/tasks";
 
 // SettingsPage Component
-const SettingsPage = () => {
+const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
   const dispatch = useDispatch();
 
   // Get states from the Redux store
@@ -52,11 +52,6 @@ const SettingsPage = () => {
 
   // Local state to check if the python backend is running
   const [backendConnectionStatus, setBackendConnectionStatus] = useState(null);
-
-  // Local state to set the theme
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    return localStorage.getItem("tracktask-theme") === "dark";
-  });
 
   // Variable that maintains a reference to the Google token client
   const tokenClientRef = useRef(null);
@@ -84,17 +79,6 @@ const SettingsPage = () => {
       });
     }
   }, []);
-
-  // Effect to update the theme in localStorage and update css whenever it changes
-  useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.setAttribute("data-theme", "dark");
-      localStorage.setItem("tracktask-theme", "dark");
-    } else {
-      document.documentElement.setAttribute("data-theme", "light");
-      localStorage.setItem("tracktask-theme", "light");
-    }
-  }, [isDarkMode]);
 
   // Handler functions
   const handleGarminLogin = (e) => {
@@ -142,10 +126,6 @@ const SettingsPage = () => {
     } catch (error) {
       setBackendConnectionStatus("offline");
     }
-  };
-
-  const toggleDarkMode = () => {
-    setIsDarkMode((prevMode) => !prevMode);
   };
 
   return (
@@ -325,9 +305,7 @@ const SettingsPage = () => {
           </div>
 
           <div className="card-body">
-            <p className="card-description">
-              Clear the local storage memory
-            </p>
+            <p className="card-description">Clear the local storage memory</p>
 
             <button
               type="button"
