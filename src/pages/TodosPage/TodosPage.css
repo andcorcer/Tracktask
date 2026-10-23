@@ -1,0 +1,227 @@
+/* Main Container */
+.todos-page-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  max-width: 1600px;
+  margin: 0 auto;
+  min-height: calc(100vh - 80px);
+}
+
+/* Header & Controls Section */
+.todos-page-header {
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 1.25rem;
+  transition:
+    background-color var(--transition-speed),
+    border-color var(--transition-speed),
+    box-shadow var(--transition-speed);
+}
+
+.todos-page-header:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.todos-page-actions,
+.todos-page-controls {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Permanent Delete Button */
+.btn.delete-permanently-btn {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--error-color);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-speed),
+    color var(--transition-speed),
+    border-color var(--transition-speed);
+}
+
+.delete-permanently-btn:hover {
+  background-color: var(--error-color);
+  color: #ffffff;
+  border-color: var(--error-color);
+}
+
+.view-mode-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-color);
+  border: 1px solid var(--border-color);
+  padding: 0.25rem;
+  border-radius: 0.75rem;
+  gap: 0.25rem;
+  width: fit-content;
+}
+
+.btn.view-btn {
+  background: transparent;
+  color: var(--text-secondary);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all var(--transition-speed);
+}
+
+.btn.view-btn:hover {
+  color: var(--text-primary);
+}
+
+.btn.view-btn.active {
+  background-color: var(--surface-color);
+  color: var(--accent-color);
+  box-shadow: var(--shadow-sm);
+  font-weight: 600;
+}
+
+/* Date Navigation */
+.todos-page-controls .date-navigation {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.todos-page-controls .date-navigation .nav-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.todos-page-controls .date-navigation .nav-controls .btn.today-btn {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-speed),
+    border-color var(--transition-speed);
+}
+
+.todos-page-controls .date-navigation .nav-controls .btn.today-btn:hover {
+  background-color: var(--border-color);
+}
+
+.todos-page-controls .date-navigation .nav-controls .nav-arrows {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.todos-page-controls .date-navigation .nav-controls .nav-arrows .nav-btn {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-speed),
+    border-color var(--transition-speed),
+    color var(--transition-speed);
+}
+
+.todos-page-controls .date-navigation .nav-controls .nav-arrows .nav-btn:hover {
+  background-color: var(--accent-color);
+  color: #ffffff;
+  border-color: var(--accent-color);
+}
+
+.todos-page-controls .date-navigation .nav-date {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  width: auto;
+  text-align: center;
+}
+
+/* Todo List Section */
+.todo-list-section {
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition:
+    background-color var(--transition-speed),
+    border-color var(--transition-speed),
+    box-shadow var(--transition-speed);
+}
+
+.todo-list-section:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* Responsive Styles */
+@media (max-width: 800px) {
+  .todos-page-controls .date-navigation {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 625px) {
+  .todos-page-controls {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .todos-page-controls .date-navigation {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.75rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .todos-page-controls .date-navigation {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 365px) {
+  .todos-page-actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
