@@ -40,7 +40,7 @@
 }
 
 /* Permanent Delete Button */
-.btn.delete-permanently-btn {
+.delete-permanently-btn {
   background-color: rgba(239, 68, 68, 0.1);
   color: var(--error-color);
   border: 1px solid rgba(239, 68, 68, 0.2);
@@ -74,7 +74,7 @@
   width: fit-content;
 }
 
-.btn.view-btn {
+.view-btn {
   background: transparent;
   color: var(--text-secondary);
   border: none;
@@ -89,11 +89,11 @@
   transition: all var(--transition-speed);
 }
 
-.btn.view-btn:hover {
+.view-btn:hover {
   color: var(--text-primary);
 }
 
-.btn.view-btn.active {
+.view-btn.active {
   background-color: var(--surface-color);
   color: var(--accent-color);
   box-shadow: var(--shadow-sm);
@@ -113,7 +113,7 @@
   gap: 0.5rem;
 }
 
-.todos-page-controls .date-navigation .nav-controls .btn.today-btn {
+.todos-page-controls .date-navigation .nav-controls .today-btn {
   background-color: var(--bg-color);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
@@ -127,7 +127,7 @@
     border-color var(--transition-speed);
 }
 
-.todos-page-controls .date-navigation .nav-controls .btn.today-btn:hover {
+.todos-page-controls .date-navigation .nav-controls .today-btn:hover {
   background-color: var(--border-color);
 }
 

@@ -69,34 +69,3 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-secondary);
 }
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  color: var(--text-primary);
-}
-
-p {
-  color: var(--text-secondary);
-}
-
-a {
-  color: var(--accent-color);
-  text-decoration: none;
-}
-
-a:hover {
-  color: var(--accent-hover);
-}
-
-.btn {
-  color: var(--text-primary);
-  background-color: var(--accent-color);
-}
-
-.btn:hover {
-  background-color: var(--accent-hover);
-}

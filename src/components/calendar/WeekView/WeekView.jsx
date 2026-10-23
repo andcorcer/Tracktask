@@ -78,7 +78,7 @@ const WeekView = ({ selectedDate = new Date(), onViewChange }) => {
   const events = useSelector((state) => state.calendar.events.items);
   const activities = useSelector((state) => state.garmin.activities.items);
   const workouts = useSelector((state) => state.garmin.upcomingWorkouts.items);
-  const startDate = useSelector((state) => state.calendar.startDate);
+  const startDate = useSelector((state) => state.date.startDate);
 
   // We get all dates in the current week based on the startDate from the store
   const weekDates = useMemo(() => {

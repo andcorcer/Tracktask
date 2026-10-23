@@ -26,12 +26,12 @@ const getWeekRange = (providedDate) => {
   // Format start date
   const startDay = String(startDate.getDate()).padStart(2, "0");
   const startMonth = startDate.toLocaleDateString("en-US", {
-    month: "2-digit",
+    month: "short",
   });
 
   // Format end date
   const endDay = String(endDate.getDate()).padStart(2, "0");
-  const endMonth = endDate.toLocaleDateString("en-US", { month: "2-digit" });
+  const endMonth = endDate.toLocaleDateString("en-US", { month: "short" });
   return `${startMonth} ${startDay} - ${endMonth} ${endDay}`;
 };
 
