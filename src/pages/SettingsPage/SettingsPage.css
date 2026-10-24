@@ -1,0 +1,204 @@
+/* Main Container */
+.settings-page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 1.5rem;
+  gap: 1.5rem;
+}
+
+/* Header Section */
+.settings-page-header {
+  width: 100%;
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.25rem;
+  transition:
+    background-color var(--transition-speed),
+    border-color var(--transition-speed),
+    box-shadow var(--transition-speed);
+}
+
+.settings-page-header:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.settings-page-header p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.settings-page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* Settings Page Grid */
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  padding: 1.5rem;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* Settings Card */
+.settings-card {
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition:
+    background-color var(--transition-speed),
+    border-color var(--transition-speed),
+    box-shadow var(--transition-speed);
+}
+
+.settings-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* Card header */
+.card-header h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+}
+
+.status-badge.connected {
+  background-color: rgba(0, 128, 0, 0.1);
+  border: 1px solid rgba(0, 128, 0, 0.2);
+  color: var(--success-color);
+}
+
+.status-badge.disconnected {
+  background-color: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.2);
+  color: var(--error-color);
+}
+
+/* Card body */
+.card-body,
+.card-authentication-body,
+.card-microservice-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.card-body .btn,
+.card-authentication-body .btn,
+.card-microservice-body .btn {
+  background-color: var(--surface-color);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-speed),
+    color var(--transition-speed),
+    border-color var(--transition-speed);
+}
+
+.card-body .btn:hover,
+.card-authentication-body .btn:hover,
+.card-microservice-body .btn:hover {
+  background-color: var(--accent-color);
+  color: #ffffff;
+  border-color: var(--accent-color);
+}
+
+.card-body .btn:disabled,
+.card-authentication-body .btn:disabled,
+.card-microservice-body .btn:disabled {
+  opacity: 0.5;                
+  cursor: not-allowed;         
+  pointer-events: none;        
+  box-shadow: none;   
+}
+
+.card-description,
+.card-microservice-body span {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+/* Theme toggle label */
+.toggle-label {
+  color: var(--text-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+/* Garmin authentication form */
+.authentication-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.authentication-form label {
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.authentication-form input {
+  color: var(--text-primary);
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  outline: none;
+  transition: border-color var(--transition-speed);
+}
+
+.authentication-form input:focus {
+  border-color: var(--accent-color);
+}
+
+/* Responsive Styles */
+@media (max-width: 1023px) {
+  .settings-grid {
+    grid-template-columns: 1fr; /* Only one column on smaller screens */
+  }
+}

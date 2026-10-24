@@ -45,6 +45,7 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
   const googleAuthenticationStatus = useSelector(
     (state) => state.authentication.google.status || "disconnected",
   );
+  const todos = useSelector((state) => state.todos.items);
 
   // Local states
   const [garminEmail, setGarminEmail] = useState("");
@@ -90,6 +91,8 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
   const handleGarminLogout = () => {
     dispatch(logoutGarmin());
     dispatch(clearGarminSelections());
+    setGarminEmail("");
+    setGarminPassword("");
   };
 
   const handleGooglePopUpLogin = () => {
@@ -131,7 +134,7 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
   return (
     <div className="settings-page-container">
       <header className="settings-page-header">
-        <h2>Settings and Preferences</h2>
+        <h2 className="settings-page-title">Settings and Preferences</h2>
         <p>
           Manage external microservice, authentication, and application
           settings.
@@ -216,7 +219,7 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
                 Logout from Garmin
               </button>
             ) : (
-              <form className="autentication-form">
+              <form className="authentication-form">
                 <label htmlFor="garmin-email">Email</label>
                 <input
                   type="email"
@@ -241,6 +244,7 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
                   type="submit"
                   className="btn btn-primary"
                   onClick={handleGarminLogin}
+                  disabled={garminAuthenticationStatus === "checking" || !garminEmail || !garminPassword}
                 >
                   <LogIn size={16} />
                   Login with Garmin
@@ -248,25 +252,27 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
               </form>
             )}
           </div>
-          <div className="card-microservice-body">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={testBackendConnection}
-            >
-              <FileTerminal size={16} />
-              Check Python Microservice
-            </button>
-            {backendConnectionStatus && (
-              <span>
-                {backendConnectionStatus === "checking"
-                  ? "Checking port 8000"
-                  : backendConnectionStatus === "online"
-                    ? "Python Microservice Connected on port 8000"
-                    : "Python Microservice Disconnected, Verify that main.py is running"}
-              </span>
-            )}
-          </div>
+          {garminAuthenticationStatus === "connected" && (
+            <div className="card-microservice-body">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={testBackendConnection}
+              >
+                <FileTerminal size={16} />
+                Check Python Microservice
+              </button>
+              {backendConnectionStatus && (
+                <span>
+                  {backendConnectionStatus === "checking"
+                    ? "Checking port 8000"
+                    : backendConnectionStatus === "online"
+                      ? "Python Microservice Connected on port 8000"
+                      : "Python Microservice Disconnected, Verify that main.py is running"}
+                </span>
+              )}
+            </div>
+          )}
         </section>
 
         {/* Theme Section */}
@@ -311,6 +317,7 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
               type="button"
               className="btn btn-secondary"
               onClick={handleDeletePermanently}
+              disabled={todos.length === 0}
             >
               Clear Cache
             </button>
