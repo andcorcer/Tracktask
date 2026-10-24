@@ -44,45 +44,9 @@ const CalendarHeader = ({
   onNavigate,
 }) => {
   return (
-    <header className="calendar-header">
-      {/* Date Actions */}
-      <div className="header-navigation">
-        <button
-          type="button"
-          className="btn today-btn"
-          onClick={() => onNavigate?.("today")}
-        >
-          Today
-        </button>
-
-        <div className="nav-arrows">
-          <button
-            type="button"
-            className="btn nav-btn"
-            onClick={() => onNavigate?.("prev")}
-          >
-            <CircleChevronLeft size={20} />
-          </button>
-          <button
-            type="button"
-            className="btn nav-btn"
-            onClick={() => onNavigate?.("next")}
-          >
-            <CircleChevronRight size={20} />
-          </button>
-        </div>
-
-        <h2 className="calendar-header-title">
-          {viewMode === "week"
-            ? getWeekRange(date)
-            : date.toLocaleDateString("en-US", {
-                month: "long",
-                year: "numeric",
-                ...(viewMode === "day" && { day: "2-digit" }),
-              })}
-        </h2>
-      </div>
-
+    <header
+      className={`calendar-header ${isHomePage ? "home-page" : "not-home-page"}`}
+    >
       {/* View Mode Switcher (only when not on the home page) */}
       {!isHomePage && (
         <div
@@ -116,6 +80,45 @@ const CalendarHeader = ({
           </button>
         </div>
       )}
+
+      {/* Date Actions */}
+      <div className="date-navigation">
+        <h2 className="calendar-header-title">
+          {viewMode === "week"
+            ? getWeekRange(date)
+            : date.toLocaleDateString("en-US", {
+                month: "long",
+                year: "numeric",
+                ...(viewMode === "day" && { day: "2-digit" }),
+              })}
+        </h2>
+        <div className="nav-controls">
+          <button
+            type="button"
+            className="btn today-btn"
+            onClick={() => onNavigate?.("today")}
+          >
+            Today
+          </button>
+
+          <div className="nav-arrows">
+            <button
+              type="button"
+              className="btn nav-btn"
+              onClick={() => onNavigate?.("prev")}
+            >
+              <CircleChevronLeft size={20} />
+            </button>
+            <button
+              type="button"
+              className="btn nav-btn"
+              onClick={() => onNavigate?.("next")}
+            >
+              <CircleChevronRight size={20} />
+            </button>
+          </div>
+        </div>
+      </div>
     </header>
   );
 };

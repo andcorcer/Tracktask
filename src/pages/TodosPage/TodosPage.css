@@ -66,7 +66,7 @@
   border-color: var(--error-color);
 }
 
-.view-mode-switcher {
+.todos-page-controls .view-mode-switcher {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -79,7 +79,7 @@
   width: fit-content;
 }
 
-.view-btn {
+.todos-page-controls .view-mode-switcher .view-btn {
   background: transparent;
   color: var(--text-secondary);
   border: none;
@@ -94,11 +94,11 @@
   transition: all var(--transition-speed);
 }
 
-.view-btn:hover {
+.todos-page-controls .view-mode-switcher .view-btn:hover {
   color: var(--text-primary);
 }
 
-.view-btn.active {
+.todos-page-controls .view-mode-switcher .view-btn.active {
   background-color: var(--surface-color);
   color: var(--accent-color);
   box-shadow: var(--shadow-sm);
