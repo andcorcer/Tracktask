@@ -1,0 +1,138 @@
+/* Main Container */
+.week-view-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Week View Header */
+.week-grid-header {
+  display: grid;
+  grid-template-columns: 70px repeat(7, 1fr);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* First Day Column Adjustment */
+.week-grid-header .day-column-grid-header:first-child {
+  grid-column-start: 2;
+}
+
+.week-grid-header .day-column-grid-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 0.5rem;
+  border-left: 1px solid var(--border-color);
+  gap: 0.5rem;
+}
+
+.week-grid-header .day-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.01rem;
+}
+
+.week-grid-header .date-circle {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-primary);
+  background-color: var(--bg-color);
+  border: 1px solid var(--border-color);
+  transition:
+    background-color var(--transition-speed),
+    color var(--transition-speed),
+    border-color var(--transition-speed);
+}
+
+.week-grid-header .date-circle:hover {
+  background-color: var(--border-color);
+}
+
+.week-grid-header .date-circle.active {
+  background-color: var(--accent-color);
+  color: #ffffff;
+  border-color: var(--accent-color);
+}
+
+/* All Day Items */
+.week-all-day-banner {
+  display: grid;
+  grid-template-columns: 70px repeat(7, 1fr);
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-color);
+  padding: 0.5rem 0;
+  align-items: flex-start;
+}
+
+.all-day-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  text-align: right;
+  padding-right: 0.75rem;
+  padding-top: 0.5rem;
+}
+
+.all-day-column {
+  border-left: 1px solid var(--border-color);
+  padding: 0 0.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 30px;
+}
+
+.time-grid-scroll-container {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 650px;
+  position: relative;
+}
+
+.week-time-grid {
+  display: grid;
+  grid-template-columns: 70px repeat(7, 1fr);
+  grid-template-rows: repeat(96, 1fr);
+  position: relative;
+  min-height: 1728px;
+  background-color: var(--surface-color);
+}
+
+.week-time-grid .time-grid-label {
+  grid-column: 1 / 2;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-align: right;
+  padding-right: 0.75rem;
+  transform: translateY(-50%);
+  user-select: none;
+}
+
+/* Hourly Background Grid Lines & Column Dividers */
+.week-time-grid .grid-hour-row {
+  border-bottom: 1px solid var(--border-color);
+  border-left: 1px solid var(--border-color);
+  opacity: 0.5;
+}
+
+/* Timed Card Wrapper Placed via Component's Grid Row/Column Inline Styles */
+.week-time-grid .timed-card-wrapper {
+  padding: 0 0.25rem;
+  z-index: 2;
+}

@@ -9,6 +9,14 @@ import CalendarCard from "../../items/CalendarCard/CalendarCard";
 // Import Styles
 import "./WeekView.css";
 
+const formatLocalDate = (date) => {
+  const dateObj = new Date(date);
+  const year = dateObj.getFullYear();
+  const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
+  const day = dateObj.getDate().toString().padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 // Function that returns the rows in the calendar grid using the time range (each row represents 15 minutes)
 const getGridRows = (timeString, defaultHour = 1) => {
   if (!timeString) return defaultHour * 4 + 1; // Return the default number of rows if no time string is provided
@@ -203,9 +211,6 @@ const WeekView = ({ selectedDate = new Date(), onViewChange }) => {
     return { allDayItemsByDay: allDayByDay, timedItemsbyDay: timedByDay };
   }, [events, tasks, activities, workouts, weekDates]);
 
-  // We convert the current date to a string for easy comparison with the week dates
-  const currentDateString = selectedDate.toISOString().split("T")[0];
-
   return (
     <div className="week-view-container">
       {/* Header for all 7 days of the week */}
@@ -217,7 +222,7 @@ const WeekView = ({ selectedDate = new Date(), onViewChange }) => {
               onClick={() => onViewChange("day", day.date)}
               role="button"
               tabIndex={0}
-              className={`date-circle ${day.dateString === currentDateString ? "active" : ""}`}
+              className={`date-circle ${day.dateString === formatLocalDate(new Date()) ? "active" : ""}`}
             >
               {day.dayNumber}
             </div>
