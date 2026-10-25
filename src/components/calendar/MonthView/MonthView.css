@@ -1,0 +1,112 @@
+/* Main Container */
+.month-view-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  margin: 1rem auto;
+}
+
+/* Weekday Names Header */
+.month-grid-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.month-grid-header .day-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  border-right: 1px solid var(--border-color);
+  padding: 1rem 0;
+}
+
+/* Remove right border on the last column (Saturdays) */
+.month-grid-header .day-name:nth-child(7) {
+  border-right: none;
+}
+
+/* 42 cells for the month grid */
+.month-grid-body {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-auto-rows: minmax(120px, 1fr);
+}
+
+.month-grid-body .month-day-container {
+  background-color: var(--surface-color);
+  border-right: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-height: 100px;
+  overflow-y: auto;
+  transition: background-color var(--transition-speed);
+}
+
+/* Remove right border on the last column (Saturdays) */
+.month-grid-body .month-day-container:nth-child(7) {
+  border-right: none;
+}
+
+/* Dim style for days that belong to previous or next month */
+.month-day-container.not-current-month {
+  background-color: var(--bg-color);
+  opacity: 0.5;
+}
+
+.month-day-container:hover {
+  background-color: var(--bg-color);
+}
+
+/* Day Cell Header & Number Badge */
+.month-day-grid-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 0.25rem;
+}
+
+.month-day-grid-header .date-circle {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-primary);
+  background-color: var(--bg-color);
+  border: 1px solid var(--border-color);
+  transition:
+    background-color var(--transition-speed),
+    color var(--transition-speed),
+    border-color var(--transition-speed);
+}
+
+.month-day-grid-header .date-circle:hover {
+  background-color: var(--border-color);
+}
+
+.month-day-grid-header .date-circle.active {
+  background-color: var(--accent-color);
+  color: #ffffff;
+  border-color: var(--accent-color);
+}
+
+.all-day-banner,
+.timed-card-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
