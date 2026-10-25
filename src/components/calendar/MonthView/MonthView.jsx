@@ -9,6 +9,14 @@ import CalendarCard from "../../items/CalendarCard/CalendarCard";
 // Import Styles
 import "./MonthView.css";
 
+const formatLocalDate = (date) => {
+  const dateObj = new Date(date);
+  const year = dateObj.getFullYear();
+  const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
+  const day = dateObj.getDate().toString().padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 // Function that returns the date string in the format "YYYY-MM-DD" for any calendar item
 const getDateString = (item, type) => {
   // Normalize event dates to "YYYY-MM-DD" string
@@ -146,9 +154,6 @@ const MonthView = ({ selectedDate = new Date(), onViewChange }) => {
     return { allDayItemsByDay: allDayByDay, timedItemsbyDay: timedByDay };
   }, [events, tasks, activities, workouts, monthDates]);
 
-  // We convert the current date to a string for easy comparison with the month dates
-  const currentDateString = selectedDate.toISOString().split("T")[0];
-
   return (
     <div className="month-view-container">
       {/* Header for all 7 days of the week */}
@@ -174,7 +179,7 @@ const MonthView = ({ selectedDate = new Date(), onViewChange }) => {
                 onClick={() => onViewChange("day", day.date)}
                 role="button"
                 tabIndex={0}
-                className={`date-circle ${day.dateString === currentDateString ? "active" : ""}`}
+                className={`date-circle ${day.dateString === formatLocalDate(new Date()) ? "active" : ""}`}
               >
                 {day.dayNumber}
               </div>
