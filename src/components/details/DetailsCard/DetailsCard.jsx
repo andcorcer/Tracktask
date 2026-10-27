@@ -114,6 +114,11 @@ const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
       <div className="details-card todo-details">
         {/* Checkbox toggle button */}
         <div className="details-header">
+          {/* Description */}
+          <div className="details-description todo-description">
+            <h4 className="details-subtitle">Description</h4>
+            <p className="details-text">{item.data}</p>
+          </div>
           <button
             className={`btn checkbox-btn ${completed ? "checked" : ""}`}
             onClick={handleToggle}
@@ -124,12 +129,6 @@ const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
               {completed ? "Completed" : "Incompleted"}
             </span>
           </button>
-        </div>
-
-        {/* Description */}
-        <div className="details-description">
-          <h4 className="details-subtitle">Description</h4>
-          <p className="details-text">{item.data}</p>
         </div>
 
         {/* Meta Information */}
@@ -381,7 +380,7 @@ const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
               const cleanedDate = item.date.split("T")[0];
               const [year, month, day] = cleanedDate.split("-");
               return new Date(year, month - 1, day).toLocaleDateString();
-            })
+            })(),
           },
           {
             label: "Type",
@@ -449,7 +448,9 @@ const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
         metaItems = [
           {
             label: "Title",
-            value: item?.title || "(No title)",
+            value:
+              item?.title.charAt(0).toUpperCase() + item?.title.slice(1) ||
+              "(No title)",
           },
           {
             label: "Last Updated",
@@ -464,15 +465,21 @@ const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
         metaItems = [
           {
             label: "Title",
-            value: item?.summary || "(No title)",
+            value:
+              item?.summary.charAt(0).toUpperCase() + item?.summary.slice(1) ||
+              "(No title)",
           },
           {
             label: "Description",
-            value: item?.description || "(No description)",
+            value:
+              item?.description.charAt(0).toUpperCase() +
+                item?.description.slice(1) || "(No description)",
           },
           {
             label: "Access Role",
-            value: item?.accessRole || "reader",
+            value:
+              item?.accessRole.charAt(0).toUpperCase() +
+                item?.accessRole.slice(1) || "Reader",
           },
           {
             label: "Timezone",
@@ -485,19 +492,27 @@ const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
         metaItems = [
           {
             label: "Title",
-            value: item?.summary || "(No title)",
+            value:
+              item?.summary?.charAt(0).toUpperCase() +
+                item?.summary?.slice(1) || "(No title)",
           },
           {
             label: "Description",
-            value: item?.description || "(No description)",
+            value:
+              item?.description?.charAt(0).toUpperCase() +
+                item?.description?.slice(1) || "(No description)",
           },
           {
             label: "Location",
-            value: item?.location || "(No location)",
+            value:
+              item?.location?.charAt(0).toUpperCase() +
+                item?.location?.slice(1) || "(No location)",
           },
           {
             label: "Status",
-            value: item?.status || "(No status)",
+            value:
+              item?.status?.charAt(0).toUpperCase() + item?.status?.slice(1) ||
+              "(No status)",
           },
           {
             label: "Date",
@@ -529,19 +544,28 @@ const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
         metaItems = [
           {
             label: "Title",
-            value: item?.title || "(No title)",
+            value:
+              item?.title?.charAt(0).toUpperCase() + item?.title?.slice(1) ||
+              "(No title)",
           },
           {
             label: "Notes",
-            value: item?.notes || "(No notes)",
+            value:
+              item?.notes?.charAt(0).toUpperCase() + item?.notes?.slice(1) ||
+              "(No notes)",
           },
           {
             label: "Status",
-            value: item?.status || "(No status)",
+            value:
+              item?.status?.charAt(0).toUpperCase() +
+                item?.status
+                  ?.slice(1)
+                  .split(/(?=[A-Z])/)
+                  .join(" ") || "(No status)",
           },
           {
             label: "Due Date",
-            value: item?.due ? item?.due.split("T")[0] : "(No due date)",
+            value: item?.due?.split("T")[0] || "(No due date)",
           },
         ];
 
@@ -557,23 +581,26 @@ const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
 
     return (
       <div className={`details-card calendar-details ${title}`}>
-        {/* Checkbox toggle button */}
-        {secondaryType === "task" && (
-          <button
-            className="btn toggle-task-btn"
-            onClick={(e) => handleToggleTask(e, taskListId)}
-          >
-            {item?.status === "needsAction" ? (
-              <Square size={18} className="task" />
-            ) : (
-              <SquareCheckBig size={18} className="task" />
-            )}
-          </button>
-        )}
+        {/* Header */}
+        <div className="details-header calendar-header">
+          {/* Description */}
+          <div className="details-description">
+            <h4 className="details-subtitle">{title}</h4>
+          </div>
 
-        {/* Description */}
-        <div className="details-description">
-          <h4 className="details-subtitle">{title}</h4>
+          {/* Checkbox toggle button */}
+          {secondaryType === "task" && (
+            <button
+              className="btn toggle-task-btn"
+              onClick={(e) => handleToggleTask(e, taskListId)}
+            >
+              {item?.status === "needsAction" ? (
+                <Square size={18} className="task" />
+              ) : (
+                <SquareCheckBig size={18} className="task" />
+              )}
+            </button>
+          )}
         </div>
 
         {/* Meta Information */}
