@@ -56,15 +56,11 @@ const transformTimeFormat = (time) => {
     : `${paddedMinutes}:${paddedSeconds}`;
 };
 
-// Function to get the current local date in YYYY-MM-DD format
-const getLocalDate = () => {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, "0");
-  const day = String(today.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
+// Function to capitalize safely
+const capitalizeSafe = (str, fallback = "(None)") => {
+  if (!str || typeof str !== "string") return fallback;
+  return str.charAt(0).toUpperCase() + str.slice(1);
 };
-
 // DetailsCard Component
 const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
   const dispatch = useDispatch(); // Get the dispatch function from Redux to dispatch actions
@@ -448,9 +444,7 @@ const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
         metaItems = [
           {
             label: "Title",
-            value:
-              item?.title.charAt(0).toUpperCase() + item?.title.slice(1) ||
-              "(No title)",
+            value: capitalizeSafe(item?.title, "(No title)"),
           },
           {
             label: "Last Updated",
@@ -465,21 +459,15 @@ const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
         metaItems = [
           {
             label: "Title",
-            value:
-              item?.summary.charAt(0).toUpperCase() + item?.summary.slice(1) ||
-              "(No title)",
+            value: capitalizeSafe(item?.summary, "(No title)"),
           },
           {
             label: "Description",
-            value:
-              item?.description.charAt(0).toUpperCase() +
-                item?.description.slice(1) || "(No description)",
+            value: capitalizeSafe(item?.description, "(No description)"),
           },
           {
             label: "Access Role",
-            value:
-              item?.accessRole.charAt(0).toUpperCase() +
-                item?.accessRole.slice(1) || "Reader",
+            value: capitalizeSafe(item?.accessRole, "Reader"),
           },
           {
             label: "Timezone",
@@ -492,27 +480,19 @@ const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
         metaItems = [
           {
             label: "Title",
-            value:
-              item?.summary?.charAt(0).toUpperCase() +
-                item?.summary?.slice(1) || "(No title)",
+            value: capitalizeSafe(item?.summary, "(No title)"),
           },
           {
             label: "Description",
-            value:
-              item?.description?.charAt(0).toUpperCase() +
-                item?.description?.slice(1) || "(No description)",
+            value: capitalizeSafe(item?.description, "(No description)"),
           },
           {
             label: "Location",
-            value:
-              item?.location?.charAt(0).toUpperCase() +
-                item?.location?.slice(1) || "(No location)",
+            value: capitalizeSafe(item?.location, "(No location)"),
           },
           {
             label: "Status",
-            value:
-              item?.status?.charAt(0).toUpperCase() + item?.status?.slice(1) ||
-              "(No status)",
+            value: capitalizeSafe(item?.status, "(No status)"),
           },
           {
             label: "Date",
@@ -544,24 +524,22 @@ const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
         metaItems = [
           {
             label: "Title",
-            value:
-              item?.title?.charAt(0).toUpperCase() + item?.title?.slice(1) ||
-              "(No title)",
+            value: capitalizeSafe(item?.title, "(No title)"),
           },
           {
             label: "Notes",
-            value:
-              item?.notes?.charAt(0).toUpperCase() + item?.notes?.slice(1) ||
-              "(No notes)",
+            value: capitalizeSafe(item?.notes, "(No notes)"),
           },
           {
             label: "Status",
             value:
-              item?.status?.charAt(0).toUpperCase() +
-                item?.status
-                  ?.slice(1)
-                  .split(/(?=[A-Z])/)
-                  .join(" ") || "(No status)",
+              typeof item?.status === "string"
+                ? item?.status?.charAt(0).toUpperCase() +
+                    item?.status
+                      ?.slice(1)
+                      .split(/(?=[A-Z])/)
+                      .join(" ") || "(No status)"
+                : "(No status)",
           },
           {
             label: "Due Date",

@@ -14,7 +14,11 @@ import DetailsCard from "../../details/DetailsCard/DetailsCard";
 import Modal from "../../details/Modal/Modal";
 
 // Import Actions
-import { toggleTask } from "../../../store/slices/calendarSlice";
+import {
+  toggleTask,
+  selectCalendarList,
+  selectTaskList,
+} from "../../../store/slices/calendarSlice";
 
 // Import Styles
 import "./CalendarCard.css";
@@ -78,7 +82,10 @@ const CalendarCard = ({ type, data, viewMode, taskListId }) => {
   const renderCalendarList = () => (
     <div
       className="calendar-content calendar-list-container"
-      onClick={handleOpenDetails}
+      onClick={() => {
+        dispatch(selectCalendarList(data.id));
+        handleOpenDetails();
+      }}
       role="button"
       tabIndex={0}
       style={{
@@ -99,7 +106,10 @@ const CalendarCard = ({ type, data, viewMode, taskListId }) => {
   const renderTaskList = () => (
     <div
       className="calendar-content task-list-container"
-      onClick={handleOpenDetails}
+      onClick={() => {
+        dispatch(selectTaskList(data.id));
+        handleOpenDetails();
+      }}
       role="button"
       tabIndex={0}
     >

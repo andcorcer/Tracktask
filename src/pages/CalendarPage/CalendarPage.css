@@ -3,6 +3,7 @@
   display: flex;
   flex-direction: column;
   padding: 1.5rem;
+  gap: 2rem;
   max-width: 1600px;
   margin: 0 auto;
   min-height: calc(100vh - 80px);
@@ -45,7 +46,7 @@
 }
 
 /* Todos Widget Container */
-.calendar-todos-container {
+.calendar-sidebar {
   background-color: var(--surface-color);
   border: 1px solid var(--border-color);
   border-radius: 1rem;
@@ -57,11 +58,11 @@
     border-color var(--transition-speed);
 }
 
-.calendar-todos-container:hover {
+.calendar-sidebar:hover {
   box-shadow: var(--shadow-md);
 }
 
-.calendar-todos-date {
+.calendar-sidebar-title {
   font-size: 1rem;
   font-weight: 600;
   color: var(--text-primary);

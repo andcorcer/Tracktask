@@ -42,82 +42,94 @@ const CalendarHeader = ({
   viewMode = "day",
   onViewChange,
   onNavigate,
+  handleOpenInput,
 }) => {
   return (
-    <header
-      className={`calendar-header ${isHomePage ? "home-page" : "not-home-page"}`}
-    >
-      {/* View Mode Switcher (only when not on the home page) */}
-      {!isHomePage && (
-        <div
-          className="view-mode-switcher"
-          role="radiogroup"
-          aria-label="Calendar View Options"
-        >
-          <button
-            type="button"
-            className={`btn view-btn ${viewMode === "day" ? "active" : ""}`}
-            onClick={() => onViewChange("day")}
+    <header className={`calendar-header ${!isHomePage ? "not-home-page" : "home-page"}`}>
+      <div className="calendar-header-date">
+        {/* View Mode Switcher (only when not on the home page) */}
+        {!isHomePage && (
+          <div
+            className="view-mode-switcher"
+            role="radiogroup"
+            aria-label="Calendar View Options"
           >
-            <Calendar size={16} />
-            <span>Day</span>
-          </button>
-          <button
-            type="button"
-            className={`btn view-btn ${viewMode === "week" ? "active" : ""}`}
-            onClick={() => onViewChange("week")}
-          >
-            <CalendarDays size={16} />
-            <span>Week</span>
-          </button>
-          <button
-            type="button"
-            className={`btn view-btn ${viewMode === "month" ? "active" : ""}`}
-            onClick={() => onViewChange("month")}
-          >
-            <CalendarRange size={16} />
-            <span>Month</span>
-          </button>
-        </div>
-      )}
-
-      {/* Date Actions */}
-      <div className="date-navigation">
-        <h2 className="calendar-header-title">
-          {viewMode === "week"
-            ? getWeekRange(date)
-            : date.toLocaleDateString("en-US", {
-                month: "long",
-                year: "numeric",
-                ...(viewMode === "day" && { day: "2-digit" }),
-              })}
-        </h2>
-        <div className="nav-controls">
-          <button
-            type="button"
-            className="btn today-btn"
-            onClick={() => onNavigate?.("today")}
-          >
-            Today
-          </button>
-
-          <div className="nav-arrows">
             <button
               type="button"
-              className="btn nav-btn"
-              onClick={() => onNavigate?.("prev")}
+              className={`btn view-btn ${viewMode === "day" ? "active" : ""}`}
+              onClick={() => onViewChange("day")}
             >
-              <CircleChevronLeft size={20} />
+              <Calendar size={16} />
+              <span>Day</span>
             </button>
             <button
               type="button"
-              className="btn nav-btn"
-              onClick={() => onNavigate?.("next")}
+              className={`btn view-btn ${viewMode === "week" ? "active" : ""}`}
+              onClick={() => onViewChange("week")}
             >
-              <CircleChevronRight size={20} />
+              <CalendarDays size={16} />
+              <span>Week</span>
+            </button>
+            <button
+              type="button"
+              className={`btn view-btn ${viewMode === "month" ? "active" : ""}`}
+              onClick={() => onViewChange("month")}
+            >
+              <CalendarRange size={16} />
+              <span>Month</span>
             </button>
           </div>
+        )}
+
+        {/* Date Actions */}
+        <div className="date-navigation">
+          <h2 className="calendar-header-title">
+            {viewMode === "week"
+              ? getWeekRange(date)
+              : date.toLocaleDateString("en-US", {
+                  month: "long",
+                  year: "numeric",
+                  ...(viewMode === "day" && { day: "2-digit" }),
+                })}
+          </h2>
+          <div className="nav-controls">
+            <button
+              type="button"
+              className="btn today-btn"
+              onClick={() => onNavigate?.("today")}
+            >
+              Today
+            </button>
+
+            <div className="nav-arrows">
+              <button
+                type="button"
+                className="btn nav-btn"
+                onClick={() => onNavigate?.("prev")}
+              >
+                <CircleChevronLeft size={20} />
+              </button>
+              <button
+                type="button"
+                className="btn nav-btn"
+                onClick={() => onNavigate?.("next")}
+              >
+                <CircleChevronRight size={20} />
+              </button>
+            </div>
+          </div>
         </div>
+      </div>
+
+      {/* Add Calendar Item Button */}
+      <div className="add-calendar-item-button">
+        <button
+          type="button"
+          className="btn add-calendar-item-btn"
+          onClick={handleOpenInput}
+        >
+          Add Calendar Item
+        </button>
       </div>
     </header>
   );

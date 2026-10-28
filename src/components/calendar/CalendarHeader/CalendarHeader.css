@@ -1,5 +1,5 @@
 /* Main Container */
-.calendar-header {
+header.calendar-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -7,14 +7,41 @@
   text-align: center;
 }
 
-.calendar-header.home-page {
-  justify-content: flex-end;
+.calendar-header-date {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
 }
 
 .calendar-header-title {
   font-size: 1.5rem;
   font-weight: 600;
   color: var(--text-primary);
+}
+
+/* Add Calendar Item Button */
+.calendar-header .add-calendar-item-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calendar-header .add-calendar-item-button .add-calendar-item-btn {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-speed),
+    border-color var(--transition-speed);
+}
+
+.calendar-header .add-calendar-item-button .add-calendar-item-btn:hover {
+  background-color: var(--border-color);
 }
 
 /* View Mode Switcher */
@@ -79,9 +106,7 @@
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
-  transition:
-    background-color var(--transition-speed),
-    border-color var(--transition-speed);
+  transition: background-color var(--transition-speed);
 }
 
 .calendar-header .date-navigation .nav-controls .today-btn:hover {
@@ -126,45 +151,58 @@
 }
 
 /* Responsive Styles */
-@media (max-width: 800px) {
-  .calendar-header.not-home-page .date-navigation  {
-    flex-direction: column;
-    gap: 0.5rem;
-    align-items: flex-end;
-  }
-  .calendar-header.not-home-page .view-mode-switcher {
-    justify-content: center;
-  }
-} 
 
-@media (max-width: 600px) {
+/* Not Home Page */
+@media (max-width: 925px) {
   .calendar-header.not-home-page {
-    flex-direction: column;
+    flex-direction: column-reverse;
     align-items: center;
     gap: 0.5rem;
   }
 
-  .calendar-header.not-home-page .date-navigation {
-    flex-direction: row;
-    align-items: center;
-    gap: 0.75rem;
+  .calendar-header.not-home-page .add-calendar-item-button {
+    align-self: flex-end;
   }
-} 
+}
+
+@media (max-width: 750px) {
+  .calendar-header.not-home-page .calendar-header-date {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .calendar-header.not-home-page .add-calendar-item-button {
+    align-self: center;
+  }
+}
 
 @media (max-width: 450px) {
-  .calendar-header.not-home-page .date-navigation  {
+  .calendar-header.not-home-page .date-navigation {
     flex-direction: column;
     gap: 0.5rem;
     align-items: center;
   }
-} 
+}
 
-@media (max-width: 500px) {
-    .calendar-header.home-page {
-        justify-content: center;
-    }
-  .calendar-header.home-page .date-navigation  {
+/* Home Page */
+@media (max-width: 650px) {
+  .calendar-header.home-page {
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .calendar-header.home-page .add-calendar-item-button {
+    align-self: flex-end;
+  }
+}
+
+@media (max-width: 475px) {
+  .calendar-header.home-page .date-navigation {
     flex-direction: column;
   }
 
-} 
+  .calendar-header.home-page .add-calendar-item-button {
+    align-self: center;
+  }
+}

@@ -1,7 +1,7 @@
 // Import all dependencies
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Calendar, SquareCheck  } from "lucide-react";
+import { Calendar, SquareCheck } from "lucide-react";
 
 // Import Actions
 import { createTask } from "../../../store/slices/calendarSlice";
@@ -20,10 +20,23 @@ const getLocalDate = () => {
 };
 
 // CalendarInput Component
-const CalendarInput = ({ date, entryType, onClose }) => {
+const CalendarInput = ({
+  date,
+  initialStartTime,
+  initialEndTime,
+  entryType,
+  onClose,
+}) => {
   const dispatch = useDispatch(); // Get the dispatch function from Redux to dispatch actions
 
-  const { calendarList, tasksList } = useSelector((state) => state.calendar);
+  // Select items from Redux store depending on whether we want calendar lists or task lists
+  const calendarListsState = useSelector(
+    (state) => state.calendar.calendarList,
+  );
+  const taskListsState = useSelector((state) => state.calendar.tasksList);
+
+  const calendarLists = calendarListsState.items || [];
+  const taskLists = taskListsState.items || [];
 
   // Local states to track what the input fields have
   const [currentEntryType, setCurrentEntryType] = useState(
@@ -32,17 +45,17 @@ const CalendarInput = ({ date, entryType, onClose }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [selectedDate, setSelectedDate] = useState(date || getLocalDate());
-  const [startTime, setStartTime] = useState("00:00");
-  const [endTime, setEndTime] = useState("00:00");
+  const [startTime, setStartTime] = useState(initialStartTime || "00:00");
+  const [endTime, setEndTime] = useState(initialEndTime || "00:00");
   const [isAllDay, setIsAllDay] = useState(false);
 
   // List ID selection
 
   const [calendarListId, setCalendarListId] = useState(
-    calendarList?.selectedListId || "primary",
+    calendarListsState?.selectedListId || "primary",
   );
   const [tasksListId, setTasksListId] = useState(
-    tasksList?.selectedListId || "@default",
+    taskListsState?.selectedListId || "@default",
   );
 
   // Handler functions
@@ -95,8 +108,8 @@ const CalendarInput = ({ date, entryType, onClose }) => {
     setStartTime("00:00");
     setEndTime("00:00");
     setIsAllDay(false);
-    setCalendarListId(calendarList?.selectedListId || "primary");
-    setTasksListId(tasksList?.selectedListId || "@default");
+    setCalendarListId("primary");
+    setTasksListId("@default");
   };
 
   return (
@@ -133,7 +146,7 @@ const CalendarInput = ({ date, entryType, onClose }) => {
             onChange={({ target }) => setCalendarListId(target.value)}
           >
             <option value="primary">Primary Calendar List</option>
-            {calendarList?.items.map((list) => (
+            {calendarLists?.map((list) => (
               <option key={list.id} value={list.id}>
                 {list.summary}
               </option>
@@ -146,7 +159,7 @@ const CalendarInput = ({ date, entryType, onClose }) => {
             onChange={({ target }) => setTasksListId(target.value)}
           >
             <option value="@default">Default Task List</option>
-            {tasksList?.items.map((list) => (
+            {taskLists?.map((list) => (
               <option key={list.id} value={list.id}>
                 {list.title}
               </option>
