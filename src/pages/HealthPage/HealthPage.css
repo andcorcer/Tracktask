@@ -96,7 +96,11 @@
     color var(--transition-speed);
 }
 
-.daily-summary-header .date-navigation .nav-controls .nav-arrows .nav-btn:hover {
+.daily-summary-header
+  .date-navigation
+  .nav-controls
+  .nav-arrows
+  .nav-btn:hover {
   background-color: var(--accent-color);
   color: #ffffff;
   border-color: var(--accent-color);
@@ -179,6 +183,11 @@
   background-color: var(--accent-color);
   color: #ffffff;
   border-color: var(--accent-color);
+}
+
+.secon:disabled{
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .section-content {

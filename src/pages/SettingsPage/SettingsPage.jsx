@@ -315,7 +315,7 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
 
             <button
               type="button"
-              className="btn btn-secondary"
+              className="btn clear-cache"
               onClick={handleDeletePermanently}
               disabled={todos.length === 0}
             >

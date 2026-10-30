@@ -196,6 +196,11 @@
   border-color: var(--accent-color);
 }
 
+.btn.clear-cache:disabled{
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
 /* Responsive Styles */
 @media (max-width: 1023px) {
   .settings-grid {

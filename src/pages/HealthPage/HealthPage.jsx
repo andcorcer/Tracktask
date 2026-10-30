@@ -51,6 +51,9 @@ const HealthPage = () => {
   // Get the selected date from the store
   const date = useSelector((state) => state.date.selectedDate);
   const selectedDate = useMemo(() => parseLocalDate(date), [date]);
+  const trainingPlans = useSelector((state) => state.garmin.trainingPlans.items);
+  const workouts = useSelector((state) => state.garmin.upcomingWorkouts.items);
+  const activities = useSelector((state) => state.garmin.activities.items);
 
   // Handler to handle navigation
   const handleNavigation = (direction) => {
@@ -136,6 +139,7 @@ const HealthPage = () => {
             <button
               type="button"
               className="btn view-all-btn"
+              disabled={activities.length === 0}
               onClick={() => setSelectedCategory("activities")}
             >
               <Maximize2 size={16} />
@@ -159,6 +163,7 @@ const HealthPage = () => {
             <button
               type="button"
               className="btn view-all-btn"
+              disabled={workouts.length === 0}
               onClick={() => setSelectedCategory("workouts")}
             >
               <Maximize2 size={16} />
@@ -182,6 +187,7 @@ const HealthPage = () => {
             <button
               type="button"
               className="btn view-all-btn"
+              disabled={trainingPlans.length === 0}
               onClick={() => setSelectedCategory("trainingPlans")}
             >
               <Maximize2 size={16} />

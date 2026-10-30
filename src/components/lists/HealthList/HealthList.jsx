@@ -29,9 +29,13 @@ const HealthList = ({ type, startDate, endDate, trainingPlan, itemLimit }) => {
     (state) => state.garmin.healthMetrics.items,
   );
   const activities = useSelector((state) => state.garmin.activities.items);
-  const trainingPlans = useSelector(
+  const rawTrainingPlans = useSelector(
     (state) => state.garmin.trainingPlans.items,
   );
+  // Normalize trainingPlans to always be an array
+  const trainingPlans = Array.isArray(rawTrainingPlans)
+    ? rawTrainingPlans
+    : rawTrainingPlans?.trainingPlanList || [];
   const upcomingWorkouts = useSelector(
     (state) => state.garmin.upcomingWorkouts.items,
   );
