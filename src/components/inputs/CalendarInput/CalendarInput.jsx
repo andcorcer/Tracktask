@@ -118,7 +118,7 @@ const CalendarInput = ({
       <div className="form-group entry-type">
         <button
           type="button"
-          className={`btn ${currentEntryType === "event" ? "active" : ""}`}
+          className={`btn event-btn ${currentEntryType === "event" ? "active" : ""}`}
           onClick={() => setCurrentEntryType("event")}
         >
           <Calendar size={18} />
@@ -126,7 +126,7 @@ const CalendarInput = ({
         </button>
         <button
           type="button"
-          className={`btn ${currentEntryType === "task" ? "active" : ""}`}
+          className={`btn task-btn ${currentEntryType === "task" ? "active" : ""}`}
           onClick={() => setCurrentEntryType("task")}
         >
           <SquareCheck size={18} />
@@ -136,12 +136,12 @@ const CalendarInput = ({
 
       {/* Target List */}
       <div className="form-group target-list">
-        <label htmlFor="target-list">
+        <label htmlFor="target-list-select">
           {currentEntryType === "event" ? "Calendar List" : "Tasks List"}
         </label>
         {currentEntryType === "event" ? (
           <select
-            id="target-list"
+            id="target-list-select"
             value={calendarListId}
             onChange={({ target }) => setCalendarListId(target.value)}
           >
@@ -154,7 +154,7 @@ const CalendarInput = ({
           </select>
         ) : (
           <select
-            id="target-list"
+            id="target-list-select"
             value={tasksListId}
             onChange={({ target }) => setTasksListId(target.value)}
           >

@@ -1,0 +1,164 @@
+label {
+  cursor: pointer;
+}
+
+.calendar-input-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.event-btn,
+.task-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.event-btn:hover,
+.task-btn:hover {
+  background-color: var(--border-color);
+}
+
+.event-btn.active,
+.task-btn.active {
+  background-color: rgba(0, 128, 0, 0.1);
+  border: 1px solid rgba(0, 128, 0, 0.2);
+  color: var(--success-color);
+}
+
+#target-list-select {
+  padding: 0.5rem 1.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  cursor: pointer;
+  width: 15rem;
+  overflow: hidden;
+}
+
+#target-list-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+#target-list-select option {
+    padding: 0.5rem 1.5rem;
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+}
+
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+#entry-date,
+#start-time,
+#end-time {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+}
+
+#entry-date:focus,
+#start-time:focus,
+#end-time:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+#entry-date::-webkit-calendar-picker-indicator,
+#start-time::-webkit-calendar-picker-indicator,
+#end-time::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+}
+
+.all-day label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+#all-day-checkbox {
+  cursor: pointer;
+  accent-color: var(--accent-color);
+}
+
+.title input[type="text"],
+.description textarea {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  background-color: var(--bg-color);
+  color: var(--text-secondary);
+}
+
+.title input[type="text"]:focus,
+.description textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.actions {
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.actions .clear-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(255, 0, 0, 0.2);
+  border-radius: 0.5rem;
+  font-weight: 700;
+  background-color: rgba(255, 0, 0, 0.1);
+  color: var(--error-color);
+  cursor: pointer;
+  transition: background-color var(--transition-speed);
+}
+
+.actions .clear-btn:hover {
+  background-color: rgba(255, 0, 0, 0.2);
+}
+
+.actions .submit-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  font-weight: 700;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background-color var(--transition-speed) color
+    var(--transition-speed);
+}
+
+.actions .submit-btn:hover {
+  background-color: var(--border-color);
+}
+
+.actions .submit-btn:disabled {
+  background-color: var(--border-color);
+  color: var(--text-secondary);
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: auto;
+}
