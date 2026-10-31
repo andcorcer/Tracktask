@@ -88,16 +88,8 @@ const CalendarCard = ({ type, data, viewMode, taskListId }) => {
       }}
       role="button"
       tabIndex={0}
-      style={{
-        color: data?.foregroundColor,
-        backgroundColor: data?.backgroundColor,
-      }}
     >
-      <ListOrdered
-        size={18}
-        className="calendar-list"
-        style={{ color: data?.foregroundColor }}
-      />
+      <ListOrdered size={18} className="calendar-list" />
       <h4>{data?.summary}</h4>
     </div>
   );
@@ -132,14 +124,16 @@ const CalendarCard = ({ type, data, viewMode, taskListId }) => {
           className={`month-element event-element ${isDayEvent ? "day-event" : ""}`}
           onClick={handleOpenDetails}
         >
-          <span>
+          <span className="month-element-content">
             {/* We render a span element conditionally to show the starting time only if the event is not daily */}
             {!isDayEvent && (
               <span className="start-time">{transformTimes(startTime)}</span>
             )}
 
-            <Calendar size={10} className="event" />
-            {data?.summary || "(No title)"}
+            <span>
+              <Calendar size={10} className="event" />
+              <p>{data?.summary || "(No title)"}</p>
+            </span>
           </span>
         </button>
       );
@@ -153,7 +147,7 @@ const CalendarCard = ({ type, data, viewMode, taskListId }) => {
         >
           <h5>
             <Calendar size={14} className="event" />
-            {data?.summary || "(No title)"}
+            <span>{data?.summary || "(No title)"}</span>
           </h5>
 
           {/* We render a span element conditionally to show the starting time only if the event is not daily */}
@@ -173,23 +167,21 @@ const CalendarCard = ({ type, data, viewMode, taskListId }) => {
         role="button"
         tabIndex={0}
       >
-        <div className="event-main">
+        <div className="event-title">
           <Calendar size={18} className="event" />
-          <div className="main-data">
-            <h4>{data?.summary || "(No title)"}</h4>
-
-            {/* We render a span element conditionally to show the starting time only if the event is not daily */}
-            {!isDayEvent && (
-              <span className="time-range">
-                {transformTimes(startTime, endTime)}
-              </span>
-            )}
-
-            {data?.description && (
-              <p className="description">{data?.description}</p>
-            )}
-          </div>
+          <h4>{data?.summary || "(No title)"}</h4>
         </div>
+
+        {/* We render a span element conditionally to show the starting time only if the event is not daily */}
+        {!isDayEvent && (
+          <span className="time-range">
+            {transformTimes(startTime, endTime)}
+          </span>
+        )}
+
+        {data?.description && (
+          <p className="description">{data?.description}</p>
+        )}
       </div>
     );
   };
@@ -203,13 +195,15 @@ const CalendarCard = ({ type, data, viewMode, taskListId }) => {
           className="month-element task-element"
           onClick={handleOpenDetails}
         >
-          <span>
-            {data?.status === "needsAction" ? (
-              <Square size={10} className="task" />
-            ) : (
-              <SquareCheckBig size={10} className="task" />
-            )}
-            {data?.title || "(No title)"}
+          <span className="month-element-content">
+            <span>
+              {data?.status === "needsAction" ? (
+                <Square size={10} className="task" />
+              ) : (
+                <SquareCheckBig size={10} className="task" />
+              )}
+              <p>{data?.title || "(No title)"}</p>
+            </span>
           </span>
         </button>
       );
@@ -227,7 +221,7 @@ const CalendarCard = ({ type, data, viewMode, taskListId }) => {
             ) : (
               <SquareCheckBig size={14} className="task" />
             )}
-            {data?.title || "(No title)"}
+            <span>{data?.title || "(No title)"}</span>
           </h5>
           <span className="notes">{data?.notes}</span>
         </div>
@@ -241,7 +235,7 @@ const CalendarCard = ({ type, data, viewMode, taskListId }) => {
         role="button"
         tabIndex={0}
       >
-        <div className="task-main">
+        <div className="task-title">
           <button
             className="btn toggle-task-btn"
             onClick={(e) => handleToggleTask(e, taskListId)}
@@ -252,11 +246,9 @@ const CalendarCard = ({ type, data, viewMode, taskListId }) => {
               <SquareCheckBig size={18} className="task" />
             )}
           </button>
-          <div className="main-data">
-            <h4>{data?.title || "(No title)"}</h4>
-            <span className="notes">{data?.notes}</span>
-          </div>
+          <h4>{data?.title || "(No title)"}</h4>
         </div>
+        <span className="notes">{data?.notes}</span>
       </div>
     );
   };

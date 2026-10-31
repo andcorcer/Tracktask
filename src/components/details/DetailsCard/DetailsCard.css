@@ -160,9 +160,9 @@
 
 .add-calendar-btn,
 .add-task-btn {
-  background-color: var(--accent-color);
-  color: var(--text-secondary);
-  border: none;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
   font-weight: 500;
@@ -171,10 +171,10 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  transition: opacity var(--transition-speed);
+  transition: background-color var(--transition-speed);
 }
 
 .add-calendar-btn:hover,
 .add-task-btn:hover {
-  opacity: 0.9;
+  background-color: var(--border-color);
 }

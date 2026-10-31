@@ -41,22 +41,6 @@ const getHoursArray = () => {
 
 const HOURS = getHoursArray();
 
-// Helper to get the 7 days of the week given a selected date
-const getWeekDays = (date) => {
-  const start = new Date(date);
-  const day = start.getDay();
-  start.setDate(start.getDate() - day); // Adjust to start of week (Sunday)
-  start.setHours(0, 0, 0, 0);
-
-  const days = [];
-  for (let i = 0; i < 7; i++) {
-    const d = new Date(start);
-    d.setDate(d.getDate() + i);
-    days.push(d);
-  }
-  return days;
-};
-
 // Function that returns the date string in the format "YYYY-MM-DD" for any calendar item
 const getDateString = (item, type) => {
   // Normalize event dates to "YYYY-MM-DD" string
@@ -233,6 +217,7 @@ const WeekView = ({ onViewChange, handleOpenInput }) => {
     <div className="week-view-container">
       {/* Header for all 7 days of the week */}
       <div className="week-grid-header">
+        <div className="empty-header-cell" />
         {weekDates.map((day) => (
           <div key={day.dateString} className="day-column-grid-header">
             <span className="day-name">{day.dayName}</span>
