@@ -105,6 +105,11 @@
   border-color: var(--accent-color);
 }
 
+.month-day-grid-header .date-circle.active:hover {
+  background-color: var(--accent-hover);
+  border: 1px solid var(--accent-hover);
+}
+
 .all-day-banner,
 .timed-card-wrapper {
   display: flex;

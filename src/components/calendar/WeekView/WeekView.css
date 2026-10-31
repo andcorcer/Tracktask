@@ -69,6 +69,12 @@
   border-color: var(--accent-color);
 }
 
+.week-grid-header .date-circle.active:hover {
+  background-color: var(--accent-hover);
+  border: 1px solid var(--accent-hover);
+}
+
+
 /* All Day Items */
 .week-all-day-banner {
   display: grid;

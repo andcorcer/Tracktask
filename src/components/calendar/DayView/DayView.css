@@ -55,6 +55,11 @@
   border-color: var(--accent-color);
 }
 
+.day-view-container .day-column-grid-header .date-circle.active:hover {
+  background-color: var(--accent-hover);
+  border: 1px solid var(--accent-hover);
+}
+
 .day-view-container .all-day-banner {
   display: flex;
   flex-direction: column;

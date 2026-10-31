@@ -167,7 +167,7 @@ const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
         </div>
       </div>
     );
-  };
+  }; 
 
   // -----------------------------------------------------------------------------------------------------------------
   // HEALTH DETAILS
@@ -175,8 +175,8 @@ const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
   const renderHealthDetails = () => {
     // Convert secondaryType to a human-readable title
     const title = secondaryType
-      .replace(/([A-Z])/g, " $1") // Add a space before each uppercase letter
-      .replace(/^./, (str) => str.toUpperCase()); // Capitalize the first letter
+      ?.replace(/([A-Z])/g, " $1") // Add a space before each uppercase letter
+      ?.replace(/^./, (str) => str.toUpperCase()); // Capitalize the first letter
 
     // Array of all the meta items and icons for the health details card depending on the secondaryType
     let metaItems = [];
@@ -350,7 +350,7 @@ const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
           },
           {
             label: "Type",
-            value: item?.typeKey.replace(/_/g, " ").toUpperCase() || "N/A",
+            value: item?.typeKey?.replace(/_/g, " ").toUpperCase() || "N/A",
           },
           {
             label: "Duration In Weeks",
@@ -381,7 +381,7 @@ const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
           {
             label: "Type",
             value:
-              item?.activityType?.typeKey.replace(/_/g, " ").toUpperCase() ||
+              item?.activityType?.typeKey?.replace(/_/g, " ").toUpperCase() ||
               "N/A",
           },
           {
