@@ -575,7 +575,7 @@ const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
               {item?.status === "needsAction" ? (
                 <Square size={18} className="task" />
               ) : (
-                <SquareCheckBig size={18} className="task" />
+                <SquareCheckBig size={18} className="task" style={{ color: "var(--success-color)" }} />
               )}
             </button>
           )}

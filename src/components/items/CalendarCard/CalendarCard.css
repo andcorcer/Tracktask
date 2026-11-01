@@ -7,11 +7,21 @@
   border: 1px solid var(--border-color);
   height: 100%;
   border-radius: 0.5rem;
-  transition: background-color var(--transition-speed);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition:
+    background-color var(--transition-speed),
+    box-shadow var(--transition-speed),
+    opacity var(--transition-speed);
 }
 
 .calendar-card:hover {
   background-color: var(--border-color);
+  box-shadow: var(--shadow-md);
+}
+
+.calendar-card.task-completed {
+  opacity: 0.5;
 }
 
 .calendar-content {
@@ -105,6 +115,10 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.task-element .task:hover {
+  color: var(--success-color);
 }
 
 /* Responsive Styles */

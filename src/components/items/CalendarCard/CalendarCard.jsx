@@ -200,7 +200,11 @@ const CalendarCard = ({ type, data, viewMode, taskListId }) => {
               {data?.status === "needsAction" ? (
                 <Square size={10} className="task" />
               ) : (
-                <SquareCheckBig size={10} className="task" />
+                <SquareCheckBig
+                  size={10}
+                  className="task"
+                  style={{ color: "var(--success-color)" }}
+                />
               )}
               <p>{data?.title || "(No title)"}</p>
             </span>
@@ -219,7 +223,11 @@ const CalendarCard = ({ type, data, viewMode, taskListId }) => {
             {data?.status === "needsAction" ? (
               <Square size={14} className="task" />
             ) : (
-              <SquareCheckBig size={14} className="task" />
+              <SquareCheckBig
+                size={14}
+                className="task"
+                style={{ color: "var(--success-color)" }}
+              />
             )}
             <span>{data?.title || "(No title)"}</span>
           </h5>
@@ -243,7 +251,11 @@ const CalendarCard = ({ type, data, viewMode, taskListId }) => {
             {data?.status === "needsAction" ? (
               <Square size={18} className="task" />
             ) : (
-              <SquareCheckBig size={18} className="task" />
+              <SquareCheckBig
+                size={18}
+                className="task"
+                style={{ color: "var(--success-color)" }}
+              />
             )}
           </button>
           <h4>{data?.title || "(No title)"}</h4>
@@ -270,7 +282,9 @@ const CalendarCard = ({ type, data, viewMode, taskListId }) => {
   };
 
   return (
-    <div className={`calendar-card ${viewMode ? `${viewMode}-view` : ""}`}>
+    <div
+      className={`calendar-card ${viewMode ? `${viewMode}-view` : ""} ${type === "task" && data?.status !== "needsAction" ? "task-completed"  : ""}`}
+    >
       {renderContent()}
 
       {/* Conditionally render the DetailsCard component */}

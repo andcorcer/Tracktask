@@ -178,3 +178,7 @@
 .add-task-btn:hover {
   background-color: var(--border-color);
 }
+
+.calendar-details .task:hover {
+  color: var(--success-color);
+}
