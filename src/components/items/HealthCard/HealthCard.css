@@ -1,0 +1,105 @@
+.health-card.activity-element,
+.health-card.trainingPlan-element,
+.health-card.workout-element {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background-color: var(--bg-color);
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border-color);
+  height: 100%;
+  border-radius: 0.5rem;
+  transition: background-color var(--transition-speed);
+}
+
+.health-card.activity-element:hover,
+.health-card.trainingPlan-element:hover,
+.health-card.workout-element:hover {
+  background-color: var(--border-color);
+}
+
+.health-content.summary-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  place-items: center;
+  gap: 1rem;
+}
+
+.health-content.summary-container .metric {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: fit-content;
+  background-color: var(--bg-color);
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  text-align: center;
+  transition: background-color var(--transition-speed);
+}
+
+.health-content.summary-container .metric:hover {
+  background-color: var(--border-color);
+}
+
+.activity-element,
+.workout-element,
+.plan-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.activity-title,
+.plan-title,
+.workout-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-primary);
+}
+
+.activity-title,
+.plan-title {
+  overflow: hidden;
+}
+
+
+.activity-subtext {
+  color: var(--text-secondary);
+  display: flex;
+  gap: 2rem;
+  font-size: 0.75rem;
+}
+
+.stats-badge.duration {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+}
+
+.plan-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  color: var(--text-secondary);
+}
+
+.plan-meta p {
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.plan-meta span {
+  font-size: 0.75rem;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .health-card.month-view,
+  .health-card.week-view {
+    padding: 0.25rem;
+  }
+}

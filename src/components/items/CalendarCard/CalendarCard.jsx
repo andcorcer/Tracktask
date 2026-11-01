@@ -230,7 +230,7 @@ const CalendarCard = ({ type, data, viewMode, taskListId }) => {
 
     return (
       <div
-        className="calendar-content task-container"
+        className="calendar-content task-element"
         onClick={handleOpenDetails}
         role="button"
         tabIndex={0}

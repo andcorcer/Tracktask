@@ -7,9 +7,7 @@
   border: 1px solid var(--border-color);
   height: 100%;
   border-radius: 0.5rem;
-  transition:
-    background-color var(--transition-speed),
-    border-color var(--transition-speed);
+  transition: background-color var(--transition-speed);
 }
 
 .calendar-card:hover {
@@ -95,13 +93,15 @@
   gap: 0.5rem;
 }
 
-.calendar-content .event-title, .calendar-content .task-title {
+.calendar-content .event-title,
+.calendar-content .task-title {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.calendar-content .description, .calendar-content .notes {
+.calendar-content .description,
+.calendar-content .notes {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
