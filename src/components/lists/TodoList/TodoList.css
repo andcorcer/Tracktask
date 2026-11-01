@@ -1,0 +1,53 @@
+.todo-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.add-todo-container {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn.add-todo-btn, .btn.load-more-btn {
+  background: transparent;
+  color: var(--accent-color);
+  border: 1px solid var(--border-color);
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-speed),
+    color var(--transition-speed),
+    border-color var(--transition-speed);
+}
+
+.btn.add-todo-btn:hover,
+.btn.load-more-btn:hover {
+  background-color: var(--accent-color);
+  color: var(--text-primary);
+  border-color: var(--accent-color);
+}
+
+.todo-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.empty-list {
+    display: flex;
+    align-items: center;
+    color: var(--text-secondary);
+}
+
+.load-more-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+}

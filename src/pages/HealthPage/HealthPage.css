@@ -179,14 +179,14 @@
     border-color var(--transition-speed);
 }
 
-.btn.view-all-btn:hover {
+.btn.view-all-btn:not(:disabled):hover {
   background-color: var(--accent-color);
   color: var(--text-primary);
   border-color: var(--accent-color);
 }
 
 .btn.view-all-btn:disabled{
-  pointer-events: none;
+  pointer-events: auto;
   cursor: not-allowed;
   opacity: 0.5;
 }

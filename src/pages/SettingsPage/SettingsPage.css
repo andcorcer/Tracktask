@@ -133,11 +133,11 @@
     border-color var(--transition-speed);
 }
 
-.card-body .btn:hover,
-.card-authentication-body .btn:hover,
-.card-microservice-body .btn:hover {
+.card-body .btn:not(:disabled):hover,
+.card-authentication-body .btn:not(:disabled):hover,
+.card-microservice-body .btn:not(:disabled):hover {
   background-color: var(--accent-color);
-  color: #ffffff;
+  color: var(--text-primary);
   border-color: var(--accent-color);
 }
 
@@ -146,8 +146,7 @@
 .card-microservice-body .btn:disabled {
   opacity: 0.5;                
   cursor: not-allowed;         
-  pointer-events: none;        
-  box-shadow: none;   
+  pointer-events: auto;        
 }
 
 .card-description,
@@ -194,12 +193,6 @@
 
 .authentication-form input:focus {
   border-color: var(--accent-color);
-}
-
-.btn.clear-cache:disabled{
-  cursor: not-allowed;
-  opacity: 0.5;
-  pointer-events: none;
 }
 
 /* Responsive Styles */

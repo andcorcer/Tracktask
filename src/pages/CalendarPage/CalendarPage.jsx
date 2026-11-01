@@ -66,7 +66,7 @@ const CalendarPage = () => {
             {/* Sidebar for Todos */}
             <div className="calendar-sidebar calendar-todos-container">
               <h3 className="calendar-sidebar-title calendar-todos-title">Todos for {dateString}</h3>
-              <TodoList date={date} />
+              <TodoList date={date} itemsLimit={5} />
             </div>
           </>
         )}
