@@ -30,7 +30,7 @@ const CalendarList = ({ type = "calendarList", itemsLimit }) => {
   return (
     <div className="calendar-lists-container">
       {displayedItems.length > 0 ? (
-        <div className="lists-grid">
+        <div className="lists-catalogue">
           {displayedItems.map((item) => (
             <CalendarCard
               key={item.id}

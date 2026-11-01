@@ -269,7 +269,7 @@ const HealthCard = ({ type, data, viewMode }) => {
 
       <div className="plan-meta">
         <p>{data?.status || "ACTIVE"}</p>
-        <span>
+        <span className="badge">
           {data?.startDate && data?.endDate
             ? `${data?.startDate.split("T")[0]} --- ${data?.endDate.split("T")[0]}`
             : "Ongoing"}
