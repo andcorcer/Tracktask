@@ -1,0 +1,11 @@
+.health-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.empty-list {
+    display: flex;
+    align-items: center;
+    color: var(--text-secondary);
+}

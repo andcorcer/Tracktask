@@ -51,6 +51,9 @@ const HealthPage = () => {
   // Get the selected date from the store
   const date = useSelector((state) => state.date.selectedDate);
   const selectedDate = useMemo(() => parseLocalDate(date), [date]);
+  const trainingPlans = useSelector((state) => state.garmin.trainingPlans.items);
+  const workouts = useSelector((state) => state.garmin.upcomingWorkouts.items);
+  const activities = useSelector((state) => state.garmin.activities.items);
 
   // Handler to handle navigation
   const handleNavigation = (direction) => {
@@ -71,9 +74,7 @@ const HealthPage = () => {
     } else if (direction === "prev") {
       newDate.setDate(newDate.getDate() - 1);
     }
-    dispatch(
-      setSelectedDate({ selectedDate: formatLocalDate(newDate) }),
-    );
+    dispatch(setSelectedDate({ selectedDate: formatLocalDate(newDate) }));
   };
 
   // Formatted date string
@@ -92,33 +93,35 @@ const HealthPage = () => {
           {/* Date Navigation */}
           <h2 className="daily-summary-header-title">Daily Summary</h2>
           <div className="date-navigation">
-            <button
-              type="button"
-              className="btn today-btn"
-              onClick={() => handleNavigation("today")}
-            >
-              Today
-            </button>
-
-            <div className="nav-arrows">
+            <span className="nav-date">{formattedDate}</span>
+            <div className="nav-controls">
               <button
                 type="button"
-                className="btn nav-btn"
-                onClick={() => handleNavigation("prev")}
+                className="btn today-btn"
+                onClick={() => handleNavigation("today")}
               >
-                <CircleChevronLeft size={20} />
+                Today
               </button>
 
-              <button
-                type="button"
-                className="btn nav-btn"
-                onClick={() => handleNavigation("next")}
-              >
-                <CircleChevronRight size={20} />
-              </button>
+              <div className="nav-arrows">
+                <button
+                  type="button"
+                  className="btn nav-btn"
+                  onClick={() => handleNavigation("prev")}
+                >
+                  <CircleChevronLeft size={20} />
+                </button>
+
+                <button
+                  type="button"
+                  className="btn nav-btn"
+                  onClick={() => handleNavigation("next")}
+                >
+                  <CircleChevronRight size={20} />
+                </button>
+              </div>
             </div>
           </div>
-          <span className="nav-date">{formattedDate}</span>
         </div>
         <div className="daily-summary-content">
           <HealthList type="summary" startDate={date} />
@@ -136,9 +139,10 @@ const HealthPage = () => {
             <button
               type="button"
               className="btn view-all-btn"
+              disabled={activities.length === 0}
               onClick={() => setSelectedCategory("activities")}
             >
-              <Maximize2 size={14} />
+              <Maximize2 size={16} />
               View All
             </button>
           </div>
@@ -159,9 +163,10 @@ const HealthPage = () => {
             <button
               type="button"
               className="btn view-all-btn"
+              disabled={workouts.length === 0}
               onClick={() => setSelectedCategory("workouts")}
             >
-              <Maximize2 size={14} />
+              <Maximize2 size={16} />
               View All
             </button>
           </div>
@@ -182,9 +187,10 @@ const HealthPage = () => {
             <button
               type="button"
               className="btn view-all-btn"
+              disabled={trainingPlans.length === 0}
               onClick={() => setSelectedCategory("trainingPlans")}
             >
-              <Maximize2 size={14} />
+              <Maximize2 size={16} />
               View All
             </button>
           </div>

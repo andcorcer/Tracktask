@@ -56,15 +56,11 @@ const transformTimeFormat = (time) => {
     : `${paddedMinutes}:${paddedSeconds}`;
 };
 
-// Function to get the current local date in YYYY-MM-DD format
-const getLocalDate = () => {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, "0");
-  const day = String(today.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
+// Function to capitalize safely
+const capitalizeSafe = (str, fallback = "(None)") => {
+  if (!str || typeof str !== "string") return fallback;
+  return str.charAt(0).toUpperCase() + str.slice(1);
 };
-
 // DetailsCard Component
 const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
   const dispatch = useDispatch(); // Get the dispatch function from Redux to dispatch actions
@@ -114,6 +110,11 @@ const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
       <div className="details-card todo-details">
         {/* Checkbox toggle button */}
         <div className="details-header">
+          {/* Description */}
+          <div className="details-description todo-description">
+            <h4 className="details-subtitle">Description</h4>
+            <p className="details-text">{item.data}</p>
+          </div>
           <button
             className={`btn checkbox-btn ${completed ? "checked" : ""}`}
             onClick={handleToggle}
@@ -124,12 +125,6 @@ const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
               {completed ? "Completed" : "Incompleted"}
             </span>
           </button>
-        </div>
-
-        {/* Description */}
-        <div className="details-description">
-          <h4 className="details-subtitle">Description</h4>
-          <p className="details-text">{item.data}</p>
         </div>
 
         {/* Meta Information */}
@@ -172,7 +167,7 @@ const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
         </div>
       </div>
     );
-  };
+  }; 
 
   // -----------------------------------------------------------------------------------------------------------------
   // HEALTH DETAILS
@@ -180,8 +175,8 @@ const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
   const renderHealthDetails = () => {
     // Convert secondaryType to a human-readable title
     const title = secondaryType
-      .replace(/([A-Z])/g, " $1") // Add a space before each uppercase letter
-      .replace(/^./, (str) => str.toUpperCase()); // Capitalize the first letter
+      ?.replace(/([A-Z])/g, " $1") // Add a space before each uppercase letter
+      ?.replace(/^./, (str) => str.toUpperCase()); // Capitalize the first letter
 
     // Array of all the meta items and icons for the health details card depending on the secondaryType
     let metaItems = [];
@@ -355,7 +350,7 @@ const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
           },
           {
             label: "Type",
-            value: item?.typeKey.replace(/_/g, " ").toUpperCase() || "N/A",
+            value: item?.typeKey?.replace(/_/g, " ").toUpperCase() || "N/A",
           },
           {
             label: "Duration In Weeks",
@@ -381,12 +376,12 @@ const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
               const cleanedDate = item.date.split("T")[0];
               const [year, month, day] = cleanedDate.split("-");
               return new Date(year, month - 1, day).toLocaleDateString();
-            })
+            })(),
           },
           {
             label: "Type",
             value:
-              item?.activityType?.typeKey.replace(/_/g, " ").toUpperCase() ||
+              item?.activityType?.typeKey?.replace(/_/g, " ").toUpperCase() ||
               "N/A",
           },
           {
@@ -449,7 +444,7 @@ const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
         metaItems = [
           {
             label: "Title",
-            value: item?.title || "(No title)",
+            value: capitalizeSafe(item?.title, "(No title)"),
           },
           {
             label: "Last Updated",
@@ -464,15 +459,15 @@ const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
         metaItems = [
           {
             label: "Title",
-            value: item?.summary || "(No title)",
+            value: capitalizeSafe(item?.summary, "(No title)"),
           },
           {
             label: "Description",
-            value: item?.description || "(No description)",
+            value: capitalizeSafe(item?.description, "(No description)"),
           },
           {
             label: "Access Role",
-            value: item?.accessRole || "reader",
+            value: capitalizeSafe(item?.accessRole, "Reader"),
           },
           {
             label: "Timezone",
@@ -485,19 +480,19 @@ const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
         metaItems = [
           {
             label: "Title",
-            value: item?.summary || "(No title)",
+            value: capitalizeSafe(item?.summary, "(No title)"),
           },
           {
             label: "Description",
-            value: item?.description || "(No description)",
+            value: capitalizeSafe(item?.description, "(No description)"),
           },
           {
             label: "Location",
-            value: item?.location || "(No location)",
+            value: capitalizeSafe(item?.location, "(No location)"),
           },
           {
             label: "Status",
-            value: item?.status || "(No status)",
+            value: capitalizeSafe(item?.status, "(No status)"),
           },
           {
             label: "Date",
@@ -529,19 +524,26 @@ const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
         metaItems = [
           {
             label: "Title",
-            value: item?.title || "(No title)",
+            value: capitalizeSafe(item?.title, "(No title)"),
           },
           {
             label: "Notes",
-            value: item?.notes || "(No notes)",
+            value: capitalizeSafe(item?.notes, "(No notes)"),
           },
           {
             label: "Status",
-            value: item?.status || "(No status)",
+            value:
+              typeof item?.status === "string"
+                ? item?.status?.charAt(0).toUpperCase() +
+                    item?.status
+                      ?.slice(1)
+                      .split(/(?=[A-Z])/)
+                      .join(" ") || "(No status)"
+                : "(No status)",
           },
           {
             label: "Due Date",
-            value: item?.due ? item?.due.split("T")[0] : "(No due date)",
+            value: item?.due?.split("T")[0] || "(No due date)",
           },
         ];
 
@@ -557,23 +559,26 @@ const DetailsCard = ({ type, secondaryType, item, date, taskListId }) => {
 
     return (
       <div className={`details-card calendar-details ${title}`}>
-        {/* Checkbox toggle button */}
-        {secondaryType === "task" && (
-          <button
-            className="btn toggle-task-btn"
-            onClick={(e) => handleToggleTask(e, taskListId)}
-          >
-            {item?.status === "needsAction" ? (
-              <Square size={18} className="task" />
-            ) : (
-              <SquareCheckBig size={18} className="task" />
-            )}
-          </button>
-        )}
+        {/* Header */}
+        <div className="details-header calendar-header">
+          {/* Description */}
+          <div className="details-description">
+            <h4 className="details-subtitle">{title}</h4>
+          </div>
 
-        {/* Description */}
-        <div className="details-description">
-          <h4 className="details-subtitle">{title}</h4>
+          {/* Checkbox toggle button */}
+          {secondaryType === "task" && (
+            <button
+              className="btn toggle-task-btn"
+              onClick={(e) => handleToggleTask(e, taskListId)}
+            >
+              {item?.status === "needsAction" ? (
+                <Square size={18} className="task" />
+              ) : (
+                <SquareCheckBig size={18} className="task" style={{ color: "var(--success-color)" }} />
+              )}
+            </button>
+          )}
         </div>
 
         {/* Meta Information */}

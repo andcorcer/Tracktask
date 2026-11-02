@@ -16,7 +16,13 @@ const Error = ({ error, onRetry }) => {
     <div className="error-container">
       <p className="error-message">⚠️ {errorMessage}</p>
       {onRetry && (
-        <button className="btn btn-primary" onClick={onRetry}>
+        <button
+          className="btn retry-btn"
+          onClick={(e) => {
+            e.stopPropagation();
+            onRetry();
+          }}
+        >
           Try Again
         </button>
       )}

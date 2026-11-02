@@ -1,0 +1,118 @@
+.todo-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background-color: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition:
+    background-color var(--transition-speed),
+    box-shadow var(--transition-speed),
+    opacity var(--transition-speed);
+}
+
+.todo-card:hover {
+  background-color: var(--bg-color);
+  box-shadow: var(--shadow-md);
+}
+
+.todo-card.completed {
+  opacity: 0.5;
+  background-color: var(--bg-color);
+}
+
+.todo-card .checkbox-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  transition: color var(--transition-speed);
+}
+
+.todo-card .checkbox-btn:hover {
+  color: var(--success-color);
+}
+
+.todo-card .checkbox-btn.checked {
+  color: var(--success-color);
+}
+
+
+.todo-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.todo-text {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin: 0;
+  transition: color var(--transition-speed);
+}
+
+.todo-card.completed .todo-text {
+  text-decoration: line-through;
+  color: var(--text-secondary);
+}
+
+.todo-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.todo-card .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.3rem;
+}
+
+.todo-card .category-badge {
+  background-color: rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  color: var(--accent-color);
+}
+
+.todo-card .daily-badge {
+  background-color: rgba(0, 128, 0, 0.1);
+  border: 1px solid rgba(0, 128, 0, 0.2);
+  color: var(--success-color);
+}
+
+.todo-card .delete-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: 0.3rem;
+  transition:
+    background-color var(--transition-speed),
+    color var(--transition-speed);
+}
+
+.todo-card .delete-btn:hover {
+  background-color: rgba(255, 0, 0, 0.1);
+  color: var(--error-color);
+}

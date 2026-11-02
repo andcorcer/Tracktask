@@ -8,16 +8,18 @@ import "./NotFoundPage.css";
 // NotFoundPage Component
 const NotFoundPage = () => {
   return (
-    <div className="not-found-page">
+    <div className="not-found-page-container">
       <h1 className="error-code">404</h1>
       <h2>Page Not Found</h2>
       <p>
         This URL path does not exist, has been changed or removed. Please check
         the URL or return to the home page.
       </p>
-      <Link to="/" className="btn btn-primary">
-        Back to Home
-      </Link>
+      <button className="btn back-to-home-btn">
+        <Link to="/">
+          Back to Home
+        </Link>
+      </button>
     </div>
   );
 };

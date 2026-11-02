@@ -70,13 +70,15 @@ const TodoList = ({ date, viewMode = "date", itemsLimit }) => {
   return (
     <div className="todo-list-container">
       {viewMode === "date" && (
-        <button
-          className="btn add-todo-btn"
-          onClick={handleOpenInput}
-          aria-label="Add Todo Button"
-        >
-          {<Plus size={14} />}
-        </button>
+        <div className="add-todo-container">
+          <button
+            className="btn add-todo-btn"
+            onClick={handleOpenInput}
+            aria-label="Add Todo Button"
+          >
+            {<Plus size={14} />}
+          </button>
+        </div>
       )}
 
       {/* We render todos conditionally weather displayedTodos has any items or not */}

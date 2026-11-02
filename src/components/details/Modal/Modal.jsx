@@ -1,5 +1,6 @@
 // Import all dependencies
 import React, { useEffect } from "react";
+import ReactDOM from "react-dom";
 import { X } from "lucide-react";
 
 // Import Styles
@@ -27,7 +28,8 @@ const Modal = ({ title, onClose, children }) => {
     };
   }, [onClose]);
 
-  return (
+  // Render the modal using a React portal to attach it to the document body
+  return ReactDOM.createPortal(
     <div className="modal-overlay" onClick={onClose}>
       <div
         className="modal-container"
@@ -53,7 +55,7 @@ const Modal = ({ title, onClose, children }) => {
         </div>
       </div>
     </div>
-  );
+  , document.body);
 };
 
 // Export the Modal component

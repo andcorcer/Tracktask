@@ -35,7 +35,7 @@ const SCOPES =
   "https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/tasks";
 
 // SettingsPage Component
-const SettingsPage = () => {
+const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
   const dispatch = useDispatch();
 
   // Get states from the Redux store
@@ -45,6 +45,7 @@ const SettingsPage = () => {
   const googleAuthenticationStatus = useSelector(
     (state) => state.authentication.google.status || "disconnected",
   );
+  const todos = useSelector((state) => state.todos.items);
 
   // Local states
   const [garminEmail, setGarminEmail] = useState("");
@@ -52,11 +53,6 @@ const SettingsPage = () => {
 
   // Local state to check if the python backend is running
   const [backendConnectionStatus, setBackendConnectionStatus] = useState(null);
-
-  // Local state to set the theme
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    return localStorage.getItem("tracktask-theme") === "dark";
-  });
 
   // Variable that maintains a reference to the Google token client
   const tokenClientRef = useRef(null);
@@ -85,17 +81,6 @@ const SettingsPage = () => {
     }
   }, []);
 
-  // Effect to update the theme in localStorage and update css whenever it changes
-  useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.setAttribute("data-theme", "dark");
-      localStorage.setItem("tracktask-theme", "dark");
-    } else {
-      document.documentElement.setAttribute("data-theme", "light");
-      localStorage.setItem("tracktask-theme", "light");
-    }
-  }, [isDarkMode]);
-
   // Handler functions
   const handleGarminLogin = (e) => {
     e.preventDefault();
@@ -106,6 +91,8 @@ const SettingsPage = () => {
   const handleGarminLogout = () => {
     dispatch(logoutGarmin());
     dispatch(clearGarminSelections());
+    setGarminEmail("");
+    setGarminPassword("");
   };
 
   const handleGooglePopUpLogin = () => {
@@ -144,14 +131,10 @@ const SettingsPage = () => {
     }
   };
 
-  const toggleDarkMode = () => {
-    setIsDarkMode((prevMode) => !prevMode);
-  };
-
   return (
     <div className="settings-page-container">
       <header className="settings-page-header">
-        <h2>Settings and Preferences</h2>
+        <h2 className="settings-page-title">Settings and Preferences</h2>
         <p>
           Manage external microservice, authentication, and application
           settings.
@@ -236,7 +219,7 @@ const SettingsPage = () => {
                 Logout from Garmin
               </button>
             ) : (
-              <form className="autentication-form">
+              <form className="authentication-form">
                 <label htmlFor="garmin-email">Email</label>
                 <input
                   type="email"
@@ -261,6 +244,7 @@ const SettingsPage = () => {
                   type="submit"
                   className="btn btn-primary"
                   onClick={handleGarminLogin}
+                  disabled={garminAuthenticationStatus === "checking" || !garminEmail || !garminPassword}
                 >
                   <LogIn size={16} />
                   Login with Garmin
@@ -268,25 +252,27 @@ const SettingsPage = () => {
               </form>
             )}
           </div>
-          <div className="card-microservice-body">
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={testBackendConnection}
-            >
-              <FileTerminal size={16} />
-              Check Python Microservice
-            </button>
-            {backendConnectionStatus && (
-              <span>
-                {backendConnectionStatus === "checking"
-                  ? "Checking port 8000"
-                  : backendConnectionStatus === "online"
-                    ? "Python Microservice Connected on port 8000"
-                    : "Python Microservice Disconnected, Verify that main.py is running"}
-              </span>
-            )}
-          </div>
+          {garminAuthenticationStatus === "connected" && (
+            <div className="card-microservice-body">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={testBackendConnection}
+              >
+                <FileTerminal size={16} />
+                Check Python Microservice
+              </button>
+              {backendConnectionStatus && (
+                <span>
+                  {backendConnectionStatus === "checking"
+                    ? "Checking port 8000"
+                    : backendConnectionStatus === "online"
+                      ? "Python Microservice Connected on port 8000"
+                      : "Python Microservice Disconnected, Verify that main.py is running"}
+                </span>
+              )}
+            </div>
+          )}
         </section>
 
         {/* Theme Section */}
@@ -325,14 +311,13 @@ const SettingsPage = () => {
           </div>
 
           <div className="card-body">
-            <p className="card-description">
-              Clear the local storage memory
-            </p>
+            <p className="card-description">Clear the local storage memory</p>
 
             <button
               type="button"
-              className="btn btn-secondary"
+              className="btn clear-cache"
               onClick={handleDeletePermanently}
+              disabled={todos.length === 0}
             >
               Clear Cache
             </button>

@@ -84,13 +84,15 @@ const TodoInput = ({ date, onClose }) => {
         </div>
 
         <div className="form-group daily">
-          <label htmlFor="todo-isDaily">Daily Habit</label>
-          <input
-            id="todo-isDaily"
-            type="checkbox"
-            checked={isDaily}
-            onChange={({ target }) => setIsDaily(target.checked)}
-          />
+          <label htmlFor="todo-isDaily">
+            <input
+              id="todo-isDaily"
+              type="checkbox"
+              checked={isDaily}
+              onChange={({ target }) => setIsDaily(target.checked)}
+            />
+            Daily Habit
+          </label>
         </div>
       </div>
 

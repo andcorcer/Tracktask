@@ -63,14 +63,13 @@ googleTasksApi.interceptors.response.use(
   },
 );
 
-// Functions that formats dates to ISO for the API
-const formatDateToISO = (date) => {
-  if (!date) return null;
+// Helper to get YYYY-MM-DD from any date input in local time
+const getLocalDateString = (date) => {
   const d = new Date(date);
-  if (isNaN(d.getTime())) {
-    throw new Error(`Invalid date provided: ${date}`);
-  }
-  return d.toISOString(); // Return full ISO date string
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 };
 
 // Class containing static methods for interacting with the Google Tasks API
@@ -98,15 +97,31 @@ class GoogleTasksApi {
       showHidden: false,
     };
 
-    // We only add dueMin and dueMax to the parameters if they're provided
-    if (dueMin) params.dueMin = formatDateToISO(dueMin);
-    if (dueMax) params.dueMax = formatDateToISO(dueMax);
-
     // Make a GET request to retrieve all tasks within a given timeframe and using a specific task list
     const response = await googleTasksApi.get(`/lists/${listId}/tasks`, {
       params,
     });
-    return response.data.items || [];
+
+    const items = response.data.items || [];
+
+    if (dueMin || dueMax) {
+      const minTimeStr = dueMin ? getLocalDateString(dueMin) : null;
+      const maxTimeStr = dueMax ? getLocalDateString(dueMax) : null;
+
+      return items.filter((task) => {
+        if (!task.due) return false;
+        const dateStr = task.due.split("T")[0];
+
+        // We check if the task falls outside the specified date range
+        if (minTimeStr && dateStr < minTimeStr) return false;
+        if (maxTimeStr && dateStr > maxTimeStr) return false;
+
+        // If none of the above conditions are met, the task is within the specified date range
+        return true;
+      });
+    }
+
+    return items;
   }
 
   // JSDoc comment for the getTaskById static method

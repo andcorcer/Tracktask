@@ -3,6 +3,8 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 // Import Components
+import Modal from "../../details/Modal/Modal";
+import CalendarInput from "../../inputs/CalendarInput/CalendarInput";
 import CalendarHeader from "../CalendarHeader/CalendarHeader";
 import DayView from "../DayView/DayView";
 import WeekView from "../WeekView/WeekView";
@@ -12,6 +14,8 @@ import MonthView from "../MonthView/MonthView";
 import {
   fetchTasks,
   fetchCalendarEvents,
+  fetchTaskLists,
+  fetchCalendarLists,
 } from "../../../store/slices/calendarSlice";
 import { setSelectedDate, setDateRange } from "../../../store/slices/dateSlice";
 import {
@@ -50,14 +54,12 @@ const getDateRange = (date, viewMode) => {
 
   switch (viewMode) {
     case "day":
-
       // Set the start and end times for the day view
       start.setHours(0, 0, 0, 0); // Set the start time to the beginning of the day
       end.setHours(23, 59, 59, 999); // Set the end time to the end of the day
       break;
 
     case "week":
-
       const dayOfWeek = start.getDay();
       start.setDate(start.getDate() - dayOfWeek); // Sunday as the first day of the week
       start.setHours(0, 0, 0, 0); // Set the start time to the beginning of the day
@@ -66,9 +68,12 @@ const getDateRange = (date, viewMode) => {
       break;
 
     case "month":
-
       // Get the first day of the current month
-      const firstDayOfMonth = new Date(start.getFullYear(), start.getMonth(), 1);
+      const firstDayOfMonth = new Date(
+        start.getFullYear(),
+        start.getMonth(),
+        1,
+      );
 
       // We move to the start of the week that contains the first day of the month
       start.setTime(firstDayOfMonth.getTime()); // We equal times so that we don't go over or under
@@ -92,15 +97,32 @@ const getDateRange = (date, viewMode) => {
 };
 
 // CalendarContainer Component
-const CalendarContainer = ({ isHomePage = false, viewMode = "day", onViewChange }) => {
-  const dispatch = useDispatch(); // Redux dispatch function
+const CalendarContainer = ({
+  isHomePage = false,
+  viewMode = "day",
+  onViewChange,
+}) => {
+  const dispatch = useDispatch();
 
   const date = useSelector((state) => state.date.selectedDate);
   const selectedDate = useMemo(() => parseLocalDate(date), [date]);
 
+  // Local state to render the TodoInput component conditionally
+  const [showInput, setShowInput] = useState(false);
+  const [entryTimes, setEntryTimes] = useState(null);
+
   // Get the date range for the current view mode
   const viewRange = isHomePage ? "day" : viewMode;
-  const { startDate, endDate } = useMemo(() => getDateRange(selectedDate, viewRange), [selectedDate, viewRange]);
+  const { startDate, endDate } = useMemo(
+    () => getDateRange(selectedDate, viewRange),
+    [selectedDate, viewRange],
+  );
+
+  // Get all calendar and task lists whenever the component re-renders
+  useEffect(() => {
+    dispatch(fetchTaskLists());
+    dispatch(fetchCalendarLists());
+  }, [dispatch]);
 
   // Call all async thunks whenever the date range changes
   useEffect(() => {
@@ -112,6 +134,39 @@ const CalendarContainer = ({ isHomePage = false, viewMode = "day", onViewChange 
   }, [startDate, endDate, dispatch]);
 
   // Handlers
+
+  const handleOpenInput = (timestamp) => {
+    if (timestamp) {
+      const d = new Date(timestamp);
+
+      // Get 'YYYY-MM-DD' string
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      const dateString = `${year}-${month}-${day}`;
+
+      // Get start time 'HH:MM' string
+      const hours = String(d.getHours()).padStart(2, "0");
+      const minutes = String(d.getMinutes()).padStart(2, "0");
+      const startTimeString = `${hours}:${minutes}`;
+
+      // Get end time 'HH:MM' string
+      const end = new Date(d.getTime() + 60 * 60 * 1000); // Default to 1 hour later
+      const endHours = String(end.getHours()).padStart(2, "0");
+      const endMinutes = String(end.getMinutes()).padStart(2, "0");
+      const endTimeString = `${endHours}:${endMinutes}`;
+      setEntryTimes({ date: dateString, startTime: startTimeString, endTime: endTimeString });
+    } 
+    // Default for when rendering without a specific timestamp, use the selected date with default times
+    else {
+      setEntryTimes({ date: formatLocalDate(selectedDate), startTime: "00:00", endTime: "01:00" })
+    }
+    setShowInput(true);
+  };
+
+  const handleCloseInput = () => {
+    setShowInput(false);
+  };
 
   // Navigation handler for the calendar (e.g., next/previous month, week, or day)
   const handleNavigation = (direction) => {
@@ -136,22 +191,37 @@ const CalendarContainer = ({ isHomePage = false, viewMode = "day", onViewChange 
       else if (viewMode === "week") newDate.setDate(newDate.getDate() - 7);
       else if (viewMode === "month") newDate.setMonth(newDate.getMonth() - 1);
     }
-    dispatch(
-      setSelectedDate({ selectedDate: formatLocalDate(newDate) }),
-    );
+    dispatch(setSelectedDate({ selectedDate: formatLocalDate(newDate) }));
   };
 
   // Function to render the corresponding calendar view based on the current view mode
   const renderCalendarView = () => {
     switch (viewMode) {
       case "day":
-        return <DayView selectedDate={selectedDate} />;
+        return (
+          <DayView
+            selectedDate={selectedDate}
+            handleOpenInput={handleOpenInput}
+          />
+        );
       case "week":
-        return <WeekView selectedDate={selectedDate} onViewChange={onViewChange} />;
+        return (
+          <WeekView
+            onViewChange={onViewChange}
+            handleOpenInput={handleOpenInput}
+          />
+        );
       case "month":
-        return <MonthView selectedDate={selectedDate} onViewChange={onViewChange} />;
+        return (
+          <MonthView selectedDate={selectedDate} onViewChange={onViewChange} />
+        );
       default:
-        return <DayView selectedDate={selectedDate} />;
+        return (
+          <DayView
+            selectedDate={selectedDate}
+            handleOpenInput={handleOpenInput}
+          />
+        );
     }
   };
 
@@ -163,8 +233,21 @@ const CalendarContainer = ({ isHomePage = false, viewMode = "day", onViewChange 
         viewMode={viewMode}
         onViewChange={onViewChange}
         onNavigate={handleNavigation}
+        handleOpenInput={handleOpenInput}
       />
       <main className="calendar-body">{renderCalendarView()}</main>
+
+      {/* Conditionally render the CalendarInput component */}
+      {showInput && (
+        <Modal onClose={handleCloseInput} title="Add Event or Task">
+          <CalendarInput
+            date={entryTimes?.date}
+            initialStartTime={entryTimes?.startTime}
+            initialEndTime={entryTimes?.endTime}
+            onClose={handleCloseInput}
+          />
+        </Modal>
+      )}
     </div>
   );
 };

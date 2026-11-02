@@ -9,6 +9,14 @@ import CalendarCard from "../../items/CalendarCard/CalendarCard";
 // Import Styles
 import "./WeekView.css";
 
+const formatLocalDate = (date) => {
+  const dateObj = new Date(date);
+  const year = dateObj.getFullYear();
+  const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
+  const day = dateObj.getDate().toString().padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 // Function that returns the rows in the calendar grid using the time range (each row represents 15 minutes)
 const getGridRows = (timeString, defaultHour = 1) => {
   if (!timeString) return defaultHour * 4 + 1; // Return the default number of rows if no time string is provided
@@ -24,7 +32,9 @@ const getGridRows = (timeString, defaultHour = 1) => {
 const getHoursArray = () => {
   const hours = [];
   for (let i = 0; i < 24; i++) {
-    hours.push(i.toString().padStart(2, "0") + ":00");
+    const period = i < 12 ? "AM" : "PM";
+    const hour12 = i === 0 ? 12 : i > 12 ? i - 12 : i;
+    hours.push(`${hour12}:00 ${period}`);
   }
   return hours;
 };
@@ -72,13 +82,13 @@ const parseGarminTime = (startTimeLocal, GMTTime) => {
 };
 
 // WeekView Component
-const WeekView = ({ selectedDate = new Date(), onViewChange }) => {
+const WeekView = ({ onViewChange, handleOpenInput }) => {
   // Events, tasks, activities, workouts and startDate states from the store
   const tasks = useSelector((state) => state.calendar.tasks.items);
   const events = useSelector((state) => state.calendar.events.items);
   const activities = useSelector((state) => state.garmin.activities.items);
   const workouts = useSelector((state) => state.garmin.upcomingWorkouts.items);
-  const startDate = useSelector((state) => state.calendar.startDate);
+  const startDate = useSelector((state) => state.date.startDate);
 
   // We get all dates in the current week based on the startDate from the store
   const weekDates = useMemo(() => {
@@ -203,13 +213,11 @@ const WeekView = ({ selectedDate = new Date(), onViewChange }) => {
     return { allDayItemsByDay: allDayByDay, timedItemsbyDay: timedByDay };
   }, [events, tasks, activities, workouts, weekDates]);
 
-  // We convert the current date to a string for easy comparison with the week dates
-  const currentDateString = selectedDate.toISOString().split("T")[0];
-
   return (
     <div className="week-view-container">
       {/* Header for all 7 days of the week */}
       <div className="week-grid-header">
+        <div className="empty-header-cell" />
         {weekDates.map((day) => (
           <div key={day.dateString} className="day-column-grid-header">
             <span className="day-name">{day.dayName}</span>
@@ -217,7 +225,7 @@ const WeekView = ({ selectedDate = new Date(), onViewChange }) => {
               onClick={() => onViewChange("day", day.date)}
               role="button"
               tabIndex={0}
-              className={`date-circle ${day.dateString === currentDateString ? "active" : ""}`}
+              className={`date-circle ${day.dateString === formatLocalDate(new Date()) ? "active" : ""}`}
             >
               {day.dayNumber}
             </div>
@@ -276,17 +284,25 @@ const WeekView = ({ selectedDate = new Date(), onViewChange }) => {
           ))}
 
           {/* Content borders for grid-hour-rows */}
-          {HOURS.map((hour, index) => (
-            <div
-              key={`line-${hour}-${index + 1}`}
-              className="grid-hour-row"
-              style={{
-                gridRowStart: index * 4 + 1,
-                gridRowEnd: (index + 1) * 4 + 1,
-                gridColumn: "2 / -1", // Span all columns except the time label column
-              }}
-            />
-          ))}
+          {weekDates.map((day) =>
+            HOURS.map((hour, index) => (
+              <div
+                key={`slot-${day.date}-${hour}-${index + 1}`}
+                className="grid-hour-row"
+                onClick={() => {
+                  const d = new Date(day.date);
+                  d.setHours(index, 0, 0, 0);
+                  handleOpenInput(d.getTime());
+                }}
+                style={{
+                  gridRowStart: index * 4 + 1,
+                  gridRowEnd: (index + 1) * 4 + 1,
+                  gridColumnStart: day.index + 2,
+                  gridColumnEnd: day.index + 3,
+                }}
+              />
+            )),
+          )}
 
           {/* Item Cards */}
           {weekDates.map((day) =>

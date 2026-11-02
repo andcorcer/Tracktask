@@ -72,9 +72,7 @@ const TodosPage = () => {
     } else if (direction === "prev") {
       newDate.setDate(newDate.getDate() - 1);
     }
-    dispatch(
-      setSelectedDate({ selectedDate: formatLocalDate(newDate) }),
-    );
+    dispatch(setSelectedDate({ selectedDate: formatLocalDate(newDate) }));
   };
 
   // Handle permanent deletion of todos
@@ -94,78 +92,86 @@ const TodosPage = () => {
     <div className="todos-page-container">
       {/* Header and Todo Actions */}
       <header className="todos-page-header">
-        {/* Permanent Delete Button */}
-        {todos.length > 0 && (
-          <button
-            type="button"
-            className="btn delete-permanently-btn"
-            onClick={handleDeletePermanently}
-          >
-            Delete All Permanently
-          </button>
-        )}
-
-        {/* View Mode Switcher */}
-        <div
-          className="view-mode-switcher"
-          role="radiogroup"
-          aria-label="Todo-Filter-Options"
-        >
-          <button
-            role="button"
-            className={`btn view-btn ${viewMode === "date" ? "active" : ""}`}
-            onClick={() => setViewMode("date")}
-          >
-            <Calendar size={16} />
-            <span>By Date</span>
-          </button>
-
-          <button
-            role="button"
-            className={`btn view-btn ${viewMode === "active" ? "active" : ""}`}
-            onClick={() => setViewMode("active")}
-          >
-            <ShieldCheck size={16} />
-            <span>Active</span>
-          </button>
-
-          <button
-            role="button"
-            className={`btn view-btn ${viewMode === "archived" ? "active" : ""}`}
-            onClick={() => setViewMode("archived")}
-          >
-            <Archive size={16} />
-            <span>Archived</span>
-          </button>
-        </div>
-
-        {/* Date Navigation */}
-        <div className="date-navigation">
-          <button
-            type="button"
-            className="btn today-btn"
-            onClick={() => handleNavigation("today")}
-          >
-            Today
-          </button>
-
-          <div className="nav-arrows">
+        <div className="todos-page-actions">
+          <h2 className="todos-page-title">Todos</h2>
+          {/* Permanent Delete Button */}
+          {todos.length > 0 && (
             <button
               type="button"
-              className="btn nav-btn"
-              onClick={() => handleNavigation("prev")}
+              className="btn delete-permanently-btn"
+              onClick={handleDeletePermanently}
             >
-              <CircleChevronLeft size={20} />
+              Delete All Permanently
             </button>
+          )}
+        </div>
+        <div className="todos-page-controls">
+          {/* View Mode Switcher */}
+          <div
+            className="view-mode-switcher"
+            role="radiogroup"
+            aria-label="Todo-Filter-Options"
+          >
             <button
-              type="button"
-              className="btn nav-btn"
-              onClick={() => handleNavigation("next")}
+              role="button"
+              className={`btn view-btn ${viewMode === "date" ? "active" : ""}`}
+              onClick={() => setViewMode("date")}
             >
-              <CircleChevronRight size={20} />
+              <Calendar size={16} />
+              <span>By Date</span>
+            </button>
+
+            <button
+              role="button"
+              className={`btn view-btn ${viewMode === "active" ? "active" : ""}`}
+              onClick={() => setViewMode("active")}
+            >
+              <ShieldCheck size={16} />
+              <span>Active</span>
+            </button>
+
+            <button
+              role="button"
+              className={`btn view-btn ${viewMode === "archived" ? "active" : ""}`}
+              onClick={() => setViewMode("archived")}
+            >
+              <Archive size={16} />
+              <span>Archived</span>
             </button>
           </div>
-          <h2 className="calendar-header-title">{formattedDate}</h2>
+
+          {/* Date Navigation */}
+          {viewMode === "date" && (
+            <div className="date-navigation">
+            <span className="nav-date">{formattedDate}</span>
+            <div className="nav-controls">
+              <button
+                type="button"
+                className="btn today-btn"
+                onClick={() => handleNavigation("today")}
+              >
+                Today
+              </button>
+
+              <div className="nav-arrows">
+                <button
+                  type="button"
+                  className="btn nav-btn"
+                  onClick={() => handleNavigation("prev")}
+                >
+                  <CircleChevronLeft size={20} />
+                </button>
+                <button
+                  type="button"
+                  className="btn nav-btn"
+                  onClick={() => handleNavigation("next")}
+                >
+                  <CircleChevronRight size={20} />
+                </button>
+              </div>
+            </div>
+          </div>
+          )}
         </div>
       </header>
 

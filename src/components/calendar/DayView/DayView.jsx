@@ -25,7 +25,9 @@ const getGridRows = (timeString, defaultHour = 1) => {
 const getHoursArray = () => {
   const hours = [];
   for (let i = 0; i < 24; i++) {
-    hours.push(i.toString().padStart(2, "0") + ":00");
+    const period = i < 12 ? "AM" : "PM";
+    const hour12 = i === 0 ? 12 : i > 12 ? i - 12 : i;
+    hours.push(`${hour12}:00 ${period}`);
   }
   return hours;
 };
@@ -56,7 +58,7 @@ const formatLocalDate = (date) => {
 };
 
 // DayView Component
-const DayView = ({ selectedDate = new Date() }) => {
+const DayView = ({ selectedDate = new Date(), handleOpenInput }) => {
   // Events, tasks, activities and workouts states from the store
   const tasks = useSelector((state) => state.calendar.tasks.items);
   const events = useSelector((state) => state.calendar.events.items);
@@ -206,6 +208,11 @@ const DayView = ({ selectedDate = new Date() }) => {
             <div
               key={`line-${hour}-${index + 1}`}
               className="grid-hour-row"
+              onClick={() => {
+                const d = new Date(selectedDate);
+                d.setHours(index, 0, 0, 0);
+                handleOpenInput(d.getTime());
+              }}
               style={{
                 gridRowStart: index * 4 + 1,
                 gridRowEnd: (index + 1) * 4 + 1,

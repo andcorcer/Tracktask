@@ -9,6 +9,14 @@ import CalendarCard from "../../items/CalendarCard/CalendarCard";
 // Import Styles
 import "./MonthView.css";
 
+const formatLocalDate = (date) => {
+  const dateObj = new Date(date);
+  const year = dateObj.getFullYear();
+  const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
+  const day = dateObj.getDate().toString().padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 // Function that returns the date string in the format "YYYY-MM-DD" for any calendar item
 const getDateString = (item, type) => {
   // Normalize event dates to "YYYY-MM-DD" string
@@ -41,8 +49,8 @@ const MonthView = ({ selectedDate = new Date(), onViewChange }) => {
   const events = useSelector((state) => state.calendar.events.items);
   const activities = useSelector((state) => state.garmin.activities.items);
   const workouts = useSelector((state) => state.garmin.upcomingWorkouts.items);
-  const startDate = useSelector((state) => state.calendar.startDate);
-  const endDate = useSelector((state) => state.calendar.endDate);
+  const startDate = useSelector((state) => state.date.startDate);
+  const endDate = useSelector((state) => state.date.endDate);
 
   // We get all dates in the current week based on the startDate from the store
   const monthDates = useMemo(() => {
@@ -146,90 +154,85 @@ const MonthView = ({ selectedDate = new Date(), onViewChange }) => {
     return { allDayItemsByDay: allDayByDay, timedItemsbyDay: timedByDay };
   }, [events, tasks, activities, workouts, monthDates]);
 
-  // We convert the current date to a string for easy comparison with the month dates
-  const currentDateString = selectedDate.toISOString().split("T")[0];
-
   return (
     <div className="month-view-container">
       {/* Header for all 7 days of the week */}
       <div className="month-grid-header">
-        <div className="weekday-column-grid-header">
-          <span className="day-name">S</span>
-          <span className="day-name">M</span>
-          <span className="day-name">T</span>
-          <span className="day-name">W</span>
-          <span className="day-name">T</span>
-          <span className="day-name">F</span>
-          <span className="day-name">S</span>
-        </div>
+        <span className="day-name">S</span>
+        <span className="day-name">M</span>
+        <span className="day-name">T</span>
+        <span className="day-name">W</span>
+        <span className="day-name">T</span>
+        <span className="day-name">F</span>
+        <span className="day-name">S</span>
       </div>
 
-      {monthDates.map((day) => (
-        <div
-          key={day.dateString}
-          className={`month-day-container ${!day.isCurrentMonth ? "not-current-month" : ""}`}
-        >
-          {/* Header for all days of the month */}
-          <div className="month-day-grid-header">
-            <div
-              onClick={() => onViewChange("day", day.date)}
-              role="button"
-              tabIndex={0}
-              className={`date-circle ${day.dateString === currentDateString ? "active" : ""}`}
-            >
-              {day.dayNumber}
-            </div>
-          </div>
-
-          {/* Render all-day items */}
-          <div className="month-all-day-banner">
-            <div className="all-day-card-wrapper">
-              {allDayItemsByDay[day.index].map((item) => {
-                if (item.type === "event" || item.type === "task") {
-                  return (
-                    <CalendarCard
-                      key={item.id}
-                      type={item.type}
-                      data={item.data}
-                      viewMode="month"
-                    />
-                  );
-                } else {
-                  return (
-                    <HealthCard
-                      key={item.id}
-                      type={item.type}
-                      data={item.data}
-                      viewMode="month"
-                    />
-                  );
-                }
-              })}
-            </div>
-          </div>
-
-          {/* Item Cards */}
-          {timedItemsbyDay[day.index].map((item) => {
-            return (
-              <div className="timed-card-wrapper" key={item.id}>
-                {item.type === "event" || item.type === "task" ? (
-                  <CalendarCard
-                    type={item.type}
-                    data={item.data}
-                    viewMode="month"
-                  />
-                ) : (
-                  <HealthCard
-                    type={item.type}
-                    data={item.data}
-                    viewMode="month"
-                  />
-                )}
+      <div className="month-grid-body">
+        {monthDates.map((day) => (
+          <div
+            key={day.dateString}
+            className={`month-day-container ${!day.isCurrentMonth ? "not-current-month" : ""}`}
+          >
+            {/* Header for all days of the month */}
+            <div className="month-day-grid-header">
+              <div
+                onClick={() => onViewChange("day", day.date)}
+                role="button"
+                tabIndex={0}
+                className={`date-circle ${day.dateString === formatLocalDate(new Date()) ? "active" : ""}`}
+              >
+                {day.dayNumber}
               </div>
-            );
-          })}
-        </div>
-      ))}
+            </div>
+
+            {/* Render all-day items */}
+            <div className="month-all-day-banner">
+                {allDayItemsByDay[day.index].map((item) => {
+                  if (item.type === "event" || item.type === "task") {
+                    return (
+                      <CalendarCard
+                        key={item.id}
+                        type={item.type}
+                        data={item.data}
+                        viewMode="month"
+                      />
+                    );
+                  } else {
+                    return (
+                      <HealthCard
+                        key={item.id}
+                        type={item.type}
+                        data={item.data}
+                        viewMode="month"
+                      />
+                    );
+                  }
+                })}
+            </div>
+
+            {/* Item Cards */}
+            {timedItemsbyDay[day.index].map((item) => {
+              return (
+                <div className="timed-card-wrapper" key={item.id}>
+                  {item.type === "event" || item.type === "task" ? (
+                    <CalendarCard
+                      type={item.type}
+                      data={item.data}
+                      viewMode="month"
+                    />
+                  ) : (
+                    <HealthCard
+                      type={item.type}
+                      data={item.data}
+                      viewMode="month"
+                    />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

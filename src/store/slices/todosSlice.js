@@ -6,7 +6,13 @@ const LOCAL_STORAGE_KEY = "tracktask_app_todos";
 
 // Helper function to get the local date (YYYY-MM-DD)
 const getLocalISOString = (dateInput = new Date()) => {
-  const d = new Date(dateInput);
+  let d;
+  if (typeof dateInput === "string" && dateInput.includes("-") && !dateInput.includes("T")) {
+    const [year, month, day] = dateInput.split("-").map(Number);
+    d = new Date(year, month - 1, day);
+  } else {
+    d = dateInput;
+  }
   const year = d.getFullYear();
   const month = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");

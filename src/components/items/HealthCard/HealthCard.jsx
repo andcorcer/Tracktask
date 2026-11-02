@@ -192,7 +192,7 @@ const HealthCard = ({ type, data, viewMode }) => {
             handleOpenDetails(`activity ${activityString?.toLowerCase()}`)
           }
         >
-          <span>
+          <span className="activity-title">
             <ActivityIcon size={10} className={activityString} />
             {activityString !== "Other" ? activityString : data?.activityName}
           </span>
@@ -208,10 +208,12 @@ const HealthCard = ({ type, data, viewMode }) => {
           role="button"
           tabIndex={0}
         >
-          <h5>
+          <div className="activity-title">
             <ActivityIcon size={14} className={activityString} />
-            {activityString !== "Other" ? activityString : data?.activityName}
-          </h5>
+            <h5>
+              {activityString !== "Other" ? activityString : data?.activityName}
+            </h5>
+          </div>
           <span className="duration-text">
             <Clock size={12} className="duration-icon" />
             {transformTimeFormat(data?.duration)}
@@ -222,23 +224,22 @@ const HealthCard = ({ type, data, viewMode }) => {
 
     return (
       <div
-        className="health-content activity-container"
+        className="health-content activity-element"
         onClick={() =>
           handleOpenDetails(`activity ${activityString?.toLowerCase()}`)
         }
         role="button"
         tabIndex={0}
       >
-        <div className="activity-main">
+        <div className="activity-title">
           <ActivityIcon size={18} className={activityString} />
-          <div className="main-data">
-            <h4>
-              {activityString !== "Other" ? activityString : data?.activityName}
-            </h4>
-            <p>
-              {subtext1} {subtext2}
-            </p>
-          </div>
+          <h4>
+            {activityString !== "Other" ? activityString : data?.activityName}
+          </h4>
+        </div>
+        <div className="activity-subtext">
+          <p>{subtext1}</p>
+          <p>{subtext2}</p>
         </div>
 
         <div className="activity-stats">
@@ -261,16 +262,16 @@ const HealthCard = ({ type, data, viewMode }) => {
       role="button"
       tabIndex={0}
     >
-      <div className="plan-main">
+      <div className="plan-title">
         <ClipboardClock size={18} className="training-plan" />
         <h4>{data?.name || "Active Training Plan"}</h4>
-        <p>{data?.status || "ACTIVE"}</p>
       </div>
 
       <div className="plan-meta">
+        <p>{data?.status || "ACTIVE"}</p>
         <span className="badge">
           {data?.startDate && data?.endDate
-            ? `${data?.startDate} - ${data?.endDate}`
+            ? `${data?.startDate.split("T")[0]} --- ${data?.endDate.split("T")[0]}`
             : "Ongoing"}
         </span>
       </div>
@@ -279,8 +280,6 @@ const HealthCard = ({ type, data, viewMode }) => {
 
   // Render Workouts
   const renderWorkouts = () => {
-    const workoutType = data?.activityType?.typeKey;
-
     // We render workouts conditionally for the calendar in its different view modes
     if (viewMode === "month") {
       return (
@@ -288,7 +287,7 @@ const HealthCard = ({ type, data, viewMode }) => {
           className="month-element workout-element"
           onClick={() => handleOpenDetails("workout")}
         >
-          <span>
+          <span className="workout-title">
             <CalendarClock size={10} className="workout" />
             {data?.title || "Scheduled Workout"}
           </span>
@@ -302,31 +301,27 @@ const HealthCard = ({ type, data, viewMode }) => {
           role="button"
           tabIndex={0}
         >
-          <div className="workout-main">
+          <div className="workout-title">
             <CalendarClock size={14} className="workout" />
             <h5>{data?.title || "Scheduled Workout"}</h5>
-            <p>
-              {formatLocalDate(data?.date)}
-            </p>
           </div>
+          <p>{formatLocalDate(data?.date)}</p>
         </div>
       );
     }
 
     return (
       <div
-        className="health-content workout-container"
+        className="health-content workout-element"
         onClick={() => handleOpenDetails("workout")}
         role="button"
         tabIndex={0}
       >
-        <div className="workout-main">
+        <div className="workout-title">
           <CalendarClock size={18} className="workout" />
           <h4>{data?.title || "Scheduled Workout"}</h4>
-          <p>
-            {formatLocalDate(data?.date)}
-          </p>
         </div>
+        <p>{formatLocalDate(data?.date)}</p>
       </div>
     );
   };
@@ -348,7 +343,9 @@ const HealthCard = ({ type, data, viewMode }) => {
   };
 
   return (
-    <div className={`health-card ${viewMode ? `${viewMode}-view` : ""}`}>
+    <div
+      className={`health-card ${viewMode ? `${viewMode}-view` : ""} ${type ? `${type}-element` : ""}`}
+    >
       {renderContent()}
 
       {/* Conditionally render the DetailsCard component */}
