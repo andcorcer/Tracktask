@@ -1,0 +1,34 @@
+/* Header Container */
+.header {
+  display: flex;
+  align-items: center;
+  background-color: var(--bg-color);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  padding: 1rem;
+  top: 0;
+  z-index: 10;
+}
+
+/* Title */
+.title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.75px;
+  padding-right: 1rem;
+}
+
+/* Logo */
+.title a {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+/* Responsive Styles */
+@media (max-width: 550px) {
+  .header {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
