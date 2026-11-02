@@ -68,8 +68,9 @@ def get_garmin_client():
     if garmin_client is not None:
         return garmin_client
 
-    # Uses session tokens in for logging in if they've been saved
-    if os.path.exists(SESSION_DIR):
+    # Uses session tokens for logging in if they've been saved
+    token_file = os.path.join(SESSION_DIR, "token.json")
+    if os.path.exists(SESSION_DIR) and os.path.exists(token_file) and garmin_email:
         try:
             client = Garmin(email=garmin_email, password="")
             client.login(SESSION_DIR)
