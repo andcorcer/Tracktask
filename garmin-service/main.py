@@ -70,7 +70,7 @@ def get_garmin_client():
 
     # Uses session tokens for logging in if they've been saved
     token_file = os.path.join(SESSION_DIR, "token.json")
-    if os.path.exists(SESSION_DIR) and os.path.exists(token_file) and garmin_email:
+    if os.path.exists(SESSION_DIR) and os.path.exists(token_file):
         try:
             client = Garmin(email=garmin_email, password="")
             client.login(SESSION_DIR)
@@ -99,17 +99,19 @@ def health_check():
 def login(credentials: GarminCredentials):
     """Authenticate with Garmin using email and password, then save session tokens for persistant access."""
     global garmin_client
-    global garmin_email
-
 
     try:
+        os.makedirs(SESSION_DIR, exist_ok=True)
+
         client = Garmin(email=credentials.email, password=credentials.password)
         # Makes a directory to dump the access credentials for persistant profile
-        os.makedirs(SESSION_DIR, exist_ok=True)
         client.login(SESSION_DIR)
 
+        # Save the newly generated tokens to SESSION_DIR for future requests
+        if hasattr(client, "garth") and hasattr(client.garth, "dump"):
+            client.garth.dump(SESSION_DIR)
+
         garmin_client = client
-        garmin_email = credentials.email
         # Returns a JSON message for the Front-End
         return {
             "status": "connected",
