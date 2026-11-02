@@ -69,7 +69,7 @@ def get_garmin_client():
         return garmin_client
 
     # Uses session tokens for logging in if they've been saved
-    token_file = os.path.join(SESSION_DIR, "token.json")
+    token_file = os.path.join(SESSION_DIR, "oauth1_token.json")
     if os.path.exists(SESSION_DIR) and os.path.exists(token_file):
         try:
             client = Garmin(email=garmin_email, password="")
@@ -105,7 +105,7 @@ def login(credentials: GarminCredentials):
 
         client = Garmin(email=credentials.email, password=credentials.password)
         # Makes a directory to dump the access credentials for persistant profile
-        client.login(SESSION_DIR)
+        client.login()
 
         # Save the newly generated tokens to SESSION_DIR for future requests
         if hasattr(client, "garth") and hasattr(client.garth, "dump"):
