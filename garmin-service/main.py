@@ -36,7 +36,8 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173"
+        "http://localhost:5173",
+        "https://tracktask-app.netlify.app"
     ],  # Allows requests from the React development server
     allow_credentials=True,  # Allows the transaction of authentication headers
     allow_methods=["*"],  # Allows all HTTP methods (GET, POST, etc.)
