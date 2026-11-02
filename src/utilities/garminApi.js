@@ -1,8 +1,9 @@
 // Import all dependencies
 import axios from "axios";
 
-const PORT = import.meta.env.VITE_GARMIN_PORT || 8000;
-const GARMIN_SERVICE_BASE_URL = `http://localhost:${PORT}/api/garmin`;
+const PORT = import.meta.env.VITE_GARMIN_PORT || 8000; // For local development 
+const API_URL = import.meta.env.VITE_API_URL || `http://localhost:${PORT}`; // Base URL for the API, defaults to local development if not specified
+const GARMIN_SERVICE_BASE_URL = `${API_URL}/api/garmin`;
 
 // Create an instance of axios with the base URL for the backend python port
 const garminApi = axios.create({
