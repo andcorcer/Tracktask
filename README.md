@@ -199,19 +199,19 @@ state = {
    ```bash
    cd garmin-service
 
-  # Create and activate a virtual environment
+   # Create and activate a virtual environment
 
-  python -m venv venv
-  source venv/bin/activate # On Windows: venv\Scripts\activate
+   python -m venv venv
+   source venv/bin/activate # On Windows: venv\Scripts\activate
 
-  # Install backend dependencies
+   # Install backend dependencies
 
-  pip install -r requirements.txt
+   pip install -r requirements.txt
 
-  # Start the server (runs at http://localhost:8000)
+   # Start the server (runs at http://localhost:8000)
 
-  uvicorn main:app --reload --port 8000
-  ```
+   uvicorn main:app --reload --port 8000
+   ```
 
 ## Deployment Configuration 
 
