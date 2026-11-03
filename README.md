@@ -1,94 +1,168 @@
-# BingeList
+# TrackTask
 
-[**Live Demo »**](https://bingelist-app.netlify.app) &nbsp;·&nbsp; [**Bug Report**](https://github.com/andcorcer/BingeList/issues) &nbsp;·&nbsp; [**New Features**](https://github.com/andcorcer/BingeList/issues)
+[**Live Demo »**](https://tracktask-app.netlify.app) &nbsp;·&nbsp; [**Bug Report**](https://github.com/andcorcer/Tracktask/issues) &nbsp;·&nbsp; [**New Features**](https://github.com/andcorcer/Tracktask/issues)
 
-A responsive React and Redux web application built with Vite for browsing movies and TV shows. Using the TMDB API, this app has dynamic categorization, search functionality, a client-side persistent watchlist, and up to date routes.
+A responsive React and Redux web application built with Vite and a python microservice backend with fastAPI that gets items from 3 different APIs (Google Calendar, Google Tasks and Garmin) as well as custom todos and shows them all in one view to make a wel rounded daily planning app.
 
 ---
 
 ## Features
 
-- **Home Page**: Displays trending movies and TV shows filtered by 'daily' and 'weekly' dynamic categories
-- **Category Browsing**: Browse for movies and TV shows using the avaiable categories such as 'popular', 'top-rated', 'upcoming' and 'airing'
-- **Search Integration**: Search functionality that supports all media types or filter by 'movies' or 'TV shows' with term tracking via queries.
-- **Watchlist Management**: Add or remove media to/from a local watchlist with an empty state and empty action.
-- **Details Access**: Able to view complete datails upon clicking a given title in a unique page
-- **Dynamic Pagination**: Full URL query parameter synchronization by using queries with smooth scroll-to-top transition upon changing pages and automatic out-of-bounds boundary handling.
+- **Home Page**: Displays a day view calendar component with interactive date as well as health metrics and todos for that given date.
+- **Calendar View Mode**: Calendar components for day, week and month view that render their corresponding events, tasks, activities and workouts inside the selected timeframe.
+- **Health Page**: Access any recent activities, workouts a full display of health metrics and different training plans.
+- **Todo Management**: Add, archive or remove todos from local storage memory with a full view to see them ordered by date or their state.
+- **Settings Page**: Complete settings page with Google and Garmin authentication, theme selection and cache memory liberation.
+- **Details Access**: Modal card for events, todos, tasks, activities, workouts, etc. to view them in detail upon clicking them.
 - **Responsive Dark UI**: Fully accessible, design built with modern CSS custom properties and box-sizing normalization.
+
+## Tech Stack
+
+- **Frontend**: React 18, Redux Toolkit, Vite, Modern CSS
+
+- **Backend Service**: Python 3.12, FastAPI, Uvicorn, GarminConnect (garth)
+
+- **Deployment**: Netlify (Frontend), Render (Backend Microservice)
 
 ## Project Structure
 
 ```text
+garmin-service/
+├── .python-version
+├── main.py
+└── requirements.txt
 src/
 ├── components/
 │   ├── App/
-│   ├── Error/
-│   ├── Header/
-│   ├── Layout/
-│   ├── Loading/
-│   ├── MediaCard/
-│   ├── MediaGrid/
-│   └── Navbar/
+│   ├── calendar/
+│   │   ├── CalendarContainer/
+│   │   ├── CalendarHeader/
+│   │   ├── DayView/
+│   │   ├── MonthView/
+│   │   └── WeekView/
+│   ├── details/
+│   │   ├── DetailsCard/
+│   │   └── Modal/
+│   ├── inputs/
+│   │   ├── CalendarInput/
+│   │   └── TodoInput/
+│   ├── items/
+│   │   ├── CalendarCard/
+│   │   ├── HealthCard/
+│   │   └── TodoCard/
+│   ├── layout/
+│   │   ├── Header/
+│   │   ├── Layout/
+│   │   └── Navbar/
+│   ├── lists/
+│   │   ├── CalendarList/
+│   │   ├── HealthList/
+│   │   └── TodoList/
+│   └── states/
+        ├── Error/
+        └── Loading/
 ├── pages/
-│   ├── DetailsPage/
+│   ├── CalendarPage/
+│   ├── HealthPage/
 │   ├── HomePage/
-│   ├── MediaCategoryPage/
 │   ├── NotFoundPage/
-│   ├── SearchPage/
-│   └── WatchlistPage/
+│   ├── SettingsPage/
+│   └── TodosPage/
 ├── store/
-│   ├── mediaSlice.js
-│   ├── watchlistSlice.js
+│   ├── slices/
+│   │   ├── authenticationSlice.js
+│   │   ├── calendarSlice.js
+│   │   ├── dateSlice.js
+│   │   ├── garminSlice.js
+│   │   └── todosSlice.js
 │   └── store.js
 ├── utilities/
-│   └── tmdbApi.js
+│   ├── garminApi.js
+│   ├── googleCalendarApi.js
+│   └── googleTasks.js
 ├── index.css
 └── main.jsx
 ```
 
 ## Application Routes
 
-| Path                             | Component               | Description                                                    |
-| :------------------------------- | :---------------------- | :------------------------------------------------------------- |
-| `/`                              | `<HomePage />`          | Displays trending movies, TV shows, and a featured hero banner |
-| `/category/:mediaType/:category` | `<MediaCategoryPage />` | Category grid listing                                          |
-| `/media/:mediaType/:id`          | `<DetailsPage />`       | Detailed view of any specific movie or TV show                 |
-| `/search`                        | `<SearchPage />`        | Search page supporting term queries and media type filtering   |
-| `/watchlist`                     | `<WatchlistPage />`     | User's saved watchlist                                         |
-| `*`                              | `<NotFoundPage />`      | Fallback page for handling invalid or outdated URLs            |
+| Path        | Component          | Description                                                  |
+| :---------- | :----------------- | :----------------------------------------------------------- |
+| `/`         | `<HomePage />`     | Displays daily data for the selected date                    |
+| `/calendar` | `<CalendarPage />` | Day, week and month calendar data displayed                  |
+| `/health`   | `<HealthPage />`   | Daily summary, activities, workouts and training plans data  |
+| `/todos`    | `<TodosPage />`    | Todos data and filtering for date, active and archived todos |
+| `/settings` | `<SettingsPage />` | Authentication, theme and memory handling settings           |
+| `*`         | `<NotFoundPage />` | Fallback page for handling invalid or outdated URLs          |
 
 ## State Management
 
-The application uses Redux Toolkit to manage global state across two slices (`media` and `watchlist`):
+The application uses Redux Toolkit to manage global state across 5 slices (`authentication`, `calendar`, `date`, `garmin` and `todos`):
 
 ```js
 state = {
-  media: {
-    trending: {
-      movies: [],
-      tv: [],
-      status: "idle", // "idle" | "loading" | "succeeded" | "failed"
-      error: null,
+  authentication: {
+    garmin: {
+      status: "disconnected", // connected || disconnected
+      message: "Not logged in with Garmin",
+      user: null,
     },
-    details: {
-      data: null,
-      status: "idle",
-      error: null,
+    google: {
+      status: "disconnected", // connected || disconnected
+      message: "Not logged in with Google",
+      accessToken: null,
+      user: null,
     },
-    search: {
-      results: [],
-      totalPages: 1,
-      status: "idle",
-      error: null,
-    },
-    category: {
-      results: [],
-      totalPages: 1,
-      status: "idle",
-      error: null,
-    },
+    isLoading: false,
+    error: null,
   },
-  watchlist: {
+  calendar: {
+    calendarList: {
+      selectedListId: "primary",
+      items: [],
+    },
+    tasksList: {
+      selectedListId: "@default",
+      items: [],
+    },
+    tasks: {
+      selectedTaskId: null,
+      items: [],
+    },
+    events: {
+      selectedEventId: null,
+      items: [],
+    },
+    isLoading: false,
+    error: null,
+  },
+  date: {
+    selectedDate: new Date().toISOString().split("T")[0],
+    startDate: new Date().toISOString().split("T")[0],
+    endDate: new Date().toISOString().split("T")[0],
+  },
+  garmin: {
+    healthMetrics: {
+      selectedMetricId: null,
+      summaryDate: null,
+      items: [],
+    },
+    activities: {
+      selectedActivityId: null,
+      items: [],
+    },
+    trainingPlans: {
+      selectedPlanId: null,
+      items: [],
+    },
+    upcomingWorkouts: {
+      selectedWorkoutId: null,
+      items: [],
+    },
+    isLoading: false,
+    error: null,
+  },
+  todos: {
     items: [],
   },
 };
@@ -97,53 +171,66 @@ state = {
 ## Getting Started
 
 ### Prerequisites
-```text
-- **Node.js**: `v18.0.0` or higher
-- **npm** or **yarn**
-- **TMDB API Access Token**: Obtain a free API key from [The Movie Database](https://www.themoviedb.org/)
-```
 
----
+- **Node.js:** `v18.0.0` or higher
+- **Python:** 3.12.x` (for running the Garmin backend locally)
+- **Google Cloud Console Credentials:** OAuth 2.0 Web Client ID (Google Calendar & Tasks API enabled for that Client ID)
 
-### Local Installation
+### Local Setup
 
 1. **Clone the Repository**:
+
    ```bash
-   git clone https://github.com/andcorcer/BingeList.git
-   cd bingelist
+   git clone https://github.com/andcorcer/Tracktask.git
+   cd Tracktask
    ```
 
-2. **Install Dependencies**:
-    ```bash
-    npm install 
-    ```
-    or 
-    ```bash
-    yarn install 
-    ```
+2. **Frontend Setup**:
 
-3. **Configure Environment Variable**
-    Create a .env file in the root directory and store your access token 
-    ```text 
-    VITE_TMDB_READ_TOKEN=your_access_token_here
-    ```
+   ```bash
+   # Install all Dependencies
+   npm install
 
-4. **Start the Development Server**
-    ```bash 
-    npm run dev
-     ```
-    or 
-    ```bash
-     yarn dev 
-    ```
-### Deployment (Netlify)
+   # Run the Vite server (runs at http://localhost:5173)
+   npm run dev
+   ```
 
-1. **Add your Environment Variable**
-  ```text
-  VITE_TMDB_READ_TOKEN=your_access_token_here
+3. **Backend Setup (FastAPI)**
+   ```bash
+   cd garmin-service
+
+  # Create and activate a virtual environment
+
+  python -m venv venv
+  source venv/bin/activate # On Windows: venv\Scripts\activate
+
+  # Install backend dependencies
+
+  pip install -r requirements.txt
+
+  # Start the server (runs at http://localhost:8000)
+
+  uvicorn main:app --reload --port 8000
   ```
-2. **Project configuration**
-  ```text
-  -Build command: bash npm run build
-  -Publish directory: dist
-  ```
+
+## Deployment Configuration 
+
+### Netlify (Frontend)
+
+Configure the following environment variables in your Netlify project settings (**Site settings > Environment variables**):
+
+| Variable                   | Value                                               | Description                   |
+| :------------------------- | :-------------------------------------------------- | :---------------------------- |
+| `VITE_GOOGLE_CLIENT_ID`    | `your_google_client_id.apps.googleusercontent.com`  | Google OAuth Client ID        |
+| `VITE_API_URL`             | `https://tracktask-backend.onrender.com`            | Production Render backend URL |
+
+**Build Settings**
+
+- **Build Command:** `npm run build`
+- **Publish Directory:** `dist`
+
+### Render (Backend)
+
+- **Environment:** Python 3.12 (Enforced via `.python-version`)
+- **Build Command:** `pip install -r requirements.txt`
+- **Start Command:** `uvicorn main:app --host 0.0.0.0 --port $PORT`
