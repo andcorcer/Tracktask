@@ -9,6 +9,7 @@ import {
   FileTerminal,
   Sun,
   Moon,
+  Loader,
 } from "lucide-react";
 
 // Import Actions
@@ -44,6 +45,9 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
   );
   const googleAuthenticationStatus = useSelector(
     (state) => state.authentication.google.status || "disconnected",
+  );
+  const loginAuthenticationError = useSelector(
+    (state) => state.authentication.error || null,
   );
   const todos = useSelector((state) => state.todos.items);
 
@@ -197,9 +201,15 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
                   <ShieldCheck />
                   Connected
                 </>
+              ) : garminAuthenticationStatus === "checking" ? (
+                <>
+                  <Loader />
+                  Checking...
+                </>
               ) : (
                 <>
-                  <ShieldAlert /> Disconnected
+                  <ShieldAlert />
+                  Disconnected
                 </>
               )}
             </span>
@@ -219,7 +229,10 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
                 Logout from Garmin
               </button>
             ) : (
-              <form className="authentication-form">
+              <form
+                className="authentication-form"
+                onSubmit={handleGarminLogin}
+              >
                 <label htmlFor="garmin-email">Email</label>
                 <input
                   type="email"
@@ -243,12 +256,22 @@ const SettingsPage = ({ isDarkMode, toggleDarkMode }) => {
                 <button
                   type="submit"
                   className="btn btn-primary"
-                  onClick={handleGarminLogin}
-                  disabled={garminAuthenticationStatus === "checking" || !garminEmail || !garminPassword}
+                  disabled={
+                    garminAuthenticationStatus === "checking" ||
+                    !garminEmail ||
+                    !garminPassword
+                  }
                 >
                   <LogIn size={16} />
                   Login with Garmin
                 </button>
+                {loginAuthenticationError && (
+                  <div className="authentication-error-container">
+                    <span>
+                      ⚠️ {loginAuthenticationError}
+                    </span>
+                  </div>
+                )}
               </form>
             )}
           </div>

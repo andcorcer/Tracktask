@@ -8,7 +8,7 @@ import GarminApi from "../../utilities/garminApi";
 const initialState = {
   // Garmin State
   garmin: {
-    status: "disconnected", // connected || disconnected
+    status: "disconnected", // connected || checking || disconnected
     message: "Not logged in with Garmin",
     user: null,
   },
@@ -40,6 +40,14 @@ export const checkGarminStatus = createAsyncThunk(
       });
     }
   },
+  {
+    condition: (_, { getState }) => {
+      const { authentication } = getState();
+      if (authentication.garmin.status === "checking") {
+        return false;
+      }
+    },
+  }
 );
 
 // Async thunk to log in the user
@@ -56,6 +64,14 @@ export const loginGarminUser = createAsyncThunk(
       });
     }
   },
+  {
+    condition: (_, { getState }) => {
+      const { authentication } = getState();
+      if (authentication.garmin.status === "checking") {
+        return false;
+      }
+    },
+  }
 );
 
 // Slice definition
@@ -102,6 +118,7 @@ const authenticationSlice = createSlice({
       // Pending
       .addCase(checkGarminStatus.pending, (state) => {
         state.isLoading = true;
+        state.garmin.status = "checking";
         state.error = null;
       })
       // Fulfilled
@@ -123,6 +140,7 @@ const authenticationSlice = createSlice({
       // Pending
       .addCase(loginGarminUser.pending, (state) => {
         state.isLoading = true;
+        state.garmin.status = "checking";
         state.error = null;
       })
       // Fulfilled
